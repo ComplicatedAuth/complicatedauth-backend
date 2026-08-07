@@ -1,0 +1,26 @@
+name: Backend CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env: {POSTGRES_USER: complicatedauth, POSTGRES_PASSWORD: complicatedauth, POSTGRES_DB: complicatedauth_test}
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U complicatedauth" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Dokosoko/complicatedauth-openapi
+          path: _contract
+      - uses: actions/setup-go@v5
+        with: {go-version: '1.25.x', cache: true}
+      - run: OPENAPI_SPEC="$GITHUB_WORKSPACE/_contract/openapi.yaml" go generate ./internal/contract
+      - run: git diff --exit-code -- internal/contract/contract.gen.go
+      - run: go test ./...
+        env:
+          TEST_DATABASE_URL: postgres://complicatedauth:complicatedauth@localhost:5432/complicatedauth_test?sslmode=disable
+      - run: go vet ./...
