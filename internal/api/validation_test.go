@@ -1,6 +1,9 @@
 package api
 
 import (
+	"io"
+	"log/slog"
+	"net/http"
 	"net/http/httptest"
 	"testing"
 )
@@ -53,5 +56,25 @@ func TestTrustedProxyParsingAndClientIP(t *testing.T) {
 	}
 	if _, err = parseTrustedProxies("not-an-address"); err == nil {
 		t.Fatal("invalid trusted proxy value was accepted")
+	}
+}
+
+func TestLegacySingleFactorRoutesAreNotRegistered(t *testing.T) {
+	handler := New(Config{}, nil, slog.New(slog.NewTextHandler(io.Discard, nil))).Handler()
+	paths := []string{
+		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/password/authenticate",
+		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/passkeys/authentication/options",
+		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/passkeys/authentication/verify",
+		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/passkeys/registration/options",
+		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/passkeys/registration/verify",
+	}
+	for _, path := range paths {
+		t.Run(path, func(t *testing.T) {
+			response := httptest.NewRecorder()
+			handler.ServeHTTP(response, httptest.NewRequest(http.MethodPost, path, nil))
+			if response.Code != http.StatusNotFound {
+				t.Fatalf("status=%d want %d", response.Code, http.StatusNotFound)
+			}
+		})
 	}
 }

@@ -37,10 +37,15 @@ type Server struct {
 	log           *slog.Logger
 	loginMu       sync.Mutex
 	loginAttempts map[string]attempt
+	biometrics    biometricProvider
 }
 
 func New(cfg Config, db *pgxpool.Pool, logger *slog.Logger) *Server {
-	return &Server{cfg: cfg, db: db, log: logger, loginAttempts: make(map[string]attempt)}
+	return newServer(cfg, db, logger, configuredBiometricProvider(cfg))
+}
+
+func newServer(cfg Config, db *pgxpool.Pool, logger *slog.Logger, biometrics biometricProvider) *Server {
+	return &Server{cfg: cfg, db: db, log: logger, loginAttempts: make(map[string]attempt), biometrics: biometrics}
 }
 
 func (s *Server) Handler() http.Handler {
@@ -76,13 +81,19 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("GET /v1/projects/{project_uid}/activity", s.console(http.HandlerFunc(s.listActivity)))
 	mux.Handle("GET /v1/activity", s.console(http.HandlerFunc(s.listActivity)))
 
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/password/authenticate", s.apiKey(http.HandlerFunc(s.runtimePassword)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/start", s.apiKey(http.HandlerFunc(s.startProjectUserLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/password", s.apiKey(http.HandlerFunc(s.verifyProjectUserLoginPassword)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/options", s.apiKey(http.HandlerFunc(s.beginFidoLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/verify", s.apiKey(http.HandlerFunc(s.finishFidoLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/options", s.apiKey(http.HandlerFunc(s.beginFirstFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/verify", s.apiKey(http.HandlerFunc(s.finishFirstFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/biometric", s.apiKey(http.HandlerFunc(s.verifyBiometricLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/fido/registration/options", s.apiKey(http.HandlerFunc(s.beginFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/fido/registration/verify", s.apiKey(http.HandlerFunc(s.finishFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/biometric/enrollment", s.apiKey(http.HandlerFunc(s.enrollBiometric)))
+	mux.Handle("DELETE /v1/projects/{project_uid}/runtime/biometric/enrollment", s.apiKey(http.HandlerFunc(s.deleteBiometricEnrollment)))
 	mux.Handle("POST /v1/projects/{project_uid}/runtime/sessions/introspect", s.apiKey(http.HandlerFunc(s.runtimeIntrospect)))
 	mux.Handle("POST /v1/projects/{project_uid}/runtime/sessions/revoke", s.apiKey(http.HandlerFunc(s.runtimeRevoke)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/passkeys/registration/options", s.apiKey(http.HandlerFunc(s.beginRegistration)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/passkeys/registration/verify", s.apiKey(http.HandlerFunc(s.finishRegistration)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/passkeys/authentication/options", s.apiKey(http.HandlerFunc(s.beginAuthentication)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/passkeys/authentication/verify", s.apiKey(http.HandlerFunc(s.finishAuthentication)))
 	return s.requestLog(s.securityHeaders(mux))
 }
 

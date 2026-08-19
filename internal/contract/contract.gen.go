@@ -99,6 +99,114 @@ func (e CreateProjectRequestEnvironment) Valid() bool {
 	}
 }
 
+// Defines values for FactorVerifiedFactor.
+const (
+	Password FactorVerifiedFactor = "password"
+)
+
+// Valid indicates whether the value is a known member of the FactorVerifiedFactor enum.
+func (e FactorVerifiedFactor) Valid() bool {
+	switch e {
+	case Password:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FactorVerifiedStatus.
+const (
+	FactorVerifiedStatusFactorVerified FactorVerifiedStatus = "factor_verified"
+)
+
+// Valid indicates whether the value is a known member of the FactorVerifiedStatus enum.
+func (e FactorVerifiedStatus) Valid() bool {
+	switch e {
+	case FactorVerifiedStatusFactorVerified:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FidoCredentialKind.
+const (
+	FidoCredentialKindPasskey     FidoCredentialKind = "passkey"
+	FidoCredentialKindSecurityKey FidoCredentialKind = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the FidoCredentialKind enum.
+func (e FidoCredentialKind) Valid() bool {
+	switch e {
+	case FidoCredentialKindPasskey:
+		return true
+	case FidoCredentialKindSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FidoEnrollmentModeRequestMode.
+const (
+	FidoEnrollmentModeRequestModePasskey     FidoEnrollmentModeRequestMode = "passkey"
+	FidoEnrollmentModeRequestModeSecurityKey FidoEnrollmentModeRequestMode = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the FidoEnrollmentModeRequestMode enum.
+func (e FidoEnrollmentModeRequestMode) Valid() bool {
+	switch e {
+	case FidoEnrollmentModeRequestModePasskey:
+		return true
+	case FidoEnrollmentModeRequestModeSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FidoFinishRequestMode.
+const (
+	FidoFinishRequestModeHybrid      FidoFinishRequestMode = "hybrid"
+	FidoFinishRequestModePasskey     FidoFinishRequestMode = "passkey"
+	FidoFinishRequestModeSecurityKey FidoFinishRequestMode = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the FidoFinishRequestMode enum.
+func (e FidoFinishRequestMode) Valid() bool {
+	switch e {
+	case FidoFinishRequestModeHybrid:
+		return true
+	case FidoFinishRequestModePasskey:
+		return true
+	case FidoFinishRequestModeSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for FidoModeRequestMode.
+const (
+	FidoModeRequestModeHybrid      FidoModeRequestMode = "hybrid"
+	FidoModeRequestModePasskey     FidoModeRequestMode = "passkey"
+	FidoModeRequestModeSecurityKey FidoModeRequestMode = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the FidoModeRequestMode enum.
+func (e FidoModeRequestMode) Valid() bool {
+	switch e {
+	case FidoModeRequestModeHybrid:
+		return true
+	case FidoModeRequestModePasskey:
+		return true
+	case FidoModeRequestModeSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ProjectEnvironment.
 const (
 	ProjectEnvironmentProduction ProjectEnvironment = "production"
@@ -222,15 +330,18 @@ func (e UpdateProjectUserRequestStatus) Valid() bool {
 	}
 }
 
-// ApiKey defines model for ApiKey.
+// ApiKey Project API key metadata that is safe to list; it never contains a reusable secret.
 type ApiKey struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt  Timestamp    `json:"created_at"`
 	LastUsedAt *time.Time   `json:"last_used_at,omitempty"`
 	Name       string       `json:"name"`
 	Prefix     string       `json:"prefix"`
 	RevokedAt  *time.Time   `json:"revoked_at,omitempty"`
 	Status     ApiKeyStatus `json:"status"`
-	Uid        Uuid         `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
 // ApiKeyStatus defines model for ApiKey.Status.
@@ -238,6 +349,7 @@ type ApiKeyStatus string
 
 // ApiKeySecret defines model for ApiKeySecret.
 type ApiKeySecret struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt  Timestamp          `json:"created_at"`
 	LastUsedAt *time.Time         `json:"last_used_at,omitempty"`
 	Name       string             `json:"name"`
@@ -245,46 +357,66 @@ type ApiKeySecret struct {
 	RevokedAt  *time.Time         `json:"revoked_at,omitempty"`
 	Secret     *string            `json:"secret,omitempty"`
 	Status     ApiKeySecretStatus `json:"status"`
-	Uid        Uuid               `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
 // ApiKeySecretStatus defines model for ApiKeySecret.Status.
 type ApiKeySecretStatus string
 
-// AuditEvent defines model for AuditEvent.
+// AuditEvent Immutable security-relevant action with actor, optional target, metadata, and timestamp.
 type AuditEvent struct {
-	Action     string                  `json:"action"`
-	ActorType  AuditEventActorType     `json:"actor_type"`
-	ActorUid   *openapi_types.UUID     `json:"actor_uid,omitempty"`
+	Action    string              `json:"action"`
+	ActorType AuditEventActorType `json:"actor_type"`
+	ActorUid  *openapi_types.UUID `json:"actor_uid,omitempty"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt  Timestamp               `json:"created_at"`
 	Metadata   *map[string]interface{} `json:"metadata,omitempty"`
 	TargetType *string                 `json:"target_type,omitempty"`
 	TargetUid  *openapi_types.UUID     `json:"target_uid,omitempty"`
-	Uid        Uuid                    `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
 // AuditEventActorType defines model for AuditEvent.ActorType.
 type AuditEventActorType string
 
-// AuditPage defines model for AuditPage.
+// AuditPage Cursor-paginated collection of audit events.
 type AuditPage struct {
 	Items      []AuditEvent `json:"items"`
 	NextCursor *string      `json:"next_cursor,omitempty"`
 }
 
-// ConsoleSession defines model for ConsoleSession.
-type ConsoleSession struct {
-	ExpiresAt Timestamp    `json:"expires_at"`
-	Member    TenantMember `json:"member"`
-	Tenant    Tenant       `json:"tenant"`
+// BiometricEnrollment Local metadata for the Project User's active biometric-provider enrollment.
+type BiometricEnrollment struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
-// CreateOriginRequest defines model for CreateOriginRequest.
+// ConsoleSession Authenticated management-console context returned after signup, login, or session discovery.
+type ConsoleSession struct {
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp `json:"expires_at"`
+
+	// Member Human administrator authenticated to the management console.
+	Member TenantMember `json:"member"`
+
+	// Tenant Administrative owner boundary for Projects and Tenant Members.
+	Tenant Tenant `json:"tenant"`
+}
+
+// CreateOriginRequest Exact browser origin to add to a Project allowlist.
 type CreateOriginRequest struct {
 	Origin string `json:"origin"`
 }
 
-// CreateProjectRequest defines model for CreateProjectRequest.
+// CreateProjectRequest Complete configuration required to create an isolated Project and its first allowed origin.
 type CreateProjectRequest struct {
 	Environment   CreateProjectRequestEnvironment `json:"environment"`
 	InitialOrigin string                          `json:"initial_origin"`
@@ -296,14 +428,14 @@ type CreateProjectRequest struct {
 // CreateProjectRequestEnvironment defines model for CreateProjectRequest.Environment.
 type CreateProjectRequestEnvironment string
 
-// CreateProjectUserRequest defines model for CreateProjectUserRequest.
+// CreateProjectUserRequest Fields used to provision a Project-scoped application identity.
 type CreateProjectUserRequest struct {
 	Email         openapi_types.Email `json:"email"`
 	EmailVerified *bool               `json:"email_verified,omitempty"`
 	Password      *string             `json:"password,omitempty"`
 }
 
-// ErrorEnvelope defines model for ErrorEnvelope.
+// ErrorEnvelope Stable machine-readable error code, safe message, optional details, and request correlation identifier.
 type ErrorEnvelope struct {
 	Error struct {
 		Code      string                  `json:"code"`
@@ -313,38 +445,107 @@ type ErrorEnvelope struct {
 	} `json:"error"`
 }
 
-// LoginRequest defines model for LoginRequest.
+// FactorVerified Confirmation that the password factor succeeded and the login attempt can continue.
+type FactorVerified struct {
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp            `json:"expires_at"`
+	Factor    FactorVerifiedFactor `json:"factor"`
+	Status    FactorVerifiedStatus `json:"status"`
+}
+
+// FactorVerifiedFactor defines model for FactorVerified.Factor.
+type FactorVerifiedFactor string
+
+// FactorVerifiedStatus defines model for FactorVerified.Status.
+type FactorVerifiedStatus string
+
+// FidoCredential Newly registered passkey or attested security-key metadata.
+type FidoCredential struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp          `json:"created_at"`
+	Kind      FidoCredentialKind `json:"kind"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// FidoCredentialKind defines model for FidoCredential.Kind.
+type FidoCredentialKind string
+
+// FidoEnrollmentModeRequest Requested FIDO credential category for a registration ceremony.
+type FidoEnrollmentModeRequest struct {
+	Mode FidoEnrollmentModeRequestMode `json:"mode"`
+}
+
+// FidoEnrollmentModeRequestMode defines model for FidoEnrollmentModeRequest.Mode.
+type FidoEnrollmentModeRequestMode string
+
+// FidoFinishRequest defines model for FidoFinishRequest.
+type FidoFinishRequest struct {
+	// CeremonyUid RFC 4122 universally unique identifier.
+	CeremonyUid Uuid                   `json:"ceremony_uid"`
+	Credential  map[string]interface{} `json:"credential"`
+	Mode        FidoFinishRequestMode  `json:"mode"`
+}
+
+// FidoFinishRequestMode defines model for FidoFinishRequest.Mode.
+type FidoFinishRequestMode string
+
+// FidoModeRequest Requested FIDO authenticator category for an assertion ceremony.
+type FidoModeRequest struct {
+	Mode FidoModeRequestMode `json:"mode"`
+}
+
+// FidoModeRequestMode defines model for FidoModeRequest.Mode.
+type FidoModeRequestMode string
+
+// LoginAttemptSecret Short-lived opaque reference that binds all factor checks in one login attempt.
+type LoginAttemptSecret struct {
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt      Timestamp `json:"expires_at"`
+	LoginReference *string   `json:"login_reference,omitempty"`
+}
+
+// LoginRequest Tenant Member credentials accepted by management-console login.
 type LoginRequest struct {
 	Email    openapi_types.Email `json:"email"`
 	Password string              `json:"password"`
 }
 
-// NameRequest defines model for NameRequest.
+// NameRequest Human-readable name used when creating or renaming a Project API key.
 type NameRequest struct {
 	Name string `json:"name"`
 }
 
-// AllowedOrigin defines model for Origin.
+// AllowedOrigin Exact browser origin permitted to perform ceremonies for a Project.
 type AllowedOrigin struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt Timestamp `json:"created_at"`
 	Origin    string    `json:"origin"`
-	Uid       Uuid      `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
-// Passkey defines model for Passkey.
+// Passkey Minimal enrolled FIDO credential metadata exposed on Project User detail.
 type Passkey struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt Timestamp `json:"created_at"`
-	Uid       Uuid      `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
-// PasswordRequest defines model for PasswordRequest.
+// PasswordRequest Password value used for replacement or login-factor verification.
 type PasswordRequest struct {
 	Password string `json:"password"`
 }
 
-// Project defines model for Project.
+// Project Isolated relying-party authentication boundary and its current aggregate counts.
 type Project struct {
-	ApiKeyCount int                `json:"api_key_count"`
+	ApiKeyCount int `json:"api_key_count"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt   Timestamp          `json:"created_at"`
 	Environment ProjectEnvironment `json:"environment"`
 	Name        string             `json:"name"`
@@ -354,8 +555,10 @@ type Project struct {
 	RpIdLocked  bool               `json:"rp_id_locked"`
 	RpName      string             `json:"rp_name"`
 	Status      ProjectStatus      `json:"status"`
-	Uid         Uuid               `json:"uid"`
-	UserCount   int                `json:"user_count"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid       Uuid `json:"uid"`
+	UserCount int  `json:"user_count"`
 }
 
 // ProjectEnvironment defines model for Project.Environment.
@@ -364,54 +567,69 @@ type ProjectEnvironment string
 // ProjectStatus defines model for Project.Status.
 type ProjectStatus string
 
-// ProjectPage defines model for ProjectPage.
+// ProjectPage Cursor-paginated collection of Projects.
 type ProjectPage struct {
 	Items      []Project `json:"items"`
 	NextCursor *string   `json:"next_cursor,omitempty"`
 }
 
-// ProjectUser defines model for ProjectUser.
+// ProjectUser Application identity scoped to exactly one Project, with optional credential detail.
 type ProjectUser struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt     Timestamp           `json:"created_at"`
 	Email         openapi_types.Email `json:"email"`
 	EmailVerified bool                `json:"email_verified"`
 	PasskeyCount  int                 `json:"passkey_count"`
-	Status        ProjectUserStatus   `json:"status"`
-	Uid           Uuid                `json:"uid"`
+
+	// Passkeys Present on the project-user detail response.
+	Passkeys *[]Passkey        `json:"passkeys,omitempty"`
+	Status   ProjectUserStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
 // ProjectUserStatus defines model for ProjectUser.Status.
 type ProjectUserStatus string
 
-// ProjectUserPage defines model for ProjectUserPage.
+// ProjectUserPage Cursor-paginated collection of Project Users.
 type ProjectUserPage struct {
 	Items      []ProjectUser `json:"items"`
 	NextCursor *string       `json:"next_cursor,omitempty"`
 }
 
-// ProjectUserSession defines model for ProjectUserSession.
+// ProjectUserSession Introspection result for an active Project User session.
 type ProjectUserSession struct {
-	Active      bool        `json:"active"`
-	ExpiresAt   Timestamp   `json:"expires_at"`
+	Active bool `json:"active"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp `json:"expires_at"`
+
+	// ProjectUser Application identity scoped to exactly one Project, with optional credential detail.
 	ProjectUser ProjectUser `json:"project_user"`
 }
 
-// ProjectUserSessionSecret defines model for ProjectUserSessionSecret.
+// ProjectUserSessionSecret Opaque session reference and Project User context returned only after complete authentication.
 type ProjectUserSessionSecret struct {
-	ExpiresAt        Timestamp   `json:"expires_at"`
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp `json:"expires_at"`
+
+	// ProjectUser Application identity scoped to exactly one Project, with optional credential detail.
 	ProjectUser      ProjectUser `json:"project_user"`
 	SessionReference *string     `json:"session_reference,omitempty"`
 }
 
-// RuntimePasswordRequest defines model for RuntimePasswordRequest.
-type RuntimePasswordRequest = LoginRequest
+// SelfieRequest Multipart selfie image forwarded to the configured biometric provider.
+type SelfieRequest struct {
+	Selfie openapi_types.File `json:"selfie"`
+}
 
-// SessionReferenceRequest defines model for SessionReferenceRequest.
+// SessionReferenceRequest Opaque Project User session reference submitted by a relying-party backend.
 type SessionReferenceRequest struct {
 	SessionReference *string `json:"session_reference,omitempty"`
 }
 
-// SignupRequest defines model for SignupRequest.
+// SignupRequest Tenant and first-owner fields accepted during management-console signup.
 type SignupRequest struct {
 	DisplayName string              `json:"display_name"`
 	Email       openapi_types.Email `json:"email"`
@@ -419,28 +637,37 @@ type SignupRequest struct {
 	TenantName  string              `json:"tenant_name"`
 }
 
-// Tenant defines model for Tenant.
+// StartLoginRequest Email lookup used to create a deliberately non-enumerating login attempt.
+type StartLoginRequest struct {
+	Email openapi_types.Email `json:"email"`
+}
+
+// Tenant Administrative owner boundary for Projects and Tenant Members.
 type Tenant struct {
 	Name string `json:"name"`
 	Slug string `json:"slug"`
-	Uid  Uuid   `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
-// TenantMember defines model for TenantMember.
+// TenantMember Human administrator authenticated to the management console.
 type TenantMember struct {
 	DisplayName string              `json:"display_name"`
 	Email       openapi_types.Email `json:"email"`
 	Role        TenantMemberRole    `json:"role"`
-	Uid         Uuid                `json:"uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
 }
 
 // TenantMemberRole defines model for TenantMember.Role.
 type TenantMemberRole string
 
-// Timestamp defines model for Timestamp.
+// Timestamp UTC timestamp serialized in RFC 3339 date-time form.
 type Timestamp = time.Time
 
-// UpdateProjectRequest defines model for UpdateProjectRequest.
+// UpdateProjectRequest Partial Project configuration update; omitted fields remain unchanged.
 type UpdateProjectRequest struct {
 	Environment *UpdateProjectRequestEnvironment `json:"environment,omitempty"`
 	Name        *string                          `json:"name,omitempty"`
@@ -455,7 +682,7 @@ type UpdateProjectRequestEnvironment string
 // UpdateProjectRequestStatus defines model for UpdateProjectRequest.Status.
 type UpdateProjectRequestStatus string
 
-// UpdateProjectUserRequest defines model for UpdateProjectUserRequest.
+// UpdateProjectUserRequest Partial Project User update; omitted fields remain unchanged.
 type UpdateProjectUserRequest struct {
 	Email         *openapi_types.Email            `json:"email,omitempty"`
 	EmailVerified *bool                           `json:"email_verified,omitempty"`
@@ -465,28 +692,30 @@ type UpdateProjectUserRequest struct {
 // UpdateProjectUserRequestStatus defines model for UpdateProjectUserRequest.Status.
 type UpdateProjectUserRequestStatus string
 
-// Uuid defines model for Uuid.
+// Uuid RFC 4122 universally unique identifier.
 type Uuid = openapi_types.UUID
 
-// WebAuthnFinishRequest defines model for WebAuthnFinishRequest.
+// WebAuthnFinishRequest Server ceremony identifier and browser-produced PublicKeyCredential result.
 type WebAuthnFinishRequest struct {
+	// CeremonyUid RFC 4122 universally unique identifier.
 	CeremonyUid Uuid                   `json:"ceremony_uid"`
 	Credential  map[string]interface{} `json:"credential"`
 }
 
-// WebAuthnOptions defines model for WebAuthnOptions.
+// WebAuthnOptions Server ceremony identifier and browser-compatible PublicKeyCredential options.
 type WebAuthnOptions struct {
+	// CeremonyUid RFC 4122 universally unique identifier.
 	CeremonyUid Uuid                   `json:"ceremony_uid"`
 	PublicKey   map[string]interface{} `json:"public_key"`
 }
 
-// CredentialUid defines model for CredentialUid.
+// CredentialUid RFC 4122 universally unique identifier.
 type CredentialUid = Uuid
 
 // Cursor defines model for Cursor.
 type Cursor = string
 
-// KeyUid defines model for KeyUid.
+// KeyUid RFC 4122 universally unique identifier.
 type KeyUid = Uuid
 
 // Limit defines model for Limit.
@@ -495,19 +724,22 @@ type Limit = int
 // Origin defines model for Origin.
 type Origin = string
 
-// OriginUid defines model for OriginUid.
+// OriginUid RFC 4122 universally unique identifier.
 type OriginUid = Uuid
+
+// ProjectLogin defines model for ProjectLogin.
+type ProjectLogin = string
 
 // ProjectSession defines model for ProjectSession.
 type ProjectSession = string
 
-// ProjectUid defines model for ProjectUid.
+// ProjectUid RFC 4122 universally unique identifier.
 type ProjectUid = Uuid
 
-// UserUid defines model for UserUid.
+// UserUid RFC 4122 universally unique identifier.
 type UserUid = Uuid
 
-// Error defines model for Error.
+// Error Stable machine-readable error code, safe message, optional details, and request correlation identifier.
 type Error = ErrorEnvelope
 
 // consoleSessionContextKey is the context key for consoleSession security scheme
@@ -518,100 +750,169 @@ type projectApiKeyContextKey string
 
 // ListTenantActivityParams defines parameters for ListTenantActivity.
 type ListTenantActivityParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
 	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
-	Limit  *Limit  `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // LoginParams defines parameters for Login.
 type LoginParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // LogoutParams defines parameters for Logout.
 type LogoutParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // SignupParams defines parameters for Signup.
 type SignupParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // ListProjectsParams defines parameters for ListProjects.
 type ListProjectsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
 	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
-	Limit  *Limit  `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // CreateProjectParams defines parameters for CreateProject.
 type CreateProjectParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // UpdateProjectParams defines parameters for UpdateProject.
 type UpdateProjectParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // ListProjectActivityParams defines parameters for ListProjectActivity.
 type ListProjectActivityParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
 	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
-	Limit  *Limit  `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // CreateApiKeyParams defines parameters for CreateApiKey.
 type CreateApiKeyParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // RevokeApiKeyParams defines parameters for RevokeApiKey.
 type RevokeApiKeyParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // RenameApiKeyParams defines parameters for RenameApiKey.
 type RenameApiKeyParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // RotateApiKeyParams defines parameters for RotateApiKey.
 type RotateApiKeyParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // CreateOriginParams defines parameters for CreateOrigin.
 type CreateOriginParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
 // DeleteOriginParams defines parameters for DeleteOrigin.
 type DeleteOriginParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
-// BeginPasskeyAuthenticationJSONBody defines parameters for BeginPasskeyAuthentication.
-type BeginPasskeyAuthenticationJSONBody struct {
-	Email *openapi_types.Email `json:"email,omitempty"`
-}
-
-// BeginPasskeyRegistrationParams defines parameters for BeginPasskeyRegistration.
-type BeginPasskeyRegistrationParams struct {
+// DeleteProjectUserBiometricParams defines parameters for DeleteProjectUserBiometric.
+type DeleteProjectUserBiometricParams struct {
+	// XComplicatedAuthSession Opaque Project User session reference held only by the relying-party backend.
 	XComplicatedAuthSession ProjectSession `json:"X-ComplicatedAuth-Session"`
 }
 
-// FinishPasskeyRegistrationParams defines parameters for FinishPasskeyRegistration.
-type FinishPasskeyRegistrationParams struct {
+// EnrollProjectUserBiometricParams defines parameters for EnrollProjectUserBiometric.
+type EnrollProjectUserBiometricParams struct {
+	// XComplicatedAuthSession Opaque Project User session reference held only by the relying-party backend.
 	XComplicatedAuthSession ProjectSession `json:"X-ComplicatedAuth-Session"`
+}
+
+// BeginFidoEnrollmentParams defines parameters for BeginFidoEnrollment.
+type BeginFidoEnrollmentParams struct {
+	// XComplicatedAuthSession Opaque Project User session reference held only by the relying-party backend.
+	XComplicatedAuthSession ProjectSession `json:"X-ComplicatedAuth-Session"`
+}
+
+// FinishFidoEnrollmentParams defines parameters for FinishFidoEnrollment.
+type FinishFidoEnrollmentParams struct {
+	// XComplicatedAuthSession Opaque Project User session reference held only by the relying-party backend.
+	XComplicatedAuthSession ProjectSession `json:"X-ComplicatedAuth-Session"`
+}
+
+// VerifyProjectUserBiometricLoginParams defines parameters for VerifyProjectUserBiometricLogin.
+type VerifyProjectUserBiometricLoginParams struct {
+	// XComplicatedAuthLogin Opaque, short-lived login-attempt reference held only by the relying-party backend.
+	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
+}
+
+// BeginFirstFidoEnrollmentParams defines parameters for BeginFirstFidoEnrollment.
+type BeginFirstFidoEnrollmentParams struct {
+	// XComplicatedAuthLogin Opaque, short-lived login-attempt reference held only by the relying-party backend.
+	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
+}
+
+// FinishFirstFidoEnrollmentParams defines parameters for FinishFirstFidoEnrollment.
+type FinishFirstFidoEnrollmentParams struct {
+	// XComplicatedAuthLogin Opaque, short-lived login-attempt reference held only by the relying-party backend.
+	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
+}
+
+// BeginProjectUserFidoLoginParams defines parameters for BeginProjectUserFidoLogin.
+type BeginProjectUserFidoLoginParams struct {
+	// XComplicatedAuthLogin Opaque, short-lived login-attempt reference held only by the relying-party backend.
+	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
+}
+
+// FinishProjectUserFidoLoginParams defines parameters for FinishProjectUserFidoLogin.
+type FinishProjectUserFidoLoginParams struct {
+	// XComplicatedAuthLogin Opaque, short-lived login-attempt reference held only by the relying-party backend.
+	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
+}
+
+// VerifyProjectUserLoginPasswordParams defines parameters for VerifyProjectUserLoginPassword.
+type VerifyProjectUserLoginPasswordParams struct {
+	// XComplicatedAuthLogin Opaque, short-lived login-attempt reference held only by the relying-party backend.
+	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
 }
 
 // ListProjectUsersParams defines parameters for ListProjectUsers.
 type ListProjectUsersParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
 	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
-	Limit  *Limit  `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // UpdateProjectUserParams defines parameters for UpdateProjectUser.
 type UpdateProjectUserParams struct {
+	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
 	Origin *Origin `json:"Origin,omitempty"`
 }
 
@@ -636,17 +937,35 @@ type RenameApiKeyJSONRequestBody = NameRequest
 // CreateOriginJSONRequestBody defines body for CreateOrigin for application/json ContentType.
 type CreateOriginJSONRequestBody = CreateOriginRequest
 
-// BeginPasskeyAuthenticationJSONRequestBody defines body for BeginPasskeyAuthentication for application/json ContentType.
-type BeginPasskeyAuthenticationJSONRequestBody BeginPasskeyAuthenticationJSONBody
+// EnrollProjectUserBiometricMultipartRequestBody defines body for EnrollProjectUserBiometric for multipart/form-data ContentType.
+type EnrollProjectUserBiometricMultipartRequestBody = SelfieRequest
 
-// FinishPasskeyAuthenticationJSONRequestBody defines body for FinishPasskeyAuthentication for application/json ContentType.
-type FinishPasskeyAuthenticationJSONRequestBody = WebAuthnFinishRequest
+// BeginFidoEnrollmentJSONRequestBody defines body for BeginFidoEnrollment for application/json ContentType.
+type BeginFidoEnrollmentJSONRequestBody = FidoEnrollmentModeRequest
 
-// FinishPasskeyRegistrationJSONRequestBody defines body for FinishPasskeyRegistration for application/json ContentType.
-type FinishPasskeyRegistrationJSONRequestBody = WebAuthnFinishRequest
+// FinishFidoEnrollmentJSONRequestBody defines body for FinishFidoEnrollment for application/json ContentType.
+type FinishFidoEnrollmentJSONRequestBody = FidoFinishRequest
 
-// AuthenticateProjectUserPasswordJSONRequestBody defines body for AuthenticateProjectUserPassword for application/json ContentType.
-type AuthenticateProjectUserPasswordJSONRequestBody = RuntimePasswordRequest
+// VerifyProjectUserBiometricLoginMultipartRequestBody defines body for VerifyProjectUserBiometricLogin for multipart/form-data ContentType.
+type VerifyProjectUserBiometricLoginMultipartRequestBody = SelfieRequest
+
+// BeginFirstFidoEnrollmentJSONRequestBody defines body for BeginFirstFidoEnrollment for application/json ContentType.
+type BeginFirstFidoEnrollmentJSONRequestBody = FidoEnrollmentModeRequest
+
+// FinishFirstFidoEnrollmentJSONRequestBody defines body for FinishFirstFidoEnrollment for application/json ContentType.
+type FinishFirstFidoEnrollmentJSONRequestBody = FidoFinishRequest
+
+// BeginProjectUserFidoLoginJSONRequestBody defines body for BeginProjectUserFidoLogin for application/json ContentType.
+type BeginProjectUserFidoLoginJSONRequestBody = FidoModeRequest
+
+// FinishProjectUserFidoLoginJSONRequestBody defines body for FinishProjectUserFidoLogin for application/json ContentType.
+type FinishProjectUserFidoLoginJSONRequestBody = FidoFinishRequest
+
+// VerifyProjectUserLoginPasswordJSONRequestBody defines body for VerifyProjectUserLoginPassword for application/json ContentType.
+type VerifyProjectUserLoginPasswordJSONRequestBody = PasswordRequest
+
+// StartProjectUserLoginJSONRequestBody defines body for StartProjectUserLogin for application/json ContentType.
+type StartProjectUserLoginJSONRequestBody = StartLoginRequest
 
 // IntrospectProjectUserSessionJSONRequestBody defines body for IntrospectProjectUserSession for application/json ContentType.
 type IntrospectProjectUserSessionJSONRequestBody = SessionReferenceRequest
@@ -665,106 +984,124 @@ type ReplaceProjectUserPasswordJSONRequestBody = PasswordRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-
+	// Check whether the API process is running
 	// (GET /health/live)
 	Live(w http.ResponseWriter, r *http.Request)
-
+	// Check whether the API and database are ready
 	// (GET /health/ready)
 	Ready(w http.ResponseWriter, r *http.Request)
-
+	// List Tenant activity
 	// (GET /v1/activity)
 	ListTenantActivity(w http.ResponseWriter, r *http.Request, params ListTenantActivityParams)
-
+	// Sign in a Tenant Member
 	// (POST /v1/console/auth/login)
 	Login(w http.ResponseWriter, r *http.Request, params LoginParams)
-
+	// Sign out a Tenant Member
 	// (POST /v1/console/auth/logout)
 	Logout(w http.ResponseWriter, r *http.Request, params LogoutParams)
-
+	// Get the current console session
 	// (GET /v1/console/auth/session)
 	GetConsoleSession(w http.ResponseWriter, r *http.Request)
-
+	// Create a Tenant and its owner
 	// (POST /v1/console/auth/signup)
 	Signup(w http.ResponseWriter, r *http.Request, params SignupParams)
-
+	// List Projects
 	// (GET /v1/projects)
 	ListProjects(w http.ResponseWriter, r *http.Request, params ListProjectsParams)
-
+	// Create a Project
 	// (POST /v1/projects)
 	CreateProject(w http.ResponseWriter, r *http.Request, params CreateProjectParams)
-
+	// Get a Project
 	// (GET /v1/projects/{project_uid})
 	GetProject(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// Update a Project
 	// (PATCH /v1/projects/{project_uid})
 	UpdateProject(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params UpdateProjectParams)
-
+	// List Project activity
 	// (GET /v1/projects/{project_uid}/activity)
 	ListProjectActivity(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params ListProjectActivityParams)
-
+	// List Project API keys
 	// (GET /v1/projects/{project_uid}/api-keys)
 	ListApiKeys(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// Create a Project API key
 	// (POST /v1/projects/{project_uid}/api-keys)
 	CreateApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params CreateApiKeyParams)
-
+	// Revoke a Project API key
 	// (DELETE /v1/projects/{project_uid}/api-keys/{key_uid})
 	RevokeApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, keyUid KeyUid, params RevokeApiKeyParams)
-
+	// Rename a Project API key
 	// (PATCH /v1/projects/{project_uid}/api-keys/{key_uid})
 	RenameApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, keyUid KeyUid, params RenameApiKeyParams)
-
+	// Rotate a Project API key
 	// (POST /v1/projects/{project_uid}/api-keys/{key_uid}/rotate)
 	RotateApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, keyUid KeyUid, params RotateApiKeyParams)
-
+	// List allowed origins
 	// (GET /v1/projects/{project_uid}/origins)
 	ListOrigins(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// Add an allowed origin
 	// (POST /v1/projects/{project_uid}/origins)
 	CreateOrigin(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params CreateOriginParams)
-
+	// Remove an allowed origin
 	// (DELETE /v1/projects/{project_uid}/origins/{origin_uid})
 	DeleteOrigin(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, originUid OriginUid, params DeleteOriginParams)
-
-	// (POST /v1/projects/{project_uid}/runtime/passkeys/authentication/options)
-	BeginPasskeyAuthentication(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
-	// (POST /v1/projects/{project_uid}/runtime/passkeys/authentication/verify)
-	FinishPasskeyAuthentication(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
-	// (POST /v1/projects/{project_uid}/runtime/passkeys/registration/options)
-	BeginPasskeyRegistration(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params BeginPasskeyRegistrationParams)
-
-	// (POST /v1/projects/{project_uid}/runtime/passkeys/registration/verify)
-	FinishPasskeyRegistration(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params FinishPasskeyRegistrationParams)
-
-	// (POST /v1/projects/{project_uid}/runtime/password/authenticate)
-	AuthenticateProjectUserPassword(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// Delete biometric enrollment
+	// (DELETE /v1/projects/{project_uid}/runtime/biometric/enrollment)
+	DeleteProjectUserBiometric(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params DeleteProjectUserBiometricParams)
+	// Create or replace biometric enrollment
+	// (POST /v1/projects/{project_uid}/runtime/biometric/enrollment)
+	EnrollProjectUserBiometric(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params EnrollProjectUserBiometricParams)
+	// Begin additional FIDO enrollment
+	// (POST /v1/projects/{project_uid}/runtime/fido/registration/options)
+	BeginFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params BeginFidoEnrollmentParams)
+	// Finish additional FIDO enrollment
+	// (POST /v1/projects/{project_uid}/runtime/fido/registration/verify)
+	FinishFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params FinishFidoEnrollmentParams)
+	// Verify a biometric login factor
+	// (POST /v1/projects/{project_uid}/runtime/login/biometric)
+	VerifyProjectUserBiometricLogin(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params VerifyProjectUserBiometricLoginParams)
+	// Begin first-factor enrollment after password verification
+	// (POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/options)
+	BeginFirstFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params BeginFirstFidoEnrollmentParams)
+	// Enroll the first FIDO credential and complete login
+	// (POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/verify)
+	FinishFirstFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params FinishFirstFidoEnrollmentParams)
+	// Begin FIDO login
+	// (POST /v1/projects/{project_uid}/runtime/login/fido/options)
+	BeginProjectUserFidoLogin(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params BeginProjectUserFidoLoginParams)
+	// Finish FIDO login
+	// (POST /v1/projects/{project_uid}/runtime/login/fido/verify)
+	FinishProjectUserFidoLogin(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params FinishProjectUserFidoLoginParams)
+	// Verify the password factor
+	// (POST /v1/projects/{project_uid}/runtime/login/password)
+	VerifyProjectUserLoginPassword(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params VerifyProjectUserLoginPasswordParams)
+	// Start a Project User login
+	// (POST /v1/projects/{project_uid}/runtime/login/start)
+	StartProjectUserLogin(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
+	// Introspect a Project User session
 	// (POST /v1/projects/{project_uid}/runtime/sessions/introspect)
 	IntrospectProjectUserSession(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// Revoke a Project User session
 	// (POST /v1/projects/{project_uid}/runtime/sessions/revoke)
 	RevokeProjectUserSession(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// List Project Users
 	// (GET /v1/projects/{project_uid}/users)
 	ListProjectUsers(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params ListProjectUsersParams)
-
+	// Create a Project User
 	// (POST /v1/projects/{project_uid}/users)
 	CreateProjectUser(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-
+	// Get a Project User
 	// (GET /v1/projects/{project_uid}/users/{user_uid})
 	GetProjectUser(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, userUid UserUid)
-
+	// Update a Project User
 	// (PATCH /v1/projects/{project_uid}/users/{user_uid})
 	UpdateProjectUser(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, userUid UserUid, params UpdateProjectUserParams)
-
+	// Remove a Project User FIDO credential
 	// (DELETE /v1/projects/{project_uid}/users/{user_uid}/passkeys/{credential_uid})
 	DeletePasskey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, userUid UserUid, credentialUid CredentialUid)
-
+	// Replace a Project User password
 	// (PUT /v1/projects/{project_uid}/users/{user_uid}/password)
 	ReplaceProjectUserPassword(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, userUid UserUid)
-
+	// Revoke all Project User sessions
 	// (POST /v1/projects/{project_uid}/users/{user_uid}/sessions/revoke)
 	RevokeProjectUserSessions(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, userUid UserUid)
 }
@@ -781,12 +1118,6 @@ type MiddlewareFunc func(http.Handler) http.Handler
 // Live operation middleware
 func (siw *ServerInterfaceWrapper) Live(w http.ResponseWriter, r *http.Request) {
 
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
-
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Live(w, r)
 	}))
@@ -800,12 +1131,6 @@ func (siw *ServerInterfaceWrapper) Live(w http.ResponseWriter, r *http.Request) 
 
 // Ready operation middleware
 func (siw *ServerInterfaceWrapper) Ready(w http.ResponseWriter, r *http.Request) {
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Ready(w, r)
@@ -1703,72 +2028,8 @@ func (siw *ServerInterfaceWrapper) DeleteOrigin(w http.ResponseWriter, r *http.R
 	handler.ServeHTTP(w, r)
 }
 
-// BeginPasskeyAuthentication operation middleware
-func (siw *ServerInterfaceWrapper) BeginPasskeyAuthentication(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.BeginPasskeyAuthentication(w, r, projectUid)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// FinishPasskeyAuthentication operation middleware
-func (siw *ServerInterfaceWrapper) FinishPasskeyAuthentication(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.FinishPasskeyAuthentication(w, r, projectUid)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// BeginPasskeyRegistration operation middleware
-func (siw *ServerInterfaceWrapper) BeginPasskeyRegistration(w http.ResponseWriter, r *http.Request) {
+// DeleteProjectUserBiometric operation middleware
+func (siw *ServerInterfaceWrapper) DeleteProjectUserBiometric(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1789,7 +2050,7 @@ func (siw *ServerInterfaceWrapper) BeginPasskeyRegistration(w http.ResponseWrite
 	r = r.WithContext(ctx)
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params BeginPasskeyRegistrationParams
+	var params DeleteProjectUserBiometricParams
 
 	headers := r.Header
 
@@ -1817,7 +2078,7 @@ func (siw *ServerInterfaceWrapper) BeginPasskeyRegistration(w http.ResponseWrite
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.BeginPasskeyRegistration(w, r, projectUid, params)
+		siw.Handler.DeleteProjectUserBiometric(w, r, projectUid, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1827,8 +2088,8 @@ func (siw *ServerInterfaceWrapper) BeginPasskeyRegistration(w http.ResponseWrite
 	handler.ServeHTTP(w, r)
 }
 
-// FinishPasskeyRegistration operation middleware
-func (siw *ServerInterfaceWrapper) FinishPasskeyRegistration(w http.ResponseWriter, r *http.Request) {
+// EnrollProjectUserBiometric operation middleware
+func (siw *ServerInterfaceWrapper) EnrollProjectUserBiometric(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1849,7 +2110,7 @@ func (siw *ServerInterfaceWrapper) FinishPasskeyRegistration(w http.ResponseWrit
 	r = r.WithContext(ctx)
 
 	// Parameter object where we will unmarshal all parameters from the context
-	var params FinishPasskeyRegistrationParams
+	var params EnrollProjectUserBiometricParams
 
 	headers := r.Header
 
@@ -1877,7 +2138,7 @@ func (siw *ServerInterfaceWrapper) FinishPasskeyRegistration(w http.ResponseWrit
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.FinishPasskeyRegistration(w, r, projectUid, params)
+		siw.Handler.EnrollProjectUserBiometric(w, r, projectUid, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1887,8 +2148,488 @@ func (siw *ServerInterfaceWrapper) FinishPasskeyRegistration(w http.ResponseWrit
 	handler.ServeHTTP(w, r)
 }
 
-// AuthenticateProjectUserPassword operation middleware
-func (siw *ServerInterfaceWrapper) AuthenticateProjectUserPassword(w http.ResponseWriter, r *http.Request) {
+// BeginFidoEnrollment operation middleware
+func (siw *ServerInterfaceWrapper) BeginFidoEnrollment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params BeginFidoEnrollmentParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Session" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Session")]; found {
+		var XComplicatedAuthSession ProjectSession
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Session", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Session", valueList[0], &XComplicatedAuthSession, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Session", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthSession = XComplicatedAuthSession
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Session is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Session", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.BeginFidoEnrollment(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// FinishFidoEnrollment operation middleware
+func (siw *ServerInterfaceWrapper) FinishFidoEnrollment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params FinishFidoEnrollmentParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Session" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Session")]; found {
+		var XComplicatedAuthSession ProjectSession
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Session", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Session", valueList[0], &XComplicatedAuthSession, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Session", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthSession = XComplicatedAuthSession
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Session is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Session", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.FinishFidoEnrollment(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyProjectUserBiometricLogin operation middleware
+func (siw *ServerInterfaceWrapper) VerifyProjectUserBiometricLogin(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyProjectUserBiometricLoginParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login")]; found {
+		var XComplicatedAuthLogin ProjectLogin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login", valueList[0], &XComplicatedAuthLogin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLogin = XComplicatedAuthLogin
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyProjectUserBiometricLogin(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// BeginFirstFidoEnrollment operation middleware
+func (siw *ServerInterfaceWrapper) BeginFirstFidoEnrollment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params BeginFirstFidoEnrollmentParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login")]; found {
+		var XComplicatedAuthLogin ProjectLogin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login", valueList[0], &XComplicatedAuthLogin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLogin = XComplicatedAuthLogin
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.BeginFirstFidoEnrollment(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// FinishFirstFidoEnrollment operation middleware
+func (siw *ServerInterfaceWrapper) FinishFirstFidoEnrollment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params FinishFirstFidoEnrollmentParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login")]; found {
+		var XComplicatedAuthLogin ProjectLogin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login", valueList[0], &XComplicatedAuthLogin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLogin = XComplicatedAuthLogin
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.FinishFirstFidoEnrollment(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// BeginProjectUserFidoLogin operation middleware
+func (siw *ServerInterfaceWrapper) BeginProjectUserFidoLogin(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params BeginProjectUserFidoLoginParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login")]; found {
+		var XComplicatedAuthLogin ProjectLogin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login", valueList[0], &XComplicatedAuthLogin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLogin = XComplicatedAuthLogin
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.BeginProjectUserFidoLogin(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// FinishProjectUserFidoLogin operation middleware
+func (siw *ServerInterfaceWrapper) FinishProjectUserFidoLogin(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params FinishProjectUserFidoLoginParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login")]; found {
+		var XComplicatedAuthLogin ProjectLogin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login", valueList[0], &XComplicatedAuthLogin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLogin = XComplicatedAuthLogin
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.FinishProjectUserFidoLogin(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyProjectUserLoginPassword operation middleware
+func (siw *ServerInterfaceWrapper) VerifyProjectUserLoginPassword(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyProjectUserLoginPasswordParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login")]; found {
+		var XComplicatedAuthLogin ProjectLogin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login", valueList[0], &XComplicatedAuthLogin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLogin = XComplicatedAuthLogin
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyProjectUserLoginPassword(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// StartProjectUserLogin operation middleware
+func (siw *ServerInterfaceWrapper) StartProjectUserLogin(w http.ResponseWriter, r *http.Request) {
 
 	var err error
 	_ = err
@@ -1909,7 +2650,7 @@ func (siw *ServerInterfaceWrapper) AuthenticateProjectUserPassword(w http.Respon
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.AuthenticateProjectUserPassword(w, r, projectUid)
+		siw.Handler.StartProjectUserLogin(w, r, projectUid)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -2468,11 +3209,17 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/origins", wrapper.ListOrigins)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/origins", wrapper.CreateOrigin)
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/origins/{origin_uid}", wrapper.DeleteOrigin)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/passkeys/authentication/options", wrapper.BeginPasskeyAuthentication)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/passkeys/authentication/verify", wrapper.FinishPasskeyAuthentication)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/passkeys/registration/options", wrapper.BeginPasskeyRegistration)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/passkeys/registration/verify", wrapper.FinishPasskeyRegistration)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/password/authenticate", wrapper.AuthenticateProjectUserPassword)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/biometric/enrollment", wrapper.DeleteProjectUserBiometric)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/biometric/enrollment", wrapper.EnrollProjectUserBiometric)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/fido/registration/options", wrapper.BeginFidoEnrollment)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/fido/registration/verify", wrapper.FinishFidoEnrollment)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/biometric", wrapper.VerifyProjectUserBiometricLogin)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/fido/enrollment/options", wrapper.BeginFirstFidoEnrollment)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/fido/enrollment/verify", wrapper.FinishFirstFidoEnrollment)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/fido/options", wrapper.BeginProjectUserFidoLogin)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/fido/verify", wrapper.FinishProjectUserFidoLogin)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/password", wrapper.VerifyProjectUserLoginPassword)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/start", wrapper.StartProjectUserLogin)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/sessions/introspect", wrapper.IntrospectProjectUserSession)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/sessions/revoke", wrapper.RevokeProjectUserSession)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/users", wrapper.ListProjectUsers)

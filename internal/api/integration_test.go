@@ -14,7 +14,9 @@ import (
 	"testing"
 	"time"
 
+	security "github.com/dokosoko/complicatedauth-backend/internal/auth"
 	"github.com/dokosoko/complicatedauth-backend/internal/store"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -77,13 +79,42 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 	requestJSON(t, client, "POST", ts.URL+"/v1/projects/"+project.UID+"/users", map[string]any{"email": "user@example.com", "password": "another correct battery staple", "email_verified": true}, "http://console.test", "", http.StatusCreated, &user)
 	requestJSON(t, client, "GET", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, nil, "", key.Secret, http.StatusOK, &ProjectUser{})
 	requestJSON(t, client, "PATCH", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, map[string]any{"email_verified": false}, "", key.Secret, http.StatusOK, &ProjectUser{})
-	var runtimeSession struct {
+	runtimeSession := struct {
 		SessionReference string      `json:"session_reference"`
 		ProjectUser      ProjectUser `json:"project_user"`
+	}{ProjectUser: user}
+	runtimeSession.SessionReference, err = security.RandomToken()
+	if err != nil {
+		t.Fatal(err)
 	}
-	requestJSON(t, client, "POST", ts.URL+"/v1/projects/"+project.UID+"/runtime/password/authenticate", map[string]any{"email": "user@example.com", "password": "another correct battery staple"}, "", key.Secret, http.StatusOK, &runtimeSession)
-	if runtimeSession.SessionReference == "" || runtimeSession.ProjectUser.UID != user.UID {
-		t.Fatal("runtime session was not issued for the expected user")
+	expires, idle := time.Now().Add(cfg.UserAbsoluteTTL), time.Now().Add(cfg.UserIdleTTL)
+	if _, err = pool.Exec(ctx, `INSERT INTO project_user_sessions(uid,project_uid,project_user_uid,session_secret_hash,expires_at,idle_expires_at) VALUES($1,$2,$3,$4,$5,$6)`, uuid.NewString(), project.UID, user.UID, security.SessionHash(runtimeSession.SessionReference), expires, idle); err != nil {
+		t.Fatal(err)
+	}
+	var loginAttempt struct {
+		LoginReference string    `json:"login_reference"`
+		ExpiresAt      time.Time `json:"expires_at"`
+	}
+	requestJSON(t, client, "POST", ts.URL+"/v1/projects/"+project.UID+"/runtime/login/start", map[string]any{"email": "user@example.com"}, "", key.Secret, http.StatusCreated, &loginAttempt)
+	if loginAttempt.LoginReference == "" {
+		t.Fatal("browser login attempt was not issued")
+	}
+	requestWithLogin(t, client, ts.URL+"/v1/projects/"+project.UID+"/runtime/login/fido/options", key.Secret, loginAttempt.LoginReference, map[string]any{"mode": "passkey"}, http.StatusUnauthorized, nil)
+	var factor struct {
+		Status string `json:"status"`
+		Factor string `json:"factor"`
+	}
+	requestWithLogin(t, client, ts.URL+"/v1/projects/"+project.UID+"/runtime/login/password", key.Secret, loginAttempt.LoginReference, map[string]any{"password": "another correct battery staple"}, http.StatusOK, &factor)
+	if factor.Status != "factor_verified" || factor.Factor != "password" {
+		t.Fatalf("unexpected factor response: %+v", factor)
+	}
+	var loginOptions struct {
+		CeremonyUID string         `json:"ceremony_uid"`
+		PublicKey   map[string]any `json:"public_key"`
+	}
+	requestWithLogin(t, client, ts.URL+"/v1/projects/"+project.UID+"/runtime/login/fido/options", key.Secret, loginAttempt.LoginReference, map[string]any{"mode": "passkey"}, http.StatusOK, &loginOptions)
+	if loginOptions.CeremonyUID == "" || loginOptions.PublicKey["challenge"] == nil {
+		t.Fatal("login WebAuthn options were not generated")
 	}
 	var introspection struct {
 		Active      bool        `json:"active"`
@@ -98,7 +129,7 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 		CeremonyUID string         `json:"ceremony_uid"`
 		PublicKey   map[string]any `json:"public_key"`
 	}
-	requestWithSession(t, client, ts.URL+"/v1/projects/"+project.UID+"/runtime/passkeys/registration/options", key.Secret, runtimeSession.SessionReference, http.StatusOK, &options)
+	requestWithSession(t, client, ts.URL+"/v1/projects/"+project.UID+"/runtime/fido/registration/options", key.Secret, runtimeSession.SessionReference, map[string]any{"mode": "passkey"}, http.StatusOK, &options)
 	if options.CeremonyUID == "" || options.PublicKey["challenge"] == nil {
 		t.Fatal("WebAuthn registration options were not generated")
 	}
@@ -150,11 +181,13 @@ func requestJSON(t *testing.T, client *http.Client, method, target string, body 
 	}
 }
 
-func requestWithSession(t *testing.T, client *http.Client, target, key, session string, status int, output any) {
+func requestWithSession(t *testing.T, client *http.Client, target, key, session string, body any, status int, output any) {
 	t.Helper()
-	request, _ := http.NewRequest("POST", target, nil)
+	raw, _ := json.Marshal(body)
+	request, _ := http.NewRequest("POST", target, bytes.NewReader(raw))
 	request.Header.Set("Authorization", "Bearer "+key)
 	request.Header.Set("X-ComplicatedAuth-Session", session)
+	request.Header.Set("Content-Type", "application/json")
 	response, err := client.Do(request)
 	if err != nil {
 		t.Fatal(err)
@@ -165,6 +198,30 @@ func requestWithSession(t *testing.T, client *http.Client, target, key, session 
 	}
 	if err = json.NewDecoder(response.Body).Decode(output); err != nil {
 		t.Fatal(err)
+	}
+}
+
+func requestWithLogin(t *testing.T, client *http.Client, target, key, login string, body any, status int, output any) {
+	t.Helper()
+	raw, _ := json.Marshal(body)
+	request, _ := http.NewRequest("POST", target, bytes.NewReader(raw))
+	request.Header.Set("Authorization", "Bearer "+key)
+	request.Header.Set("X-ComplicatedAuth-Login", login)
+	request.Header.Set("Content-Type", "application/json")
+	response, err := client.Do(request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != status {
+		var problem any
+		_ = json.NewDecoder(response.Body).Decode(&problem)
+		t.Fatalf("status=%d want=%d body=%v", response.StatusCode, status, problem)
+	}
+	if output != nil {
+		if err = json.NewDecoder(response.Body).Decode(output); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 

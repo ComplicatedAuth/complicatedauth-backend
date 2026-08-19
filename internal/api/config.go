@@ -12,17 +12,19 @@ import (
 )
 
 type Config struct {
-	DatabaseURL       string
-	ListenAddress     string
-	ConsoleOrigin     string
-	CookieSecure      bool
-	SecretHashKey     []byte
-	MigrationsDir     string
-	MemberAbsoluteTTL time.Duration
-	MemberIdleTTL     time.Duration
-	UserAbsoluteTTL   time.Duration
-	UserIdleTTL       time.Duration
-	TrustedProxies    []*net.IPNet
+	DatabaseURL            string
+	ListenAddress          string
+	ConsoleOrigin          string
+	CookieSecure           bool
+	SecretHashKey          []byte
+	MigrationsDir          string
+	MemberAbsoluteTTL      time.Duration
+	MemberIdleTTL          time.Duration
+	UserAbsoluteTTL        time.Duration
+	UserIdleTTL            time.Duration
+	TrustedProxies         []*net.IPNet
+	BiometricProviderURL   string
+	BiometricProviderToken string
 }
 
 func ConfigFromEnv() (Config, error) {
@@ -40,7 +42,9 @@ func ConfigFromEnv() (Config, error) {
 		ConsoleOrigin: os.Getenv("CONSOLE_ORIGIN"), CookieSecure: secure, SecretHashKey: key,
 		MigrationsDir: env("MIGRATIONS_DIR", "migrations"), MemberAbsoluteTTL: 7 * 24 * time.Hour,
 		MemberIdleTTL: 24 * time.Hour, UserAbsoluteTTL: 30 * 24 * time.Hour, UserIdleTTL: 7 * 24 * time.Hour,
-		TrustedProxies: trustedProxies,
+		TrustedProxies:         trustedProxies,
+		BiometricProviderURL:   strings.TrimRight(os.Getenv("BIOMETRIC_PROVIDER_URL"), "/"),
+		BiometricProviderToken: os.Getenv("BIOMETRIC_PROVIDER_TOKEN"),
 	}
 	if cfg.DatabaseURL == "" || cfg.ConsoleOrigin == "" {
 		return Config{}, errors.New("DATABASE_URL and CONSOLE_ORIGIN are required")

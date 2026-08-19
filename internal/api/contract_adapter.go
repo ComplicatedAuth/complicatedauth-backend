@@ -85,25 +85,59 @@ func (a *ContractAdapter) DeleteOrigin(w http.ResponseWriter, r *http.Request, p
 	r.SetPathValue("origin_uid", originUID.String())
 	a.server.deleteOrigin(w, r)
 }
-func (a *ContractAdapter) BeginPasskeyAuthentication(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid) {
+func (a *ContractAdapter) DeleteProjectUserBiometric(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.DeleteProjectUserBiometricParams) {
 	setProjectPath(r, projectUID.String())
-	a.server.beginAuthentication(w, r)
+	r.Header.Set("X-ComplicatedAuth-Session", params.XComplicatedAuthSession)
+	a.server.deleteBiometricEnrollment(w, r)
 }
-func (a *ContractAdapter) FinishPasskeyAuthentication(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid) {
+func (a *ContractAdapter) EnrollProjectUserBiometric(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.EnrollProjectUserBiometricParams) {
 	setProjectPath(r, projectUID.String())
-	a.server.finishAuthentication(w, r)
+	r.Header.Set("X-ComplicatedAuth-Session", params.XComplicatedAuthSession)
+	a.server.enrollBiometric(w, r)
 }
-func (a *ContractAdapter) BeginPasskeyRegistration(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, _ contract.BeginPasskeyRegistrationParams) {
+func (a *ContractAdapter) BeginFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.BeginFidoEnrollmentParams) {
 	setProjectPath(r, projectUID.String())
-	a.server.beginRegistration(w, r)
+	r.Header.Set("X-ComplicatedAuth-Session", params.XComplicatedAuthSession)
+	a.server.beginFidoEnrollment(w, r)
 }
-func (a *ContractAdapter) FinishPasskeyRegistration(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, _ contract.FinishPasskeyRegistrationParams) {
+func (a *ContractAdapter) FinishFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.FinishFidoEnrollmentParams) {
 	setProjectPath(r, projectUID.String())
-	a.server.finishRegistration(w, r)
+	r.Header.Set("X-ComplicatedAuth-Session", params.XComplicatedAuthSession)
+	a.server.finishFidoEnrollment(w, r)
 }
-func (a *ContractAdapter) AuthenticateProjectUserPassword(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid) {
+func (a *ContractAdapter) VerifyProjectUserBiometricLogin(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.VerifyProjectUserBiometricLoginParams) {
 	setProjectPath(r, projectUID.String())
-	a.server.runtimePassword(w, r)
+	r.Header.Set("X-ComplicatedAuth-Login", params.XComplicatedAuthLogin)
+	a.server.verifyBiometricLogin(w, r)
+}
+func (a *ContractAdapter) BeginProjectUserFidoLogin(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.BeginProjectUserFidoLoginParams) {
+	setProjectPath(r, projectUID.String())
+	r.Header.Set("X-ComplicatedAuth-Login", params.XComplicatedAuthLogin)
+	a.server.beginFidoLogin(w, r)
+}
+func (a *ContractAdapter) FinishProjectUserFidoLogin(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.FinishProjectUserFidoLoginParams) {
+	setProjectPath(r, projectUID.String())
+	r.Header.Set("X-ComplicatedAuth-Login", params.XComplicatedAuthLogin)
+	a.server.finishFidoLogin(w, r)
+}
+func (a *ContractAdapter) BeginFirstFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.BeginFirstFidoEnrollmentParams) {
+	setProjectPath(r, projectUID.String())
+	r.Header.Set("X-ComplicatedAuth-Login", params.XComplicatedAuthLogin)
+	a.server.beginFirstFidoEnrollment(w, r)
+}
+func (a *ContractAdapter) FinishFirstFidoEnrollment(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.FinishFirstFidoEnrollmentParams) {
+	setProjectPath(r, projectUID.String())
+	r.Header.Set("X-ComplicatedAuth-Login", params.XComplicatedAuthLogin)
+	a.server.finishFirstFidoEnrollment(w, r)
+}
+func (a *ContractAdapter) VerifyProjectUserLoginPassword(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid, params contract.VerifyProjectUserLoginPasswordParams) {
+	setProjectPath(r, projectUID.String())
+	r.Header.Set("X-ComplicatedAuth-Login", params.XComplicatedAuthLogin)
+	a.server.verifyProjectUserLoginPassword(w, r)
+}
+func (a *ContractAdapter) StartProjectUserLogin(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid) {
+	setProjectPath(r, projectUID.String())
+	a.server.startProjectUserLogin(w, r)
 }
 func (a *ContractAdapter) IntrospectProjectUserSession(w http.ResponseWriter, r *http.Request, projectUID contract.ProjectUid) {
 	setProjectPath(r, projectUID.String())
