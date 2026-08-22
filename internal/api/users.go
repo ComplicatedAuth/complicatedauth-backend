@@ -13,9 +13,9 @@ import (
 
 func (s *Server) authorizedProject(r *http.Request) (string, string, bool) {
 	projectUID := r.PathValue("project_uid")
-	if apiProject, _ := r.Context().Value(contextKey("apiProjectUID")).(string); apiProject != "" {
+	if serviceProject, _ := r.Context().Value(contextKey("serviceProjectUID")).(string); serviceProject != "" {
 		tenant, err := s.projectTenant(r.Context(), projectUID)
-		return projectUID, tenant, err == nil && apiProject == projectUID
+		return projectUID, tenant, err == nil && serviceProject == projectUID
 	}
 	p, ok := r.Context().Value(principalKey).(principal)
 	if !ok || !s.ownsProject(r.Context(), p.TenantUID, projectUID) {
@@ -108,7 +108,7 @@ func (s *Server) createProjectUser(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	actorType, actorUID := "api_key", contextString(r, "apiKeyUID")
+	actorType, actorUID := "service_account", contextString(r, "serviceAccountUID")
 	if p, ok := r.Context().Value(principalKey).(principal); ok {
 		actorType, actorUID = "tenant_member", p.MemberUID
 	}
@@ -222,7 +222,7 @@ func (s *Server) replaceProjectUserPassword(w http.ResponseWriter, r *http.Reque
 		fail(w, r, 404, "not_found", "user not found")
 		return
 	}
-	actorType, actorUID := "api_key", contextString(r, "apiKeyUID")
+	actorType, actorUID := "service_account", contextString(r, "serviceAccountUID")
 	if p, ok := r.Context().Value(principalKey).(principal); ok {
 		actorType, actorUID = "tenant_member", p.MemberUID
 	}
@@ -322,5 +322,5 @@ func requestActor(r *http.Request) (string, string) {
 	if p, ok := r.Context().Value(principalKey).(principal); ok {
 		return "tenant_member", p.MemberUID
 	}
-	return "api_key", contextString(r, "apiKeyUID")
+	return "service_account", contextString(r, "serviceAccountUID")
 }

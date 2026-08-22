@@ -17,40 +17,21 @@ import (
 )
 
 const (
-	ConsoleSessionScopes consoleSessionContextKey = "consoleSession.Scopes"
-	ProjectApiKeyScopes  projectApiKeyContextKey  = "projectApiKey.Scopes"
+	ConsoleSessionScopes    consoleSessionContextKey    = "consoleSession.Scopes"
+	OauthAccessTokenScopes  oauthAccessTokenContextKey  = "oauthAccessToken.Scopes"
+	OauthClientSecretScopes oauthClientSecretContextKey = "oauthClientSecret.Scopes"
+	ServiceCredentialScopes serviceCredentialContextKey = "serviceCredential.Scopes"
 )
 
-// Defines values for ApiKeyStatus.
+// Defines values for AcceptedRequestAccepted.
 const (
-	ApiKeyStatusActive  ApiKeyStatus = "active"
-	ApiKeyStatusRevoked ApiKeyStatus = "revoked"
+	True AcceptedRequestAccepted = true
 )
 
-// Valid indicates whether the value is a known member of the ApiKeyStatus enum.
-func (e ApiKeyStatus) Valid() bool {
+// Valid indicates whether the value is a known member of the AcceptedRequestAccepted enum.
+func (e AcceptedRequestAccepted) Valid() bool {
 	switch e {
-	case ApiKeyStatusActive:
-		return true
-	case ApiKeyStatusRevoked:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for ApiKeySecretStatus.
-const (
-	ApiKeySecretStatusActive  ApiKeySecretStatus = "active"
-	ApiKeySecretStatusRevoked ApiKeySecretStatus = "revoked"
-)
-
-// Valid indicates whether the value is a known member of the ApiKeySecretStatus enum.
-func (e ApiKeySecretStatus) Valid() bool {
-	switch e {
-	case ApiKeySecretStatusActive:
-		return true
-	case ApiKeySecretStatusRevoked:
+	case True:
 		return true
 	default:
 		return false
@@ -59,22 +40,58 @@ func (e ApiKeySecretStatus) Valid() bool {
 
 // Defines values for AuditEventActorType.
 const (
-	AuditEventActorTypeApiKey       AuditEventActorType = "api_key"
-	AuditEventActorTypeProjectUser  AuditEventActorType = "project_user"
-	AuditEventActorTypeSystem       AuditEventActorType = "system"
-	AuditEventActorTypeTenantMember AuditEventActorType = "tenant_member"
+	AuditEventActorTypeProjectUser    AuditEventActorType = "project_user"
+	AuditEventActorTypeServiceAccount AuditEventActorType = "service_account"
+	AuditEventActorTypeSystem         AuditEventActorType = "system"
+	AuditEventActorTypeTenantMember   AuditEventActorType = "tenant_member"
 )
 
 // Valid indicates whether the value is a known member of the AuditEventActorType enum.
 func (e AuditEventActorType) Valid() bool {
 	switch e {
-	case AuditEventActorTypeApiKey:
-		return true
 	case AuditEventActorTypeProjectUser:
+		return true
+	case AuditEventActorTypeServiceAccount:
 		return true
 	case AuditEventActorTypeSystem:
 		return true
 	case AuditEventActorTypeTenantMember:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthenticationAssurance.
+const (
+	Bootstrap AuthenticationAssurance = "bootstrap"
+	Strong    AuthenticationAssurance = "strong"
+)
+
+// Valid indicates whether the value is a known member of the AuthenticationAssurance enum.
+func (e AuthenticationAssurance) Valid() bool {
+	switch e {
+	case Bootstrap:
+		return true
+	case Strong:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthorizationDecisionDenialReason.
+const (
+	MissingCapability AuthorizationDecisionDenialReason = "missing_capability"
+	UnknownOperation  AuthorizationDecisionDenialReason = "unknown_operation"
+)
+
+// Valid indicates whether the value is a known member of the AuthorizationDecisionDenialReason enum.
+func (e AuthorizationDecisionDenialReason) Valid() bool {
+	switch e {
+	case MissingCapability:
+		return true
+	case UnknownOperation:
 		return true
 	default:
 		return false
@@ -93,6 +110,48 @@ func (e CreateProjectRequestEnvironment) Valid() bool {
 	case CreateProjectRequestEnvironmentProduction:
 		return true
 	case CreateProjectRequestEnvironmentSandbox:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateSupportCaseMessageRequestVisibility.
+const (
+	CreateSupportCaseMessageRequestVisibilityInternal CreateSupportCaseMessageRequestVisibility = "internal"
+	CreateSupportCaseMessageRequestVisibilityPublic   CreateSupportCaseMessageRequestVisibility = "public"
+)
+
+// Valid indicates whether the value is a known member of the CreateSupportCaseMessageRequestVisibility enum.
+func (e CreateSupportCaseMessageRequestVisibility) Valid() bool {
+	switch e {
+	case CreateSupportCaseMessageRequestVisibilityInternal:
+		return true
+	case CreateSupportCaseMessageRequestVisibilityPublic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CreateTenantInvitationRequestRole.
+const (
+	CreateTenantInvitationRequestRoleAdmin     CreateTenantInvitationRequestRole = "admin"
+	CreateTenantInvitationRequestRoleDeveloper CreateTenantInvitationRequestRole = "developer"
+	CreateTenantInvitationRequestRoleSupport   CreateTenantInvitationRequestRole = "support"
+	CreateTenantInvitationRequestRoleViewer    CreateTenantInvitationRequestRole = "viewer"
+)
+
+// Valid indicates whether the value is a known member of the CreateTenantInvitationRequestRole enum.
+func (e CreateTenantInvitationRequestRole) Valid() bool {
+	switch e {
+	case CreateTenantInvitationRequestRoleAdmin:
+		return true
+	case CreateTenantInvitationRequestRoleDeveloper:
+		return true
+	case CreateTenantInvitationRequestRoleSupport:
+		return true
+	case CreateTenantInvitationRequestRoleViewer:
 		return true
 	default:
 		return false
@@ -207,6 +266,243 @@ func (e FidoModeRequestMode) Valid() bool {
 	}
 }
 
+// Defines values for JsonWebKeyAlg.
+const (
+	RS256 JsonWebKeyAlg = "RS256"
+)
+
+// Valid indicates whether the value is a known member of the JsonWebKeyAlg enum.
+func (e JsonWebKeyAlg) Valid() bool {
+	switch e {
+	case RS256:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for JsonWebKeyKty.
+const (
+	RSA JsonWebKeyKty = "RSA"
+)
+
+// Valid indicates whether the value is a known member of the JsonWebKeyKty enum.
+func (e JsonWebKeyKty) Valid() bool {
+	switch e {
+	case RSA:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for JsonWebKeyUse.
+const (
+	Sig JsonWebKeyUse = "sig"
+)
+
+// Valid indicates whether the value is a known member of the JsonWebKeyUse enum.
+func (e JsonWebKeyUse) Valid() bool {
+	switch e {
+	case Sig:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthApplicationStatus.
+const (
+	OAuthApplicationStatusActive   OAuthApplicationStatus = "active"
+	OAuthApplicationStatusDisabled OAuthApplicationStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the OAuthApplicationStatus enum.
+func (e OAuthApplicationStatus) Valid() bool {
+	switch e {
+	case OAuthApplicationStatusActive:
+		return true
+	case OAuthApplicationStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthApplicationGrantStatus.
+const (
+	OAuthApplicationGrantStatusActive   OAuthApplicationGrantStatus = "active"
+	OAuthApplicationGrantStatusDisabled OAuthApplicationGrantStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the OAuthApplicationGrantStatus enum.
+func (e OAuthApplicationGrantStatus) Valid() bool {
+	switch e {
+	case OAuthApplicationGrantStatusActive:
+		return true
+	case OAuthApplicationGrantStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthApplicationType.
+const (
+	OAuthApplicationTypeConfidential OAuthApplicationType = "confidential"
+	OAuthApplicationTypePublic       OAuthApplicationType = "public"
+)
+
+// Valid indicates whether the value is a known member of the OAuthApplicationType enum.
+func (e OAuthApplicationType) Valid() bool {
+	switch e {
+	case OAuthApplicationTypeConfidential:
+		return true
+	case OAuthApplicationTypePublic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthAuthorizationDecisionRequestDecision.
+const (
+	Approve OAuthAuthorizationDecisionRequestDecision = "approve"
+	Deny    OAuthAuthorizationDecisionRequestDecision = "deny"
+)
+
+// Valid indicates whether the value is a known member of the OAuthAuthorizationDecisionRequestDecision enum.
+func (e OAuthAuthorizationDecisionRequestDecision) Valid() bool {
+	switch e {
+	case Approve:
+		return true
+	case Deny:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthAuthorizationPrincipalType.
+const (
+	OAuthAuthorizationPrincipalTypeTenantMember OAuthAuthorizationPrincipalType = "tenant_member"
+)
+
+// Valid indicates whether the value is a known member of the OAuthAuthorizationPrincipalType enum.
+func (e OAuthAuthorizationPrincipalType) Valid() bool {
+	switch e {
+	case OAuthAuthorizationPrincipalTypeTenantMember:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthClientSecretStatus.
+const (
+	OAuthClientSecretStatusActive  OAuthClientSecretStatus = "active"
+	OAuthClientSecretStatusExpired OAuthClientSecretStatus = "expired"
+	OAuthClientSecretStatusRevoked OAuthClientSecretStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the OAuthClientSecretStatus enum.
+func (e OAuthClientSecretStatus) Valid() bool {
+	switch e {
+	case OAuthClientSecretStatusActive:
+		return true
+	case OAuthClientSecretStatusExpired:
+		return true
+	case OAuthClientSecretStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthClientSecretSecretStatus.
+const (
+	OAuthClientSecretSecretStatusActive  OAuthClientSecretSecretStatus = "active"
+	OAuthClientSecretSecretStatusExpired OAuthClientSecretSecretStatus = "expired"
+	OAuthClientSecretSecretStatusRevoked OAuthClientSecretSecretStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the OAuthClientSecretSecretStatus enum.
+func (e OAuthClientSecretSecretStatus) Valid() bool {
+	switch e {
+	case OAuthClientSecretSecretStatusActive:
+		return true
+	case OAuthClientSecretSecretStatusExpired:
+		return true
+	case OAuthClientSecretSecretStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthConsentStatus.
+const (
+	OAuthConsentStatusActive  OAuthConsentStatus = "active"
+	OAuthConsentStatusRevoked OAuthConsentStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the OAuthConsentStatus enum.
+func (e OAuthConsentStatus) Valid() bool {
+	switch e {
+	case OAuthConsentStatusActive:
+		return true
+	case OAuthConsentStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthRevocationRequestTokenTypeHint.
+const (
+	AccessToken OAuthRevocationRequestTokenTypeHint = "access_token"
+)
+
+// Valid indicates whether the value is a known member of the OAuthRevocationRequestTokenTypeHint enum.
+func (e OAuthRevocationRequestTokenTypeHint) Valid() bool {
+	switch e {
+	case AccessToken:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthTokenRequestGrantType.
+const (
+	AuthorizationCode OAuthTokenRequestGrantType = "authorization_code"
+)
+
+// Valid indicates whether the value is a known member of the OAuthTokenRequestGrantType enum.
+func (e OAuthTokenRequestGrantType) Valid() bool {
+	switch e {
+	case AuthorizationCode:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for OAuthTokenResponseTokenType.
+const (
+	Bearer OAuthTokenResponseTokenType = "Bearer"
+)
+
+// Valid indicates whether the value is a known member of the OAuthTokenResponseTokenType enum.
+func (e OAuthTokenResponseTokenType) Valid() bool {
+	switch e {
+	case Bearer:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ProjectEnvironment.
 const (
 	ProjectEnvironmentProduction ProjectEnvironment = "production"
@@ -261,15 +557,468 @@ func (e ProjectUserStatus) Valid() bool {
 	}
 }
 
-// Defines values for TenantMemberRole.
+// Defines values for ResourceServerStatus.
 const (
-	Owner TenantMemberRole = "owner"
+	ResourceServerStatusActive   ResourceServerStatus = "active"
+	ResourceServerStatusDisabled ResourceServerStatus = "disabled"
 )
 
-// Valid indicates whether the value is a known member of the TenantMemberRole enum.
-func (e TenantMemberRole) Valid() bool {
+// Valid indicates whether the value is a known member of the ResourceServerStatus enum.
+func (e ResourceServerStatus) Valid() bool {
 	switch e {
+	case ResourceServerStatusActive:
+		return true
+	case ResourceServerStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ResourceServerScopeStatus.
+const (
+	ResourceServerScopeStatusActive   ResourceServerScopeStatus = "active"
+	ResourceServerScopeStatusDisabled ResourceServerScopeStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the ResourceServerScopeStatus enum.
+func (e ResourceServerScopeStatus) Valid() bool {
+	switch e {
+	case ResourceServerScopeStatusActive:
+		return true
+	case ResourceServerScopeStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ServiceAccountEnvironment.
+const (
+	ServiceAccountEnvironmentProduction ServiceAccountEnvironment = "production"
+	ServiceAccountEnvironmentSandbox    ServiceAccountEnvironment = "sandbox"
+)
+
+// Valid indicates whether the value is a known member of the ServiceAccountEnvironment enum.
+func (e ServiceAccountEnvironment) Valid() bool {
+	switch e {
+	case ServiceAccountEnvironmentProduction:
+		return true
+	case ServiceAccountEnvironmentSandbox:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ServiceAccountStatus.
+const (
+	ServiceAccountStatusActive   ServiceAccountStatus = "active"
+	ServiceAccountStatusDisabled ServiceAccountStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the ServiceAccountStatus enum.
+func (e ServiceAccountStatus) Valid() bool {
+	switch e {
+	case ServiceAccountStatusActive:
+		return true
+	case ServiceAccountStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ServiceCredentialStatus.
+const (
+	ServiceCredentialStatusActive  ServiceCredentialStatus = "active"
+	ServiceCredentialStatusExpired ServiceCredentialStatus = "expired"
+	ServiceCredentialStatusRevoked ServiceCredentialStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the ServiceCredentialStatus enum.
+func (e ServiceCredentialStatus) Valid() bool {
+	switch e {
+	case ServiceCredentialStatusActive:
+		return true
+	case ServiceCredentialStatusExpired:
+		return true
+	case ServiceCredentialStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ServiceCredentialSecretStatus.
+const (
+	ServiceCredentialSecretStatusActive  ServiceCredentialSecretStatus = "active"
+	ServiceCredentialSecretStatusExpired ServiceCredentialSecretStatus = "expired"
+	ServiceCredentialSecretStatusRevoked ServiceCredentialSecretStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the ServiceCredentialSecretStatus enum.
+func (e ServiceCredentialSecretStatus) Valid() bool {
+	switch e {
+	case ServiceCredentialSecretStatusActive:
+		return true
+	case ServiceCredentialSecretStatusExpired:
+		return true
+	case ServiceCredentialSecretStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SupportCaseCategory.
+const (
+	Bug      SupportCaseCategory = "bug"
+	Feedback SupportCaseCategory = "feedback"
+	Question SupportCaseCategory = "question"
+)
+
+// Valid indicates whether the value is a known member of the SupportCaseCategory enum.
+func (e SupportCaseCategory) Valid() bool {
+	switch e {
+	case Bug:
+		return true
+	case Feedback:
+		return true
+	case Question:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SupportCaseEventVisibility.
+const (
+	SupportCaseEventVisibilityInternal SupportCaseEventVisibility = "internal"
+	SupportCaseEventVisibilityPublic   SupportCaseEventVisibility = "public"
+)
+
+// Valid indicates whether the value is a known member of the SupportCaseEventVisibility enum.
+func (e SupportCaseEventVisibility) Valid() bool {
+	switch e {
+	case SupportCaseEventVisibilityInternal:
+		return true
+	case SupportCaseEventVisibilityPublic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SupportCaseMessageVisibility.
+const (
+	SupportCaseMessageVisibilityInternal SupportCaseMessageVisibility = "internal"
+	SupportCaseMessageVisibilityPublic   SupportCaseMessageVisibility = "public"
+)
+
+// Valid indicates whether the value is a known member of the SupportCaseMessageVisibility enum.
+func (e SupportCaseMessageVisibility) Valid() bool {
+	switch e {
+	case SupportCaseMessageVisibilityInternal:
+		return true
+	case SupportCaseMessageVisibilityPublic:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SupportCasePriority.
+const (
+	High   SupportCasePriority = "high"
+	Low    SupportCasePriority = "low"
+	Normal SupportCasePriority = "normal"
+	Urgent SupportCasePriority = "urgent"
+)
+
+// Valid indicates whether the value is a known member of the SupportCasePriority enum.
+func (e SupportCasePriority) Valid() bool {
+	switch e {
+	case High:
+		return true
+	case Low:
+		return true
+	case Normal:
+		return true
+	case Urgent:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SupportCaseStatus.
+const (
+	Closed             SupportCaseStatus = "closed"
+	InProgress         SupportCaseStatus = "in_progress"
+	Open               SupportCaseStatus = "open"
+	Resolved           SupportCaseStatus = "resolved"
+	WaitingForCustomer SupportCaseStatus = "waiting_for_customer"
+)
+
+// Valid indicates whether the value is a known member of the SupportCaseStatus enum.
+func (e SupportCaseStatus) Valid() bool {
+	switch e {
+	case Closed:
+		return true
+	case InProgress:
+		return true
+	case Open:
+		return true
+	case Resolved:
+		return true
+	case WaitingForCustomer:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SupportReporterType.
+const (
+	SupportReporterTypeProjectUser    SupportReporterType = "project_user"
+	SupportReporterTypeServiceAccount SupportReporterType = "service_account"
+	SupportReporterTypeSystem         SupportReporterType = "system"
+	SupportReporterTypeTenantMember   SupportReporterType = "tenant_member"
+)
+
+// Valid indicates whether the value is a known member of the SupportReporterType enum.
+func (e SupportReporterType) Valid() bool {
+	switch e {
+	case SupportReporterTypeProjectUser:
+		return true
+	case SupportReporterTypeServiceAccount:
+		return true
+	case SupportReporterTypeSystem:
+		return true
+	case SupportReporterTypeTenantMember:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantInvitationRole.
+const (
+	TenantInvitationRoleAdmin     TenantInvitationRole = "admin"
+	TenantInvitationRoleDeveloper TenantInvitationRole = "developer"
+	TenantInvitationRoleSupport   TenantInvitationRole = "support"
+	TenantInvitationRoleViewer    TenantInvitationRole = "viewer"
+)
+
+// Valid indicates whether the value is a known member of the TenantInvitationRole enum.
+func (e TenantInvitationRole) Valid() bool {
+	switch e {
+	case TenantInvitationRoleAdmin:
+		return true
+	case TenantInvitationRoleDeveloper:
+		return true
+	case TenantInvitationRoleSupport:
+		return true
+	case TenantInvitationRoleViewer:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantInvitationStatus.
+const (
+	Accepted TenantInvitationStatus = "accepted"
+	Expired  TenantInvitationStatus = "expired"
+	Pending  TenantInvitationStatus = "pending"
+	Revoked  TenantInvitationStatus = "revoked"
+)
+
+// Valid indicates whether the value is a known member of the TenantInvitationStatus enum.
+func (e TenantInvitationStatus) Valid() bool {
+	switch e {
+	case Accepted:
+		return true
+	case Expired:
+		return true
+	case Pending:
+		return true
+	case Revoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantMemberStatus.
+const (
+	TenantMemberStatusActive   TenantMemberStatus = "active"
+	TenantMemberStatusDisabled TenantMemberStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the TenantMemberStatus enum.
+func (e TenantMemberStatus) Valid() bool {
+	switch e {
+	case TenantMemberStatusActive:
+		return true
+	case TenantMemberStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantMemberLoginProgressStatus.
+const (
+	PasswordVerified TenantMemberLoginProgressStatus = "password_verified"
+)
+
+// Valid indicates whether the value is a known member of the TenantMemberLoginProgressStatus enum.
+func (e TenantMemberLoginProgressStatus) Valid() bool {
+	switch e {
+	case PasswordVerified:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantMemberWebAuthnCredentialKind.
+const (
+	TenantMemberWebAuthnCredentialKindPasskey     TenantMemberWebAuthnCredentialKind = "passkey"
+	TenantMemberWebAuthnCredentialKindSecurityKey TenantMemberWebAuthnCredentialKind = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the TenantMemberWebAuthnCredentialKind enum.
+func (e TenantMemberWebAuthnCredentialKind) Valid() bool {
+	switch e {
+	case TenantMemberWebAuthnCredentialKindPasskey:
+		return true
+	case TenantMemberWebAuthnCredentialKindSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantMemberWebAuthnFinishRequestMode.
+const (
+	TenantMemberWebAuthnFinishRequestModeHybrid      TenantMemberWebAuthnFinishRequestMode = "hybrid"
+	TenantMemberWebAuthnFinishRequestModePasskey     TenantMemberWebAuthnFinishRequestMode = "passkey"
+	TenantMemberWebAuthnFinishRequestModeSecurityKey TenantMemberWebAuthnFinishRequestMode = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the TenantMemberWebAuthnFinishRequestMode enum.
+func (e TenantMemberWebAuthnFinishRequestMode) Valid() bool {
+	switch e {
+	case TenantMemberWebAuthnFinishRequestModeHybrid:
+		return true
+	case TenantMemberWebAuthnFinishRequestModePasskey:
+		return true
+	case TenantMemberWebAuthnFinishRequestModeSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantMemberWebAuthnModeRequestMode.
+const (
+	TenantMemberWebAuthnModeRequestModeHybrid      TenantMemberWebAuthnModeRequestMode = "hybrid"
+	TenantMemberWebAuthnModeRequestModePasskey     TenantMemberWebAuthnModeRequestMode = "passkey"
+	TenantMemberWebAuthnModeRequestModeSecurityKey TenantMemberWebAuthnModeRequestMode = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the TenantMemberWebAuthnModeRequestMode enum.
+func (e TenantMemberWebAuthnModeRequestMode) Valid() bool {
+	switch e {
+	case TenantMemberWebAuthnModeRequestModeHybrid:
+		return true
+	case TenantMemberWebAuthnModeRequestModePasskey:
+		return true
+	case TenantMemberWebAuthnModeRequestModeSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantMemberWebAuthnRegistrationRequestMode.
+const (
+	TenantMemberWebAuthnRegistrationRequestModePasskey     TenantMemberWebAuthnRegistrationRequestMode = "passkey"
+	TenantMemberWebAuthnRegistrationRequestModeSecurityKey TenantMemberWebAuthnRegistrationRequestMode = "security_key"
+)
+
+// Valid indicates whether the value is a known member of the TenantMemberWebAuthnRegistrationRequestMode enum.
+func (e TenantMemberWebAuthnRegistrationRequestMode) Valid() bool {
+	switch e {
+	case TenantMemberWebAuthnRegistrationRequestModePasskey:
+		return true
+	case TenantMemberWebAuthnRegistrationRequestModeSecurityKey:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantRole.
+const (
+	Admin     TenantRole = "admin"
+	Developer TenantRole = "developer"
+	Owner     TenantRole = "owner"
+	Support   TenantRole = "support"
+	Viewer    TenantRole = "viewer"
+)
+
+// Valid indicates whether the value is a known member of the TenantRole enum.
+func (e TenantRole) Valid() bool {
+	switch e {
+	case Admin:
+		return true
+	case Developer:
+		return true
 	case Owner:
+		return true
+	case Support:
+		return true
+	case Viewer:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateOAuthApplicationGrantRequestStatus.
+const (
+	UpdateOAuthApplicationGrantRequestStatusActive   UpdateOAuthApplicationGrantRequestStatus = "active"
+	UpdateOAuthApplicationGrantRequestStatusDisabled UpdateOAuthApplicationGrantRequestStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the UpdateOAuthApplicationGrantRequestStatus enum.
+func (e UpdateOAuthApplicationGrantRequestStatus) Valid() bool {
+	switch e {
+	case UpdateOAuthApplicationGrantRequestStatusActive:
+		return true
+	case UpdateOAuthApplicationGrantRequestStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateOAuthApplicationRequestStatus.
+const (
+	UpdateOAuthApplicationRequestStatusActive   UpdateOAuthApplicationRequestStatus = "active"
+	UpdateOAuthApplicationRequestStatusDisabled UpdateOAuthApplicationRequestStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the UpdateOAuthApplicationRequestStatus enum.
+func (e UpdateOAuthApplicationRequestStatus) Valid() bool {
+	switch e {
+	case UpdateOAuthApplicationRequestStatusActive:
+		return true
+	case UpdateOAuthApplicationRequestStatusDisabled:
 		return true
 	default:
 		return false
@@ -278,16 +1027,16 @@ func (e TenantMemberRole) Valid() bool {
 
 // Defines values for UpdateProjectRequestEnvironment.
 const (
-	Production UpdateProjectRequestEnvironment = "production"
-	Sandbox    UpdateProjectRequestEnvironment = "sandbox"
+	UpdateProjectRequestEnvironmentProduction UpdateProjectRequestEnvironment = "production"
+	UpdateProjectRequestEnvironmentSandbox    UpdateProjectRequestEnvironment = "sandbox"
 )
 
 // Valid indicates whether the value is a known member of the UpdateProjectRequestEnvironment enum.
 func (e UpdateProjectRequestEnvironment) Valid() bool {
 	switch e {
-	case Production:
+	case UpdateProjectRequestEnvironmentProduction:
 		return true
-	case Sandbox:
+	case UpdateProjectRequestEnvironmentSandbox:
 		return true
 	default:
 		return false
@@ -330,40 +1079,137 @@ func (e UpdateProjectUserRequestStatus) Valid() bool {
 	}
 }
 
-// ApiKey Project API key metadata that is safe to list; it never contains a reusable secret.
-type ApiKey struct {
-	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
-	CreatedAt  Timestamp    `json:"created_at"`
-	LastUsedAt *time.Time   `json:"last_used_at,omitempty"`
-	Name       string       `json:"name"`
-	Prefix     string       `json:"prefix"`
-	RevokedAt  *time.Time   `json:"revoked_at,omitempty"`
-	Status     ApiKeyStatus `json:"status"`
+// Defines values for UpdateResourceServerRequestStatus.
+const (
+	UpdateResourceServerRequestStatusActive   UpdateResourceServerRequestStatus = "active"
+	UpdateResourceServerRequestStatusDisabled UpdateResourceServerRequestStatus = "disabled"
+)
 
-	// Uid RFC 4122 universally unique identifier.
-	Uid Uuid `json:"uid"`
+// Valid indicates whether the value is a known member of the UpdateResourceServerRequestStatus enum.
+func (e UpdateResourceServerRequestStatus) Valid() bool {
+	switch e {
+	case UpdateResourceServerRequestStatusActive:
+		return true
+	case UpdateResourceServerRequestStatusDisabled:
+		return true
+	default:
+		return false
+	}
 }
 
-// ApiKeyStatus defines model for ApiKey.Status.
-type ApiKeyStatus string
+// Defines values for UpdateResourceServerScopeRequestStatus.
+const (
+	UpdateResourceServerScopeRequestStatusActive   UpdateResourceServerScopeRequestStatus = "active"
+	UpdateResourceServerScopeRequestStatusDisabled UpdateResourceServerScopeRequestStatus = "disabled"
+)
 
-// ApiKeySecret defines model for ApiKeySecret.
-type ApiKeySecret struct {
-	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
-	CreatedAt  Timestamp          `json:"created_at"`
-	LastUsedAt *time.Time         `json:"last_used_at,omitempty"`
-	Name       string             `json:"name"`
-	Prefix     string             `json:"prefix"`
-	RevokedAt  *time.Time         `json:"revoked_at,omitempty"`
-	Secret     *string            `json:"secret,omitempty"`
-	Status     ApiKeySecretStatus `json:"status"`
-
-	// Uid RFC 4122 universally unique identifier.
-	Uid Uuid `json:"uid"`
+// Valid indicates whether the value is a known member of the UpdateResourceServerScopeRequestStatus enum.
+func (e UpdateResourceServerScopeRequestStatus) Valid() bool {
+	switch e {
+	case UpdateResourceServerScopeRequestStatusActive:
+		return true
+	case UpdateResourceServerScopeRequestStatusDisabled:
+		return true
+	default:
+		return false
+	}
 }
 
-// ApiKeySecretStatus defines model for ApiKeySecret.Status.
-type ApiKeySecretStatus string
+// Defines values for UpdateServiceAccountRequestStatus.
+const (
+	UpdateServiceAccountRequestStatusActive   UpdateServiceAccountRequestStatus = "active"
+	UpdateServiceAccountRequestStatusDisabled UpdateServiceAccountRequestStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the UpdateServiceAccountRequestStatus enum.
+func (e UpdateServiceAccountRequestStatus) Valid() bool {
+	switch e {
+	case UpdateServiceAccountRequestStatusActive:
+		return true
+	case UpdateServiceAccountRequestStatusDisabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for UpdateTenantMemberRequestStatus.
+const (
+	Active   UpdateTenantMemberRequestStatus = "active"
+	Disabled UpdateTenantMemberRequestStatus = "disabled"
+)
+
+// Valid indicates whether the value is a known member of the UpdateTenantMemberRequestStatus enum.
+func (e UpdateTenantMemberRequestStatus) Valid() bool {
+	switch e {
+	case Active:
+		return true
+	case Disabled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthorizeOAuthApplicationParamsResponseType.
+const (
+	Code AuthorizeOAuthApplicationParamsResponseType = "code"
+)
+
+// Valid indicates whether the value is a known member of the AuthorizeOAuthApplicationParamsResponseType enum.
+func (e AuthorizeOAuthApplicationParamsResponseType) Valid() bool {
+	switch e {
+	case Code:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthorizeOAuthApplicationParamsCodeChallengeMethod.
+const (
+	S256 AuthorizeOAuthApplicationParamsCodeChallengeMethod = "S256"
+)
+
+// Valid indicates whether the value is a known member of the AuthorizeOAuthApplicationParamsCodeChallengeMethod enum.
+func (e AuthorizeOAuthApplicationParamsCodeChallengeMethod) Valid() bool {
+	switch e {
+	case S256:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AuthorizeOAuthApplicationParamsResponseMode.
+const (
+	Query AuthorizeOAuthApplicationParamsResponseMode = "query"
+)
+
+// Valid indicates whether the value is a known member of the AuthorizeOAuthApplicationParamsResponseMode enum.
+func (e AuthorizeOAuthApplicationParamsResponseMode) Valid() bool {
+	switch e {
+	case Query:
+		return true
+	default:
+		return false
+	}
+}
+
+// AcceptTenantInvitationRequest One-time invitation proof and the profile credentials established by the new Tenant Member.
+type AcceptTenantInvitationRequest struct {
+	AcceptanceToken *string `json:"acceptance_token,omitempty"`
+	DisplayName     string  `json:"display_name"`
+	Password        *string `json:"password,omitempty"`
+}
+
+// AcceptedRequest Generic acknowledgement used where revealing whether an account exists would create an enumeration oracle.
+type AcceptedRequest struct {
+	Accepted AcceptedRequestAccepted `json:"accepted"`
+}
+
+// AcceptedRequestAccepted defines model for AcceptedRequest.Accepted.
+type AcceptedRequestAccepted bool
 
 // AuditEvent Immutable security-relevant action with actor, optional target, metadata, and timestamp.
 type AuditEvent struct {
@@ -390,6 +1236,45 @@ type AuditPage struct {
 	NextCursor *string      `json:"next_cursor,omitempty"`
 }
 
+// AuthenticationAssurance Bootstrap sessions may enroll the first management WebAuthn credential; strong sessions completed password plus user-verified WebAuthn authentication.
+type AuthenticationAssurance string
+
+// AuthorizationDecision Deterministic scope-v1 allow or deny result bounded by the active resource token, current administrative grant, scope catalog, policy version, and validity time.
+type AuthorizationDecision struct {
+	Allowed      bool                               `json:"allowed"`
+	Capabilities []DelegatedScopeName               `json:"capabilities"`
+	DenialReason *AuthorizationDecisionDenialReason `json:"denial_reason"`
+
+	// Operation Immutable lowercase capability token. OpenID scope names and offline_access are reserved.
+	Operation     DelegatedScopeName `json:"operation"`
+	PolicyVersion string             `json:"policy_version"`
+
+	// Principal Stable pairwise Tenant Member principal derived only from the verified OAuth access token.
+	Principal OAuthAuthorizationPrincipal `json:"principal"`
+
+	// Resource Opaque customer-resource identity interpreted by the Resource Server; ComplicatedAuth binds it to the token-derived Tenant but does not fetch customer data.
+	Resource                 AuthorizationResource `json:"resource"`
+	ResourceServerIdentifier string                `json:"resource_server_identifier"`
+
+	// ResourceServerUid RFC 4122 universally unique identifier.
+	ResourceServerUid Uuid `json:"resource_server_uid"`
+
+	// TenantUid RFC 4122 universally unique identifier.
+	TenantUid Uuid `json:"tenant_uid"`
+
+	// ValidUntil UTC timestamp serialized in RFC 3339 date-time form.
+	ValidUntil Timestamp `json:"valid_until"`
+}
+
+// AuthorizationDecisionDenialReason defines model for AuthorizationDecision.DenialReason.
+type AuthorizationDecisionDenialReason string
+
+// AuthorizationResource Opaque customer-resource identity interpreted by the Resource Server; ComplicatedAuth binds it to the token-derived Tenant but does not fetch customer data.
+type AuthorizationResource struct {
+	Id   string `json:"id"`
+	Type string `json:"type"`
+}
+
 // BiometricEnrollment Local metadata for the Project User's active biometric-provider enrollment.
 type BiometricEnrollment struct {
 	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
@@ -399,16 +1284,64 @@ type BiometricEnrollment struct {
 	Uid Uuid `json:"uid"`
 }
 
-// ConsoleSession Authenticated management-console context returned after signup, login, or session discovery.
+// CompleteEmailVerificationRequest One-time email-ownership proof delivered out of band.
+type CompleteEmailVerificationRequest struct {
+	Token *string `json:"token,omitempty"`
+}
+
+// CompletePasswordResetRequest One-time reset proof and replacement password.
+type CompletePasswordResetRequest struct {
+	Password *string `json:"password,omitempty"`
+	Token    *string `json:"token,omitempty"`
+}
+
+// ConsoleSession Cookie-backed management-console context. Bootstrap assurance authorizes only session discovery, logout, and first WebAuthn enrollment; strong assurance authorizes role-permitted management operations.
 type ConsoleSession struct {
+	// AuthenticationAssurance Bootstrap sessions may enroll the first management WebAuthn credential; strong sessions completed password plus user-verified WebAuthn authentication.
+	AuthenticationAssurance AuthenticationAssurance `json:"authentication_assurance"`
+
 	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
 	ExpiresAt Timestamp `json:"expires_at"`
 
-	// Member Human administrator authenticated to the management console.
+	// Member Human membership authenticated to the management console and authorized by its Tenant role.
 	Member TenantMember `json:"member"`
 
 	// Tenant Administrative owner boundary for Projects and Tenant Members.
 	Tenant Tenant `json:"tenant"`
+}
+
+// CreateAuthorizationDecisionRequest Resource, delegated operation, and bounded optional context. Tenant, principal, audience, and capabilities deliberately cannot be supplied.
+type CreateAuthorizationDecisionRequest struct {
+	// Context Optional JSON context capped at 8 KiB by the server. The scope-v1 policy reserves it for forwards-compatible signals and does not use it to expand access.
+	Context *map[string]interface{} `json:"context,omitempty"`
+
+	// Operation Immutable lowercase capability token. OpenID scope names and offline_access are reserved.
+	Operation DelegatedScopeName `json:"operation"`
+
+	// Resource Opaque customer-resource identity interpreted by the Resource Server; ComplicatedAuth binds it to the token-derived Tenant but does not fetch customer data.
+	Resource AuthorizationResource `json:"resource"`
+}
+
+// CreateOAuthApplicationGrantRequest Resource Server relationship and complete non-empty set of active scope resource identifiers.
+type CreateOAuthApplicationGrantRequest struct {
+	// ResourceServerUid RFC 4122 universally unique identifier.
+	ResourceServerUid Uuid   `json:"resource_server_uid"`
+	ScopeUids         []Uuid `json:"scope_uids"`
+}
+
+// CreateOAuthApplicationRequest Immutable client type, display name, and canonical exact redirect set used to register an OAuth Application.
+type CreateOAuthApplicationRequest struct {
+	// ApplicationType OAuth client confidentiality classification. Public clients never receive a secret; confidential clients authenticate from a trusted backend.
+	ApplicationType OAuthApplicationType `json:"application_type"`
+	Name            string               `json:"name"`
+	RedirectUris    []string             `json:"redirect_uris"`
+}
+
+// CreateOAuthClientSecretRequest Human-readable credential name and optional explicit expiry; omitted expiry defaults to 90 days.
+type CreateOAuthClientSecretRequest struct {
+	// ExpiresAt Must be between five minutes and 365 days in the future.
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	Name      string     `json:"name"`
 }
 
 // CreateOriginRequest Exact browser origin to add to a Project allowlist.
@@ -433,6 +1366,101 @@ type CreateProjectUserRequest struct {
 	Email         openapi_types.Email `json:"email"`
 	EmailVerified *bool               `json:"email_verified,omitempty"`
 	Password      *string             `json:"password,omitempty"`
+}
+
+// CreateResourceServerRequest Display name and immutable exact API audience identifier used to register a Resource Server.
+type CreateResourceServerRequest struct {
+	Identifier string `json:"identifier"`
+	Name       string `json:"name"`
+}
+
+// CreateResourceServerScopeRequest Immutable scope token and human-facing consent description.
+type CreateResourceServerScopeRequest struct {
+	Description *string `json:"description,omitempty"`
+	DisplayName string  `json:"display_name"`
+
+	// Name Immutable lowercase capability token. OpenID scope names and offline_access are reserved.
+	Name DelegatedScopeName `json:"name"`
+}
+
+// CreateServiceAccountRequest Stable workload identity metadata and its complete initial least-privilege scope set.
+type CreateServiceAccountRequest struct {
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+
+	// Scopes Complete effective capability set read on every service-credential request. Values are stable public protocol names.
+	Scopes ServiceAccountScopes `json:"scopes"`
+}
+
+// CreateServiceCredentialRequest Human deployment label and optional expiry for a newly issued credential version. Omitted expiry defaults to 90 days.
+type CreateServiceCredentialRequest struct {
+	ExpiresAt *time.Time `json:"expires_at,omitempty"`
+	Name      string     `json:"name"`
+}
+
+// CreateSupportCaseAttachmentRequest Multipart attachment upload. The optional represented uploader is accepted only from a service credential and must belong to its Project.
+type CreateSupportCaseAttachmentRequest struct {
+	File openapi_types.File `json:"file"`
+
+	// UploaderProjectUserUid RFC 4122 universally unique identifier.
+	UploaderProjectUserUid *Uuid `json:"uploader_project_user_uid,omitempty"`
+}
+
+// CreateSupportCaseExternalReferenceRequest Generic operator-managed link to one external system record. Identifiers and URLs are encrypted and never copied into case-event or audit metadata.
+type CreateSupportCaseExternalReferenceRequest struct {
+	ExternalId string  `json:"external_id"`
+	Label      *string `json:"label,omitempty"`
+	Provider   string  `json:"provider"`
+	Url        *string `json:"url,omitempty"`
+}
+
+// CreateSupportCaseMessageRequest Immutable public correspondence or console-only internal note. A service credential may attribute public content to a Project User in its Project.
+type CreateSupportCaseMessageRequest struct {
+	// AuthorProjectUserUid RFC 4122 universally unique identifier.
+	AuthorProjectUserUid *Uuid                                      `json:"author_project_user_uid,omitempty"`
+	Body                 string                                     `json:"body"`
+	Visibility           *CreateSupportCaseMessageRequestVisibility `json:"visibility,omitempty"`
+}
+
+// CreateSupportCaseMessageRequestVisibility defines model for CreateSupportCaseMessageRequest.Visibility.
+type CreateSupportCaseMessageRequestVisibility string
+
+// CreateSupportCaseRequest New customer question, feedback item, or bug report plus its immutable initial message. Console operators may select a Project and priority; service credentials are bound to their own Project and cannot set priority.
+type CreateSupportCaseRequest struct {
+	// Category Stable customer-intent category selected independently from operator priority and lifecycle state.
+	Category          SupportCaseCategory `json:"category"`
+	DiagnosticConsent bool                `json:"diagnostic_consent"`
+
+	// Diagnostics Explicitly consented, allowlisted diagnostic snapshot. Current URLs prohibit credentials, query strings, and fragments so bearer material is not accidentally collected.
+	Diagnostics *SupportDiagnostics `json:"diagnostics,omitempty"`
+	Message     string              `json:"message"`
+
+	// Priority Tenant-operator triage priority; Project service credentials cannot set or change it.
+	Priority *SupportCasePriority `json:"priority,omitempty"`
+
+	// ProjectUid Console-selected Tenant Project. A service credential may omit it or repeat only its own Project.
+	ProjectUid *Uuid `json:"project_uid,omitempty"`
+
+	// ReporterProjectUserUid Optional reporter attribution to a Project User in the selected or credential-bound Project.
+	ReporterProjectUserUid *Uuid  `json:"reporter_project_user_uid,omitempty"`
+	Subject                string `json:"subject"`
+}
+
+// CreateTenantInvitationRequest Email and non-owner role used to create a Tenant invitation.
+type CreateTenantInvitationRequest struct {
+	Email openapi_types.Email               `json:"email"`
+	Role  CreateTenantInvitationRequestRole `json:"role"`
+}
+
+// CreateTenantInvitationRequestRole defines model for CreateTenantInvitationRequest.Role.
+type CreateTenantInvitationRequestRole string
+
+// DelegatedScopeName Immutable lowercase capability token. OpenID scope names and offline_access are reserved.
+type DelegatedScopeName = string
+
+// EmailVerificationRequest Email lookup for a deliberately non-enumerating Tenant Member verification request.
+type EmailVerificationRequest struct {
+	Email openapi_types.Email `json:"email"`
 }
 
 // ErrorEnvelope Stable machine-readable error code, safe message, optional details, and request correlation identifier.
@@ -499,6 +1527,39 @@ type FidoModeRequest struct {
 // FidoModeRequestMode defines model for FidoModeRequest.Mode.
 type FidoModeRequestMode string
 
+// InspectOAuthAuthorizationRequest Browser-only opaque authorization request handle submitted from the consent page body rather than its HTTP request URL.
+type InspectOAuthAuthorizationRequest struct {
+	RequestToken *string `json:"request_token,omitempty"`
+}
+
+// JsonWebKey RSA public verification key published for RS256 OAuth and OpenID Connect tokens.
+type JsonWebKey struct {
+	Alg JsonWebKeyAlg `json:"alg"`
+
+	// E Base64url-encoded unsigned RSA public exponent.
+	E   string        `json:"e"`
+	Kid string        `json:"kid"`
+	Kty JsonWebKeyKty `json:"kty"`
+
+	// N Base64url-encoded unsigned RSA modulus.
+	N   string        `json:"n"`
+	Use JsonWebKeyUse `json:"use"`
+}
+
+// JsonWebKeyAlg defines model for JsonWebKey.Alg.
+type JsonWebKeyAlg string
+
+// JsonWebKeyKty defines model for JsonWebKey.Kty.
+type JsonWebKeyKty string
+
+// JsonWebKeyUse defines model for JsonWebKey.Use.
+type JsonWebKeyUse string
+
+// JsonWebKeySet Public active and still-valid retiring token verification keys.
+type JsonWebKeySet struct {
+	Keys []JsonWebKey `json:"keys"`
+}
+
 // LoginAttemptSecret Short-lived opaque reference that binds all factor checks in one login attempt.
 type LoginAttemptSecret struct {
 	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
@@ -506,15 +1567,264 @@ type LoginAttemptSecret struct {
 	LoginReference *string   `json:"login_reference,omitempty"`
 }
 
-// LoginRequest Tenant Member credentials accepted by management-console login.
-type LoginRequest struct {
-	Email    openapi_types.Email `json:"email"`
-	Password string              `json:"password"`
+// OAuthApplication Tenant-owned OAuth client registration with immutable client type, exact redirects, and a monotonic concurrency version.
+type OAuthApplication struct {
+	// ApplicationType OAuth client confidentiality classification. Public clients never receive a secret; confidential clients authenticate from a trusted backend.
+	ApplicationType OAuthApplicationType `json:"application_type"`
+	ClientId        string               `json:"client_id"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt    Timestamp              `json:"created_at"`
+	Name         string                 `json:"name"`
+	RedirectUris []string               `json:"redirect_uris"`
+	Status       OAuthApplicationStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
 }
 
-// NameRequest Human-readable name used when creating or renaming a Project API key.
-type NameRequest struct {
-	Name string `json:"name"`
+// OAuthApplicationStatus defines model for OAuthApplication.Status.
+type OAuthApplicationStatus string
+
+// OAuthApplicationGrant Administrative upper bound on delegated scopes an OAuth Application may request for one Resource Server. Tenant Member consent can only narrow it.
+type OAuthApplicationGrant struct {
+	// ApplicationUid RFC 4122 universally unique identifier.
+	ApplicationUid Uuid `json:"application_uid"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt                Timestamp `json:"created_at"`
+	ResourceServerIdentifier string    `json:"resource_server_identifier"`
+	ResourceServerName       string    `json:"resource_server_name"`
+
+	// ResourceServerUid RFC 4122 universally unique identifier.
+	ResourceServerUid Uuid                        `json:"resource_server_uid"`
+	Scopes            []DelegatedScopeName        `json:"scopes"`
+	Status            OAuthApplicationGrantStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
+}
+
+// OAuthApplicationGrantStatus defines model for OAuthApplicationGrant.Status.
+type OAuthApplicationGrantStatus string
+
+// OAuthApplicationGrantList Complete non-deleted Resource Server grants for one OAuth Application.
+type OAuthApplicationGrantList struct {
+	Items []OAuthApplicationGrant `json:"items"`
+}
+
+// OAuthApplicationPage Cursor-paginated collection of non-deleted Tenant OAuth Applications.
+type OAuthApplicationPage struct {
+	Items      []OAuthApplication `json:"items"`
+	NextCursor *string            `json:"next_cursor,omitempty"`
+}
+
+// OAuthApplicationType OAuth client confidentiality classification. Public clients never receive a secret; confidential clients authenticate from a trusted backend.
+type OAuthApplicationType string
+
+// OAuthAuthorizationDecision Previously validated exact redirect URI with code or OAuth error, state, and issuer parameters for browser navigation.
+type OAuthAuthorizationDecision struct {
+	RedirectTo string `json:"redirect_to"`
+}
+
+// OAuthAuthorizationDecisionRequest One-time authorization request proof and the Tenant Member's explicit decision.
+type OAuthAuthorizationDecisionRequest struct {
+	Decision     OAuthAuthorizationDecisionRequestDecision `json:"decision"`
+	RequestToken *string                                   `json:"request_token,omitempty"`
+}
+
+// OAuthAuthorizationDecisionRequestDecision defines model for OAuthAuthorizationDecisionRequest.Decision.
+type OAuthAuthorizationDecisionRequestDecision string
+
+// OAuthAuthorizationPrincipal Stable pairwise Tenant Member principal derived only from the verified OAuth access token.
+type OAuthAuthorizationPrincipal struct {
+	Subject string                          `json:"subject"`
+	Type    OAuthAuthorizationPrincipalType `json:"type"`
+}
+
+// OAuthAuthorizationPrincipalType defines model for OAuthAuthorizationPrincipal.Type.
+type OAuthAuthorizationPrincipalType string
+
+// OAuthAuthorizationRequest Safe client, redirect, scope, and expiry details displayed for explicit Tenant Member consent.
+type OAuthAuthorizationRequest struct {
+	ApplicationName string `json:"application_name"`
+
+	// ApplicationUid RFC 4122 universally unique identifier.
+	ApplicationUid Uuid   `json:"application_uid"`
+	ClientId       string `json:"client_id"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt                Timestamp                 `json:"expires_at"`
+	RedirectUri              string                    `json:"redirect_uri"`
+	ResourceServerIdentifier *string                   `json:"resource_server_identifier,omitempty"`
+	ResourceServerName       *string                   `json:"resource_server_name,omitempty"`
+	ResourceServerUid        *openapi_types.UUID       `json:"resource_server_uid,omitempty"`
+	ScopeDetails             []OAuthAuthorizationScope `json:"scope_details"`
+	Scopes                   []string                  `json:"scopes"`
+}
+
+// OAuthAuthorizationScope Safe human-facing consent metadata paired with one immutable protocol scope token.
+type OAuthAuthorizationScope struct {
+	Description string `json:"description"`
+	DisplayName string `json:"display_name"`
+	Name        string `json:"name"`
+}
+
+// OAuthClientSecret Safe metadata for an expiring confidential-client credential; reusable secret material is absent.
+type OAuthClientSecret struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt  Timestamp               `json:"expires_at"`
+	LastUsedAt *time.Time              `json:"last_used_at,omitempty"`
+	Name       string                  `json:"name"`
+	Prefix     string                  `json:"prefix"`
+	RevokedAt  *time.Time              `json:"revoked_at,omitempty"`
+	Status     OAuthClientSecretStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// OAuthClientSecretStatus defines model for OAuthClientSecret.Status.
+type OAuthClientSecretStatus string
+
+// OAuthClientSecretList Complete safe client-secret metadata collection for one OAuth Application.
+type OAuthClientSecretList struct {
+	Items []OAuthClientSecret `json:"items"`
+}
+
+// OAuthClientSecretSecret defines model for OAuthClientSecretSecret.
+type OAuthClientSecretSecret struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt  Timestamp                     `json:"expires_at"`
+	LastUsedAt *time.Time                    `json:"last_used_at,omitempty"`
+	Name       string                        `json:"name"`
+	Prefix     string                        `json:"prefix"`
+	RevokedAt  *time.Time                    `json:"revoked_at,omitempty"`
+	Secret     *string                       `json:"secret,omitempty"`
+	Status     OAuthClientSecretSecretStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// OAuthClientSecretSecretStatus defines model for OAuthClientSecretSecret.Status.
+type OAuthClientSecretSecretStatus string
+
+// OAuthConsent Tenant Member grant metadata for one OAuth Application and optional Resource Server; token values and authorization codes are never exposed.
+type OAuthConsent struct {
+	ApplicationName string `json:"application_name"`
+
+	// ApplicationUid RFC 4122 universally unique identifier.
+	ApplicationUid Uuid   `json:"application_uid"`
+	ClientId       string `json:"client_id"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt                Timestamp           `json:"created_at"`
+	ResourceServerIdentifier *string             `json:"resource_server_identifier,omitempty"`
+	ResourceServerName       *string             `json:"resource_server_name,omitempty"`
+	ResourceServerUid        *openapi_types.UUID `json:"resource_server_uid,omitempty"`
+	RevokedAt                *time.Time          `json:"revoked_at,omitempty"`
+	Scopes                   []string            `json:"scopes"`
+	Status                   OAuthConsentStatus  `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+}
+
+// OAuthConsentStatus defines model for OAuthConsent.Status.
+type OAuthConsentStatus string
+
+// OAuthConsentPage Cursor-paginated OAuth consent history for the authenticated Tenant Member.
+type OAuthConsentPage struct {
+	Items      []OAuthConsent `json:"items"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+}
+
+// OAuthError RFC-style OAuth error code and a safe human-readable description; it deliberately does not expose the platform ErrorEnvelope.
+type OAuthError struct {
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+}
+
+// OAuthRevocationRequest Access-token revocation form plus client_id for unauthenticated public-client revocation.
+type OAuthRevocationRequest struct {
+	ClientId      *string                              `json:"client_id,omitempty"`
+	Token         *string                              `json:"token,omitempty"`
+	TokenTypeHint *OAuthRevocationRequestTokenTypeHint `json:"token_type_hint,omitempty"`
+}
+
+// OAuthRevocationRequestTokenTypeHint defines model for OAuthRevocationRequest.TokenTypeHint.
+type OAuthRevocationRequestTokenTypeHint string
+
+// OAuthTokenRequest Authorization-code exchange form. Confidential clients use HTTP Basic and omit client_id; public clients send client_id and no secret.
+type OAuthTokenRequest struct {
+	ClientId     *string                    `json:"client_id,omitempty"`
+	Code         *string                    `json:"code,omitempty"`
+	CodeVerifier *string                    `json:"code_verifier,omitempty"`
+	GrantType    OAuthTokenRequestGrantType `json:"grant_type"`
+	RedirectUri  string                     `json:"redirect_uri"`
+}
+
+// OAuthTokenRequestGrantType defines model for OAuthTokenRequest.GrantType.
+type OAuthTokenRequestGrantType string
+
+// OAuthTokenResponse Short-lived access token bound either to UserInfo or one exact Resource Server audience, plus an OpenID ID token issued for one consumed authorization code.
+type OAuthTokenResponse struct {
+	AccessToken *string                     `json:"access_token,omitempty"`
+	ExpiresIn   int64                       `json:"expires_in"`
+	IdToken     *string                     `json:"id_token,omitempty"`
+	Scope       string                      `json:"scope"`
+	TokenType   OAuthTokenResponseTokenType `json:"token_type"`
+}
+
+// OAuthTokenResponseTokenType defines model for OAuthTokenResponse.TokenType.
+type OAuthTokenResponseTokenType string
+
+// OAuthUserInfo Pairwise subject and only those profile or email claims included in the access token's granted scopes.
+type OAuthUserInfo struct {
+	Email         *openapi_types.Email `json:"email,omitempty"`
+	EmailVerified *bool                `json:"email_verified,omitempty"`
+	Name          *string              `json:"name,omitempty"`
+	Sub           string               `json:"sub"`
+}
+
+// OpenIdConfiguration OpenID Provider discovery metadata for the deployed immutable issuer origin and supported baseline profile.
+type OpenIdConfiguration struct {
+	AuthorizationEndpoint                      string    `json:"authorization_endpoint"`
+	AuthorizationResponseIssParameterSupported *bool     `json:"authorization_response_iss_parameter_supported,omitempty"`
+	ClaimsSupported                            *[]string `json:"claims_supported,omitempty"`
+	CodeChallengeMethodsSupported              []string  `json:"code_challenge_methods_supported"`
+	GrantTypesSupported                        []string  `json:"grant_types_supported"`
+	IdTokenSigningAlgValuesSupported           []string  `json:"id_token_signing_alg_values_supported"`
+	Issuer                                     string    `json:"issuer"`
+	JwksUri                                    string    `json:"jwks_uri"`
+	RequestParameterSupported                  *bool     `json:"request_parameter_supported,omitempty"`
+	RequestUriParameterSupported               *bool     `json:"request_uri_parameter_supported,omitempty"`
+	RequireRequestUriRegistration              *bool     `json:"require_request_uri_registration,omitempty"`
+	ResponseTypesSupported                     []string  `json:"response_types_supported"`
+	RevocationEndpoint                         string    `json:"revocation_endpoint"`
+	ScopesSupported                            []string  `json:"scopes_supported"`
+	SubjectTypesSupported                      []string  `json:"subject_types_supported"`
+	TokenEndpoint                              string    `json:"token_endpoint"`
+	TokenEndpointAuthMethodsSupported          []string  `json:"token_endpoint_auth_methods_supported"`
+	UserinfoEndpoint                           string    `json:"userinfo_endpoint"`
 }
 
 // AllowedOrigin Exact browser origin permitted to perform ceremonies for a Project.
@@ -541,20 +1851,24 @@ type PasswordRequest struct {
 	Password string `json:"password"`
 }
 
+// PasswordResetRequest Email lookup for a deliberately non-enumerating Tenant Member password-reset request.
+type PasswordResetRequest struct {
+	Email openapi_types.Email `json:"email"`
+}
+
 // Project Isolated relying-party authentication boundary and its current aggregate counts.
 type Project struct {
-	ApiKeyCount int `json:"api_key_count"`
-
 	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
-	CreatedAt   Timestamp          `json:"created_at"`
-	Environment ProjectEnvironment `json:"environment"`
-	Name        string             `json:"name"`
-	OriginCount int                `json:"origin_count"`
-	Origins     []AllowedOrigin    `json:"origins"`
-	RpId        string             `json:"rp_id"`
-	RpIdLocked  bool               `json:"rp_id_locked"`
-	RpName      string             `json:"rp_name"`
-	Status      ProjectStatus      `json:"status"`
+	CreatedAt           Timestamp          `json:"created_at"`
+	Environment         ProjectEnvironment `json:"environment"`
+	Name                string             `json:"name"`
+	OriginCount         int                `json:"origin_count"`
+	Origins             []AllowedOrigin    `json:"origins"`
+	RpId                string             `json:"rp_id"`
+	RpIdLocked          bool               `json:"rp_id_locked"`
+	RpName              string             `json:"rp_name"`
+	ServiceAccountCount int                `json:"service_account_count"`
+	Status              ProjectStatus      `json:"status"`
 
 	// Uid RFC 4122 universally unique identifier.
 	Uid       Uuid `json:"uid"`
@@ -619,10 +1933,161 @@ type ProjectUserSessionSecret struct {
 	SessionReference *string     `json:"session_reference,omitempty"`
 }
 
+// ResourceServer Tenant-owned OAuth resource audience with an immutable exact identifier, mutable status, resource version, and monotonic scope-policy version.
+type ResourceServer struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt     Timestamp            `json:"created_at"`
+	Identifier    string               `json:"identifier"`
+	Name          string               `json:"name"`
+	PolicyVersion int64                `json:"policy_version"`
+	Status        ResourceServerStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
+}
+
+// ResourceServerStatus defines model for ResourceServer.Status.
+type ResourceServerStatus string
+
+// ResourceServerPage Cursor-paginated collection of non-deleted Tenant Resource Servers.
+type ResourceServerPage struct {
+	Items      []ResourceServer `json:"items"`
+	NextCursor *string          `json:"next_cursor,omitempty"`
+}
+
+// ResourceServerScope Immutable delegated scope token with mutable human description, status, and optimistic-concurrency version.
+type ResourceServerScope struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt   Timestamp `json:"created_at"`
+	Description string    `json:"description"`
+	DisplayName string    `json:"display_name"`
+
+	// Name Immutable lowercase capability token. OpenID scope names and offline_access are reserved.
+	Name   DelegatedScopeName        `json:"name"`
+	Status ResourceServerScopeStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
+}
+
+// ResourceServerScopeStatus defines model for ResourceServerScope.Status.
+type ResourceServerScopeStatus string
+
+// ResourceServerScopeList Complete non-deleted delegated-scope collection for one Resource Server.
+type ResourceServerScopeList struct {
+	Items []ResourceServerScope `json:"items"`
+}
+
 // SelfieRequest Multipart selfie image forwarded to the configured biometric provider.
 type SelfieRequest struct {
 	Selfie openapi_types.File `json:"selfie"`
 }
+
+// ServiceAccount Stable Project workload identity. Secret-bearing credential versions are nested resources and never appear in this representation.
+type ServiceAccount struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt          Timestamp                 `json:"created_at"`
+	CreatedByMemberUid *openapi_types.UUID       `json:"created_by_member_uid,omitempty"`
+	Description        string                    `json:"description"`
+	DisabledAt         *time.Time                `json:"disabled_at,omitempty"`
+	Environment        ServiceAccountEnvironment `json:"environment"`
+	Name               string                    `json:"name"`
+
+	// Scopes Complete effective capability set read on every service-credential request. Values are stable public protocol names.
+	Scopes ServiceAccountScopes `json:"scopes"`
+	Status ServiceAccountStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
+}
+
+// ServiceAccountEnvironment defines model for ServiceAccount.Environment.
+type ServiceAccountEnvironment string
+
+// ServiceAccountStatus defines model for ServiceAccount.Status.
+type ServiceAccountStatus string
+
+// ServiceAccountPage Cursor-paginated Project service-account collection.
+type ServiceAccountPage struct {
+	Items      []ServiceAccount `json:"items"`
+	NextCursor *string          `json:"next_cursor,omitempty"`
+}
+
+// ServiceAccountScopes Complete effective capability set read on every service-credential request. Values are stable public protocol names.
+type ServiceAccountScopes = []string
+
+// ServiceCredential Safe metadata for one expiring service-account credential; reusable secret material is absent.
+type ServiceCredential struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt          Timestamp           `json:"created_at"`
+	CreatedByMemberUid *openapi_types.UUID `json:"created_by_member_uid,omitempty"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt          Timestamp           `json:"expires_at"`
+	Fingerprint        string              `json:"fingerprint"`
+	LastUsedAt         *time.Time          `json:"last_used_at,omitempty"`
+	Name               string              `json:"name"`
+	Prefix             string              `json:"prefix"`
+	RevocationReason   *string             `json:"revocation_reason,omitempty"`
+	RevokedAt          *time.Time          `json:"revoked_at,omitempty"`
+	RevokedByMemberUid *openapi_types.UUID `json:"revoked_by_member_uid,omitempty"`
+
+	// ServiceAccountUid RFC 4122 universally unique identifier.
+	ServiceAccountUid Uuid                    `json:"service_account_uid"`
+	Status            ServiceCredentialStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// ServiceCredentialStatus defines model for ServiceCredential.Status.
+type ServiceCredentialStatus string
+
+// ServiceCredentialList One cursor-paginated page of credential history for one service account.
+type ServiceCredentialList struct {
+	Items      []ServiceCredential `json:"items"`
+	NextCursor *string             `json:"next_cursor"`
+}
+
+// ServiceCredentialSecret defines model for ServiceCredentialSecret.
+type ServiceCredentialSecret struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt          Timestamp           `json:"created_at"`
+	CreatedByMemberUid *openapi_types.UUID `json:"created_by_member_uid,omitempty"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt          Timestamp           `json:"expires_at"`
+	Fingerprint        string              `json:"fingerprint"`
+	LastUsedAt         *time.Time          `json:"last_used_at,omitempty"`
+	Name               string              `json:"name"`
+	Prefix             string              `json:"prefix"`
+	RevocationReason   *string             `json:"revocation_reason,omitempty"`
+	RevokedAt          *time.Time          `json:"revoked_at,omitempty"`
+	RevokedByMemberUid *openapi_types.UUID `json:"revoked_by_member_uid,omitempty"`
+	Secret             *string             `json:"secret,omitempty"`
+
+	// ServiceAccountUid RFC 4122 universally unique identifier.
+	ServiceAccountUid Uuid                          `json:"service_account_uid"`
+	Status            ServiceCredentialSecretStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// ServiceCredentialSecretStatus defines model for ServiceCredentialSecret.Status.
+type ServiceCredentialSecretStatus string
 
 // SessionReferenceRequest Opaque Project User session reference submitted by a relying-party backend.
 type SessionReferenceRequest struct {
@@ -642,6 +2107,193 @@ type StartLoginRequest struct {
 	Email openapi_types.Email `json:"email"`
 }
 
+// SupportCase Tenant-owned support workflow aggregate. Sensitive text is encrypted at rest; structured routing, lifecycle, counts, timestamps, and opaque identifiers remain queryable.
+type SupportCase struct {
+	AssigneeMemberUid *openapi_types.UUID `json:"assignee_member_uid,omitempty"`
+	AttachmentBytes   int64               `json:"attachment_bytes"`
+	AttachmentCount   int                 `json:"attachment_count"`
+
+	// Category Stable customer-intent category selected independently from operator priority and lifecycle state.
+	Category SupportCaseCategory `json:"category"`
+	ClosedAt *time.Time          `json:"closed_at,omitempty"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt         Timestamp `json:"created_at"`
+	DiagnosticConsent bool      `json:"diagnostic_consent"`
+
+	// Diagnostics Explicitly consented, allowlisted diagnostic snapshot. Current URLs prohibit credentials, query strings, and fragments so bearer material is not accidentally collected.
+	Diagnostics *SupportDiagnostics `json:"diagnostics,omitempty"`
+
+	// LastMessageAt UTC timestamp serialized in RFC 3339 date-time form.
+	LastMessageAt Timestamp `json:"last_message_at"`
+	MessageCount  int       `json:"message_count"`
+
+	// Priority Tenant-operator triage priority; Project service credentials cannot set or change it.
+	Priority   SupportCasePriority `json:"priority"`
+	ProjectUid *openapi_types.UUID `json:"project_uid,omitempty"`
+	Reference  string              `json:"reference"`
+
+	// Reporter Durable attribution for the reported customer identity or actual workload/human actor. A service account may submit content on behalf of a same-Project user while remaining separately audit-attributed.
+	Reporter       SupportReporter `json:"reporter"`
+	ResolvedAt     *time.Time      `json:"resolved_at,omitempty"`
+	RetentionUntil *time.Time      `json:"retention_until,omitempty"`
+
+	// Status Support workflow state. Open work may progress or wait for the customer; resolved and closed cases must be reopened before new content is accepted.
+	Status  SupportCaseStatus `json:"status"`
+	Subject string            `json:"subject"`
+
+	// TenantUid RFC 4122 universally unique identifier.
+	TenantUid Uuid `json:"tenant_uid"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
+}
+
+// SupportCaseAttachment Safe metadata for encrypted customer-supplied content. The SHA-256 digest supports incident coordination and integrity checks, not authentication.
+type SupportCaseAttachment struct {
+	ByteCount int `json:"byte_count"`
+
+	// CaseUid RFC 4122 universally unique identifier.
+	CaseUid Uuid `json:"case_uid"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+	Filename  string    `json:"filename"`
+	MediaType string    `json:"media_type"`
+	Sha256    string    `json:"sha256"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UploadedBy Durable attribution for the reported customer identity or actual workload/human actor. A service account may submit content on behalf of a same-Project user while remaining separately audit-attributed.
+	UploadedBy SupportReporter `json:"uploaded_by"`
+}
+
+// SupportCaseAttachmentPage Cursor-paginated encrypted-attachment metadata page.
+type SupportCaseAttachmentPage struct {
+	Items      []SupportCaseAttachment `json:"items"`
+	NextCursor *string                 `json:"next_cursor"`
+}
+
+// SupportCaseCategory Stable customer-intent category selected independently from operator priority and lifecycle state.
+type SupportCaseCategory string
+
+// SupportCaseEvent Immutable safe lifecycle fact. Payloads contain routing identifiers and before/after states only, never encrypted customer content or external identifiers.
+type SupportCaseEvent struct {
+	// Actor Durable attribution for the reported customer identity or actual workload/human actor. A service account may submit content on behalf of a same-Project user while remaining separately audit-attributed.
+	Actor SupportReporter `json:"actor"`
+
+	// CaseUid RFC 4122 universally unique identifier.
+	CaseUid Uuid `json:"case_uid"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp              `json:"created_at"`
+	Payload   map[string]interface{} `json:"payload"`
+	Type      string                 `json:"type"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid        Uuid                       `json:"uid"`
+	Visibility SupportCaseEventVisibility `json:"visibility"`
+}
+
+// SupportCaseEventVisibility defines model for SupportCaseEvent.Visibility.
+type SupportCaseEventVisibility string
+
+// SupportCaseEventPage Cursor-paginated append-only Support Case event page in ascending creation order.
+type SupportCaseEventPage struct {
+	Items      []SupportCaseEvent `json:"items"`
+	NextCursor *string            `json:"next_cursor"`
+}
+
+// SupportCaseExternalReference Decrypted operator-only external-record link. It is coordination metadata, not a source of authorization or case lifecycle state.
+type SupportCaseExternalReference struct {
+	// CaseUid RFC 4122 universally unique identifier.
+	CaseUid Uuid `json:"case_uid"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt          Timestamp           `json:"created_at"`
+	CreatedByMemberUid *openapi_types.UUID `json:"created_by_member_uid,omitempty"`
+	ExternalId         string              `json:"external_id"`
+	Label              *string             `json:"label,omitempty"`
+	Provider           string              `json:"provider"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid    `json:"uid"`
+	Url *string `json:"url,omitempty"`
+}
+
+// SupportCaseExternalReferencePage Cursor-paginated operator-only external-reference page.
+type SupportCaseExternalReferencePage struct {
+	Items      []SupportCaseExternalReference `json:"items"`
+	NextCursor *string                        `json:"next_cursor"`
+}
+
+// SupportCaseMessage Decrypted immutable case correspondence returned only after access and visibility checks.
+type SupportCaseMessage struct {
+	// Author Durable attribution for the reported customer identity or actual workload/human actor. A service account may submit content on behalf of a same-Project user while remaining separately audit-attributed.
+	Author SupportReporter `json:"author"`
+	Body   string          `json:"body"`
+
+	// CaseUid RFC 4122 universally unique identifier.
+	CaseUid Uuid `json:"case_uid"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid        Uuid                         `json:"uid"`
+	Visibility SupportCaseMessageVisibility `json:"visibility"`
+}
+
+// SupportCaseMessageVisibility defines model for SupportCaseMessage.Visibility.
+type SupportCaseMessageVisibility string
+
+// SupportCaseMessagePage Cursor-paginated immutable message page in ascending creation order.
+type SupportCaseMessagePage struct {
+	Items      []SupportCaseMessage `json:"items"`
+	NextCursor *string              `json:"next_cursor"`
+}
+
+// SupportCasePage Cursor-paginated Support Case inbox page.
+type SupportCasePage struct {
+	Items      []SupportCase `json:"items"`
+	NextCursor *string       `json:"next_cursor"`
+}
+
+// SupportCasePriority Tenant-operator triage priority; Project service credentials cannot set or change it.
+type SupportCasePriority string
+
+// SupportCaseStatus Support workflow state. Open work may progress or wait for the customer; resolved and closed cases must be reopened before new content is accepted.
+type SupportCaseStatus string
+
+// SupportDiagnostics Explicitly consented, allowlisted diagnostic snapshot. Current URLs prohibit credentials, query strings, and fragments so bearer material is not accidentally collected.
+type SupportDiagnostics struct {
+	ApplicationVersion *string `json:"application_version,omitempty"`
+	CurrentUrl         *string `json:"current_url,omitempty"`
+	Locale             *string `json:"locale,omitempty"`
+
+	// OccurredAt UTC timestamp serialized in RFC 3339 date-time form.
+	OccurredAt *Timestamp `json:"occurred_at,omitempty"`
+	Platform   *string    `json:"platform,omitempty"`
+	RequestId  *string    `json:"request_id,omitempty"`
+	Timezone   *string    `json:"timezone,omitempty"`
+}
+
+// SupportReporter Durable attribution for the reported customer identity or actual workload/human actor. A service account may submit content on behalf of a same-Project user while remaining separately audit-attributed.
+type SupportReporter struct {
+	Type SupportReporterType `json:"type"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// SupportReporterType defines model for SupportReporter.Type.
+type SupportReporterType string
+
 // Tenant Administrative owner boundary for Projects and Tenant Members.
 type Tenant struct {
 	Name string `json:"name"`
@@ -651,21 +2303,202 @@ type Tenant struct {
 	Uid Uuid `json:"uid"`
 }
 
-// TenantMember Human administrator authenticated to the management console.
-type TenantMember struct {
-	DisplayName string              `json:"display_name"`
-	Email       openapi_types.Email `json:"email"`
-	Role        TenantMemberRole    `json:"role"`
+// TenantInvitation Tenant membership invitation metadata. Expired is computed when a pending invitation passes its expiry timestamp.
+type TenantInvitation struct {
+	AcceptedAt *time.Time `json:"accepted_at,omitempty"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp           `json:"created_at"`
+	Email     openapi_types.Email `json:"email"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp              `json:"expires_at"`
+	RevokedAt *time.Time             `json:"revoked_at,omitempty"`
+	Role      TenantInvitationRole   `json:"role"`
+	Status    TenantInvitationStatus `json:"status"`
 
 	// Uid RFC 4122 universally unique identifier.
 	Uid Uuid `json:"uid"`
 }
 
-// TenantMemberRole defines model for TenantMember.Role.
-type TenantMemberRole string
+// TenantInvitationRole defines model for TenantInvitation.Role.
+type TenantInvitationRole string
+
+// TenantInvitationStatus defines model for TenantInvitation.Status.
+type TenantInvitationStatus string
+
+// TenantInvitationPage Cursor-paginated collection of Tenant invitation metadata without acceptance tokens.
+type TenantInvitationPage struct {
+	Items      []TenantInvitation `json:"items"`
+	NextCursor *string            `json:"next_cursor,omitempty"`
+}
+
+// TenantMember Human membership authenticated to the management console and authorized by its Tenant role.
+type TenantMember struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt     Timestamp           `json:"created_at"`
+	DisplayName   string              `json:"display_name"`
+	Email         openapi_types.Email `json:"email"`
+	EmailVerified bool                `json:"email_verified"`
+
+	// Role Tenant authorization role. Owner and admin manage membership; developer manages Projects, credentials, and Project Users; support may read and revoke Project User sessions; viewer is read-only.
+	Role   TenantRole         `json:"role"`
+	Status TenantMemberStatus `json:"status"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// TenantMemberStatus defines model for TenantMember.Status.
+type TenantMemberStatus string
+
+// TenantMemberLoginAttempt Five-minute management login resource with a client secret returned only in this creation response.
+type TenantMemberLoginAttempt struct {
+	ClientSecret *string `json:"client_secret,omitempty"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp `json:"expires_at"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// TenantMemberLoginAttemptRequest Email lookup used to create a deliberately non-enumerating management login attempt.
+type TenantMemberLoginAttemptRequest struct {
+	Email openapi_types.Email `json:"email"`
+}
+
+// TenantMemberLoginProgress Password-verification result that selects either existing-credential authentication or one-time first enrollment.
+type TenantMemberLoginProgress struct {
+	CredentialSetupRequired bool `json:"credential_setup_required"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp                       `json:"expires_at"`
+	Status    TenantMemberLoginProgressStatus `json:"status"`
+}
+
+// TenantMemberLoginProgressStatus defines model for TenantMemberLoginProgress.Status.
+type TenantMemberLoginProgressStatus string
+
+// TenantMemberPage Cursor-paginated collection of Tenant Members.
+type TenantMemberPage struct {
+	Items      []TenantMember `json:"items"`
+	NextCursor *string        `json:"next_cursor,omitempty"`
+}
+
+// TenantMemberSession Safe metadata for one active management-console session, including its current authentication assurance; no cookie or reusable reference is exposed.
+type TenantMemberSession struct {
+	// AuthenticationAssurance Bootstrap sessions may enroll the first management WebAuthn credential; strong sessions completed password plus user-verified WebAuthn authentication.
+	AuthenticationAssurance AuthenticationAssurance `json:"authentication_assurance"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+	Current   bool      `json:"current"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp `json:"expires_at"`
+
+	// LastSeenAt UTC timestamp serialized in RFC 3339 date-time form.
+	LastSeenAt Timestamp `json:"last_seen_at"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// TenantMemberSessionPage Cursor-paginated collection of active management-console sessions.
+type TenantMemberSessionPage struct {
+	Items      []TenantMemberSession `json:"items"`
+	NextCursor *string               `json:"next_cursor,omitempty"`
+}
+
+// TenantMemberWebAuthnCeremony Five-minute, single-use management WebAuthn ceremony and browser-compatible PublicKeyCredential options.
+type TenantMemberWebAuthnCeremony struct {
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp              `json:"expires_at"`
+	PublicKey map[string]interface{} `json:"public_key"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+}
+
+// TenantMemberWebAuthnCredential Safe, versioned metadata for one management passkey or attested security key. Authenticator identifiers, public keys, and counters remain internal.
+type TenantMemberWebAuthnCredential struct {
+	Attested bool `json:"attested"`
+
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt  Timestamp                          `json:"created_at"`
+	Kind       TenantMemberWebAuthnCredentialKind `json:"kind"`
+	LastUsedAt *time.Time                         `json:"last_used_at,omitempty"`
+	Name       string                             `json:"name"`
+
+	// Uid RFC 4122 universally unique identifier.
+	Uid Uuid `json:"uid"`
+
+	// UpdatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	UpdatedAt Timestamp `json:"updated_at"`
+	Version   int64     `json:"version"`
+}
+
+// TenantMemberWebAuthnCredentialKind defines model for TenantMemberWebAuthnCredential.Kind.
+type TenantMemberWebAuthnCredentialKind string
+
+// TenantMemberWebAuthnCredentialList Complete, bounded collection of the current Tenant Member's management WebAuthn credentials.
+type TenantMemberWebAuthnCredentialList struct {
+	Items []TenantMemberWebAuthnCredential `json:"items"`
+}
+
+// TenantMemberWebAuthnFinishRequest Browser-produced PublicKeyCredential result bound to the exact ceremony and requested authenticator category.
+type TenantMemberWebAuthnFinishRequest struct {
+	// CeremonyUid RFC 4122 universally unique identifier.
+	CeremonyUid Uuid                                  `json:"ceremony_uid"`
+	Credential  map[string]interface{}                `json:"credential"`
+	Mode        TenantMemberWebAuthnFinishRequestMode `json:"mode"`
+}
+
+// TenantMemberWebAuthnFinishRequestMode defines model for TenantMemberWebAuthnFinishRequest.Mode.
+type TenantMemberWebAuthnFinishRequestMode string
+
+// TenantMemberWebAuthnModeRequest WebAuthn assertion category selected for a password-verified management login.
+type TenantMemberWebAuthnModeRequest struct {
+	Mode TenantMemberWebAuthnModeRequestMode `json:"mode"`
+}
+
+// TenantMemberWebAuthnModeRequestMode defines model for TenantMemberWebAuthnModeRequest.Mode.
+type TenantMemberWebAuthnModeRequestMode string
+
+// TenantMemberWebAuthnRegistrationRequest Human label and authenticator category for a management WebAuthn credential.
+type TenantMemberWebAuthnRegistrationRequest struct {
+	Mode TenantMemberWebAuthnRegistrationRequestMode `json:"mode"`
+	Name string                                      `json:"name"`
+}
+
+// TenantMemberWebAuthnRegistrationRequestMode defines model for TenantMemberWebAuthnRegistrationRequest.Mode.
+type TenantMemberWebAuthnRegistrationRequestMode string
+
+// TenantRole Tenant authorization role. Owner and admin manage membership; developer manages Projects, credentials, and Project Users; support may read and revoke Project User sessions; viewer is read-only.
+type TenantRole string
 
 // Timestamp UTC timestamp serialized in RFC 3339 date-time form.
 type Timestamp = time.Time
+
+// UpdateOAuthApplicationGrantRequest Partial grant update; scope_uids replaces the complete non-empty scope assignment.
+type UpdateOAuthApplicationGrantRequest struct {
+	ScopeUids *[]Uuid                                   `json:"scope_uids,omitempty"`
+	Status    *UpdateOAuthApplicationGrantRequestStatus `json:"status,omitempty"`
+}
+
+// UpdateOAuthApplicationGrantRequestStatus defines model for UpdateOAuthApplicationGrantRequest.Status.
+type UpdateOAuthApplicationGrantRequestStatus string
+
+// UpdateOAuthApplicationRequest Partial OAuth Application update; at least one field is required and redirect_uris replaces the complete exact set.
+type UpdateOAuthApplicationRequest struct {
+	Name         *string                              `json:"name,omitempty"`
+	RedirectUris *[]string                            `json:"redirect_uris,omitempty"`
+	Status       *UpdateOAuthApplicationRequestStatus `json:"status,omitempty"`
+}
+
+// UpdateOAuthApplicationRequestStatus defines model for UpdateOAuthApplicationRequest.Status.
+type UpdateOAuthApplicationRequestStatus string
 
 // UpdateProjectRequest Partial Project configuration update; omitted fields remain unchanged.
 type UpdateProjectRequest struct {
@@ -692,6 +2525,68 @@ type UpdateProjectUserRequest struct {
 // UpdateProjectUserRequestStatus defines model for UpdateProjectUserRequest.Status.
 type UpdateProjectUserRequestStatus string
 
+// UpdateResourceServerRequest Partial Resource Server metadata update; the audience identifier is intentionally absent and immutable.
+type UpdateResourceServerRequest struct {
+	Name   *string                            `json:"name,omitempty"`
+	Status *UpdateResourceServerRequestStatus `json:"status,omitempty"`
+}
+
+// UpdateResourceServerRequestStatus defines model for UpdateResourceServerRequest.Status.
+type UpdateResourceServerRequestStatus string
+
+// UpdateResourceServerScopeRequest Partial scope metadata update; the protocol scope token is intentionally absent and immutable.
+type UpdateResourceServerScopeRequest struct {
+	Description *string                                 `json:"description,omitempty"`
+	DisplayName *string                                 `json:"display_name,omitempty"`
+	Status      *UpdateResourceServerScopeRequestStatus `json:"status,omitempty"`
+}
+
+// UpdateResourceServerScopeRequestStatus defines model for UpdateResourceServerScopeRequest.Status.
+type UpdateResourceServerScopeRequestStatus string
+
+// UpdateServiceAccountRequest Partial workload-identity update; omitted fields remain unchanged. Empty updates are rejected.
+type UpdateServiceAccountRequest struct {
+	Description *string `json:"description,omitempty"`
+	Name        *string `json:"name,omitempty"`
+
+	// Scopes Complete effective capability set read on every service-credential request. Values are stable public protocol names.
+	Scopes *ServiceAccountScopes              `json:"scopes,omitempty"`
+	Status *UpdateServiceAccountRequestStatus `json:"status,omitempty"`
+}
+
+// UpdateServiceAccountRequestStatus defines model for UpdateServiceAccountRequest.Status.
+type UpdateServiceAccountRequestStatus string
+
+// UpdateSupportCaseRequest Partial ETag-guarded case update. Console operators may use every field; service credentials may supply only status `open` or `closed`. Null assignee clears assignment.
+type UpdateSupportCaseRequest struct {
+	AssigneeMemberUid *openapi_types.UUID `json:"assignee_member_uid,omitempty"`
+
+	// Category Stable customer-intent category selected independently from operator priority and lifecycle state.
+	Category *SupportCaseCategory `json:"category,omitempty"`
+
+	// Priority Tenant-operator triage priority; Project service credentials cannot set or change it.
+	Priority *SupportCasePriority `json:"priority,omitempty"`
+
+	// Status Support workflow state. Open work may progress or wait for the customer; resolved and closed cases must be reopened before new content is accepted.
+	Status  *SupportCaseStatus `json:"status,omitempty"`
+	Subject *string            `json:"subject,omitempty"`
+}
+
+// UpdateTenantMemberRequest Partial membership authorization or status change; at least one property is required by the operation.
+type UpdateTenantMemberRequest struct {
+	// Role Tenant authorization role. Owner and admin manage membership; developer manages Projects, credentials, and Project Users; support may read and revoke Project User sessions; viewer is read-only.
+	Role   *TenantRole                      `json:"role,omitempty"`
+	Status *UpdateTenantMemberRequestStatus `json:"status,omitempty"`
+}
+
+// UpdateTenantMemberRequestStatus defines model for UpdateTenantMemberRequest.Status.
+type UpdateTenantMemberRequestStatus string
+
+// UpdateTenantMemberWebAuthnCredentialRequest Replacement human label for an enrolled management WebAuthn credential.
+type UpdateTenantMemberWebAuthnCredentialRequest struct {
+	Name string `json:"name"`
+}
+
 // Uuid RFC 4122 universally unique identifier.
 type Uuid = openapi_types.UUID
 
@@ -715,11 +2610,41 @@ type CredentialUid = Uuid
 // Cursor defines model for Cursor.
 type Cursor = string
 
-// KeyUid RFC 4122 universally unique identifier.
-type KeyUid = Uuid
+// IdempotencyKey defines model for IdempotencyKey.
+type IdempotencyKey = string
+
+// IfMatch defines model for IfMatch.
+type IfMatch = string
+
+// InvitationUid RFC 4122 universally unique identifier.
+type InvitationUid = Uuid
 
 // Limit defines model for Limit.
 type Limit = int
+
+// LoginAttemptClientSecret defines model for LoginAttemptClientSecret.
+type LoginAttemptClientSecret = string
+
+// LoginAttemptUid RFC 4122 universally unique identifier.
+type LoginAttemptUid = Uuid
+
+// MemberSessionUid RFC 4122 universally unique identifier.
+type MemberSessionUid = Uuid
+
+// MemberUid RFC 4122 universally unique identifier.
+type MemberUid = Uuid
+
+// OAuthApplicationGrantUid RFC 4122 universally unique identifier.
+type OAuthApplicationGrantUid = Uuid
+
+// OAuthApplicationUid RFC 4122 universally unique identifier.
+type OAuthApplicationUid = Uuid
+
+// OAuthClientSecretUid RFC 4122 universally unique identifier.
+type OAuthClientSecretUid = Uuid
+
+// OAuthConsentUid RFC 4122 universally unique identifier.
+type OAuthConsentUid = Uuid
 
 // Origin defines model for Origin.
 type Origin = string
@@ -736,17 +2661,92 @@ type ProjectSession = string
 // ProjectUid RFC 4122 universally unique identifier.
 type ProjectUid = Uuid
 
+// ResourceServerScopeUid RFC 4122 universally unique identifier.
+type ResourceServerScopeUid = Uuid
+
+// ResourceServerUid RFC 4122 universally unique identifier.
+type ResourceServerUid = Uuid
+
+// ServiceAccountUid RFC 4122 universally unique identifier.
+type ServiceAccountUid = Uuid
+
+// ServiceCredentialUid RFC 4122 universally unique identifier.
+type ServiceCredentialUid = Uuid
+
+// SupportCaseAttachmentUid RFC 4122 universally unique identifier.
+type SupportCaseAttachmentUid = Uuid
+
+// SupportCaseExternalReferenceUid RFC 4122 universally unique identifier.
+type SupportCaseExternalReferenceUid = Uuid
+
+// SupportCaseUid RFC 4122 universally unique identifier.
+type SupportCaseUid = Uuid
+
+// TenantMemberWebAuthnCredentialUid RFC 4122 universally unique identifier.
+type TenantMemberWebAuthnCredentialUid = Uuid
+
 // UserUid RFC 4122 universally unique identifier.
 type UserUid = Uuid
 
 // Error Stable machine-readable error code, safe message, optional details, and request correlation identifier.
 type Error = ErrorEnvelope
 
+// RateLimited Stable machine-readable error code, safe message, optional details, and request correlation identifier.
+type RateLimited = ErrorEnvelope
+
 // consoleSessionContextKey is the context key for consoleSession security scheme
 type consoleSessionContextKey string
 
-// projectApiKeyContextKey is the context key for projectApiKey security scheme
-type projectApiKeyContextKey string
+// oauthAccessTokenContextKey is the context key for oauthAccessToken security scheme
+type oauthAccessTokenContextKey string
+
+// oauthClientSecretContextKey is the context key for oauthClientSecret security scheme
+type oauthClientSecretContextKey string
+
+// serviceCredentialContextKey is the context key for serviceCredential security scheme
+type serviceCredentialContextKey string
+
+// AuthorizeOAuthApplicationParams defines parameters for AuthorizeOAuthApplication.
+type AuthorizeOAuthApplicationParams struct {
+	// ResponseType OAuth response type; only code is supported.
+	ResponseType AuthorizeOAuthApplicationParamsResponseType `form:"response_type" json:"response_type"`
+
+	// ClientId Opaque identifier of an active OAuth Application.
+	ClientId string `form:"client_id" json:"client_id"`
+
+	// RedirectUri Exact registered redirect URI; no wildcard or prefix matching occurs.
+	RedirectUri string `form:"redirect_uri" json:"redirect_uri"`
+
+	// Scope Space-delimited OpenID scopes; openid is required.
+	Scope string `form:"scope" json:"scope"`
+
+	// Resource Exact Resource Server identifier required when requesting delegated scopes. One authorization request targets at most one Resource Server.
+	Resource *string `form:"resource,omitempty" json:"resource,omitempty"`
+
+	// State Client-generated correlation and CSRF value returned unchanged.
+	State string `form:"state" json:"state"`
+
+	// Nonce Client-generated replay value embedded in the ID token.
+	Nonce string `form:"nonce" json:"nonce"`
+
+	// CodeChallenge Base64url SHA-256 digest of the PKCE verifier.
+	CodeChallenge string `form:"code_challenge" json:"code_challenge"`
+
+	// CodeChallengeMethod PKCE transformation; only S256 is accepted.
+	CodeChallengeMethod AuthorizeOAuthApplicationParamsCodeChallengeMethod `form:"code_challenge_method" json:"code_challenge_method"`
+
+	// ResponseMode Authorization response encoding; only query is supported.
+	ResponseMode *AuthorizeOAuthApplicationParamsResponseMode `form:"response_mode,omitempty" json:"response_mode,omitempty"`
+}
+
+// AuthorizeOAuthApplicationParamsResponseType defines parameters for AuthorizeOAuthApplication.
+type AuthorizeOAuthApplicationParamsResponseType string
+
+// AuthorizeOAuthApplicationParamsCodeChallengeMethod defines parameters for AuthorizeOAuthApplication.
+type AuthorizeOAuthApplicationParamsCodeChallengeMethod string
+
+// AuthorizeOAuthApplicationParamsResponseMode defines parameters for AuthorizeOAuthApplication.
+type AuthorizeOAuthApplicationParamsResponseMode string
 
 // ListTenantActivityParams defines parameters for ListTenantActivity.
 type ListTenantActivityParams struct {
@@ -757,22 +2757,244 @@ type ListTenantActivityParams struct {
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// LoginParams defines parameters for Login.
-type LoginParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
-}
-
 // LogoutParams defines parameters for Logout.
 type LogoutParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// ListTenantMemberSessionsParams defines parameters for ListTenantMemberSessions.
+type ListTenantMemberSessionsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// RevokeTenantMemberSessionParams defines parameters for RevokeTenantMemberSession.
+type RevokeTenantMemberSessionParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
 // SignupParams defines parameters for Signup.
 type SignupParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// CreateTenantEmailVerificationRequestParams defines parameters for CreateTenantEmailVerificationRequest.
+type CreateTenantEmailVerificationRequestParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// VerifyTenantMemberEmailParams defines parameters for VerifyTenantMemberEmail.
+type VerifyTenantMemberEmailParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// CreateTenantMemberLoginAttemptParams defines parameters for CreateTenantMemberLoginAttempt.
+type CreateTenantMemberLoginAttemptParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// VerifyTenantMemberLoginPasswordParams defines parameters for VerifyTenantMemberLoginPassword.
+type VerifyTenantMemberLoginPasswordParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// XComplicatedAuthLoginSecret One-time client secret returned only when the login attempt was created. Hold it in memory and exclude it from application, proxy, and analytics logs.
+	XComplicatedAuthLoginSecret LoginAttemptClientSecret `json:"X-ComplicatedAuth-Login-Secret"`
+}
+
+// CreateTenantMemberWebAuthnAuthenticationCeremonyParams defines parameters for CreateTenantMemberWebAuthnAuthenticationCeremony.
+type CreateTenantMemberWebAuthnAuthenticationCeremonyParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// XComplicatedAuthLoginSecret One-time client secret returned only when the login attempt was created. Hold it in memory and exclude it from application, proxy, and analytics logs.
+	XComplicatedAuthLoginSecret LoginAttemptClientSecret `json:"X-ComplicatedAuth-Login-Secret"`
+}
+
+// VerifyTenantMemberWebAuthnAuthenticationParams defines parameters for VerifyTenantMemberWebAuthnAuthentication.
+type VerifyTenantMemberWebAuthnAuthenticationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// XComplicatedAuthLoginSecret One-time client secret returned only when the login attempt was created. Hold it in memory and exclude it from application, proxy, and analytics logs.
+	XComplicatedAuthLoginSecret LoginAttemptClientSecret `json:"X-ComplicatedAuth-Login-Secret"`
+}
+
+// CreateInitialTenantMemberWebAuthnRegistrationCeremonyParams defines parameters for CreateInitialTenantMemberWebAuthnRegistrationCeremony.
+type CreateInitialTenantMemberWebAuthnRegistrationCeremonyParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// XComplicatedAuthLoginSecret One-time client secret returned only when the login attempt was created. Hold it in memory and exclude it from application, proxy, and analytics logs.
+	XComplicatedAuthLoginSecret LoginAttemptClientSecret `json:"X-ComplicatedAuth-Login-Secret"`
+}
+
+// VerifyInitialTenantMemberWebAuthnRegistrationParams defines parameters for VerifyInitialTenantMemberWebAuthnRegistration.
+type VerifyInitialTenantMemberWebAuthnRegistrationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// XComplicatedAuthLoginSecret One-time client secret returned only when the login attempt was created. Hold it in memory and exclude it from application, proxy, and analytics logs.
+	XComplicatedAuthLoginSecret LoginAttemptClientSecret `json:"X-ComplicatedAuth-Login-Secret"`
+}
+
+// CreateTenantPasswordResetRequestParams defines parameters for CreateTenantPasswordResetRequest.
+type CreateTenantPasswordResetRequestParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// ResetTenantMemberPasswordParams defines parameters for ResetTenantMemberPassword.
+type ResetTenantMemberPasswordParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// DeleteTenantMemberWebAuthnCredentialParams defines parameters for DeleteTenantMemberWebAuthnCredential.
+type DeleteTenantMemberWebAuthnCredentialParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// UpdateTenantMemberWebAuthnCredentialParams defines parameters for UpdateTenantMemberWebAuthnCredential.
+type UpdateTenantMemberWebAuthnCredentialParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// CreateTenantMemberWebAuthnRegistrationCeremonyParams defines parameters for CreateTenantMemberWebAuthnRegistrationCeremony.
+type CreateTenantMemberWebAuthnRegistrationCeremonyParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// VerifyTenantMemberWebAuthnRegistrationParams defines parameters for VerifyTenantMemberWebAuthnRegistration.
+type VerifyTenantMemberWebAuthnRegistrationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// ListOAuthApplicationsParams defines parameters for ListOAuthApplications.
+type ListOAuthApplicationsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateOAuthApplicationParams defines parameters for CreateOAuthApplication.
+type CreateOAuthApplicationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteOAuthApplicationParams defines parameters for DeleteOAuthApplication.
+type DeleteOAuthApplicationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// UpdateOAuthApplicationParams defines parameters for UpdateOAuthApplication.
+type UpdateOAuthApplicationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// CreateOAuthClientSecretParams defines parameters for CreateOAuthClientSecret.
+type CreateOAuthClientSecretParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RevokeOAuthClientSecretParams defines parameters for RevokeOAuthClientSecret.
+type RevokeOAuthClientSecretParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// CreateOAuthApplicationGrantParams defines parameters for CreateOAuthApplicationGrant.
+type CreateOAuthApplicationGrantParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteOAuthApplicationGrantParams defines parameters for DeleteOAuthApplicationGrant.
+type DeleteOAuthApplicationGrantParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// UpdateOAuthApplicationGrantParams defines parameters for UpdateOAuthApplicationGrant.
+type UpdateOAuthApplicationGrantParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// DecideOAuthAuthorizationRequestParams defines parameters for DecideOAuthAuthorizationRequest.
+type DecideOAuthAuthorizationRequestParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// InspectOAuthAuthorizationRequestParams defines parameters for InspectOAuthAuthorizationRequest.
+type InspectOAuthAuthorizationRequestParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// ListOAuthConsentsParams defines parameters for ListOAuthConsents.
+type ListOAuthConsentsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// RevokeOAuthConsentParams defines parameters for RevokeOAuthConsent.
+type RevokeOAuthConsentParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
 // ListProjectsParams defines parameters for ListProjects.
@@ -786,14 +3008,14 @@ type ListProjectsParams struct {
 
 // CreateProjectParams defines parameters for CreateProject.
 type CreateProjectParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
 // UpdateProjectParams defines parameters for UpdateProject.
 type UpdateProjectParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
 // ListProjectActivityParams defines parameters for ListProjectActivity.
@@ -805,40 +3027,16 @@ type ListProjectActivityParams struct {
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
-// CreateApiKeyParams defines parameters for CreateApiKey.
-type CreateApiKeyParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
-}
-
-// RevokeApiKeyParams defines parameters for RevokeApiKey.
-type RevokeApiKeyParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
-}
-
-// RenameApiKeyParams defines parameters for RenameApiKey.
-type RenameApiKeyParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
-}
-
-// RotateApiKeyParams defines parameters for RotateApiKey.
-type RotateApiKeyParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
-}
-
 // CreateOriginParams defines parameters for CreateOrigin.
 type CreateOriginParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
 // DeleteOriginParams defines parameters for DeleteOrigin.
 type DeleteOriginParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
 // DeleteProjectUserBiometricParams defines parameters for DeleteProjectUserBiometric.
@@ -901,6 +3099,66 @@ type VerifyProjectUserLoginPasswordParams struct {
 	XComplicatedAuthLogin ProjectLogin `json:"X-ComplicatedAuth-Login"`
 }
 
+// ListServiceAccountsParams defines parameters for ListServiceAccounts.
+type ListServiceAccountsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateServiceAccountParams defines parameters for CreateServiceAccount.
+type CreateServiceAccountParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteServiceAccountParams defines parameters for DeleteServiceAccount.
+type DeleteServiceAccountParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// UpdateServiceAccountParams defines parameters for UpdateServiceAccount.
+type UpdateServiceAccountParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// ListServiceCredentialsParams defines parameters for ListServiceCredentials.
+type ListServiceCredentialsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateServiceCredentialParams defines parameters for CreateServiceCredential.
+type CreateServiceCredentialParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RevokeServiceCredentialParams defines parameters for RevokeServiceCredential.
+type RevokeServiceCredentialParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
 // ListProjectUsersParams defines parameters for ListProjectUsers.
 type ListProjectUsersParams struct {
 	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
@@ -912,27 +3170,306 @@ type ListProjectUsersParams struct {
 
 // UpdateProjectUserParams defines parameters for UpdateProjectUser.
 type UpdateProjectUserParams struct {
-	// Origin Browser origin checked on state-changing management-console requests. Required when the request is authorized by a console session.
-	Origin *Origin `json:"Origin,omitempty"`
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
 }
 
-// LoginJSONRequestBody defines body for Login for application/json ContentType.
-type LoginJSONRequestBody = LoginRequest
+// ListResourceServersParams defines parameters for ListResourceServers.
+type ListResourceServersParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateResourceServerParams defines parameters for CreateResourceServer.
+type CreateResourceServerParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteResourceServerParams defines parameters for DeleteResourceServer.
+type DeleteResourceServerParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// UpdateResourceServerParams defines parameters for UpdateResourceServer.
+type UpdateResourceServerParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// CreateResourceServerScopeParams defines parameters for CreateResourceServerScope.
+type CreateResourceServerScopeParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteResourceServerScopeParams defines parameters for DeleteResourceServerScope.
+type DeleteResourceServerScopeParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// UpdateResourceServerScopeParams defines parameters for UpdateResourceServerScope.
+type UpdateResourceServerScopeParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// ListSupportCasesParams defines parameters for ListSupportCases.
+type ListSupportCasesParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Status Exact Support Case lifecycle filter.
+	Status *SupportCaseStatus `form:"status,omitempty" json:"status,omitempty"`
+
+	// Category Exact customer-intent category filter.
+	Category *SupportCaseCategory `form:"category,omitempty" json:"category,omitempty"`
+
+	// ProjectUid Console-only exact Project filter; service credentials are always confined to their own Project.
+	ProjectUid *Uuid `form:"project_uid,omitempty" json:"project_uid,omitempty"`
+}
+
+// CreateSupportCaseParams defines parameters for CreateSupportCase.
+type CreateSupportCaseParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// UpdateSupportCaseParams defines parameters for UpdateSupportCase.
+type UpdateSupportCaseParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IfMatch Strong ETag from the latest mutable resource representation. Weak, wildcard, multiple, and stale validators are rejected.
+	IfMatch IfMatch `json:"If-Match"`
+}
+
+// ListSupportCaseAttachmentsParams defines parameters for ListSupportCaseAttachments.
+type ListSupportCaseAttachmentsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateSupportCaseAttachmentParams defines parameters for CreateSupportCaseAttachment.
+type CreateSupportCaseAttachmentParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// ListSupportCaseEventsParams defines parameters for ListSupportCaseEvents.
+type ListSupportCaseEventsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// ListSupportCaseExternalReferencesParams defines parameters for ListSupportCaseExternalReferences.
+type ListSupportCaseExternalReferencesParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateSupportCaseExternalReferenceParams defines parameters for CreateSupportCaseExternalReference.
+type CreateSupportCaseExternalReferenceParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// DeleteSupportCaseExternalReferenceParams defines parameters for DeleteSupportCaseExternalReference.
+type DeleteSupportCaseExternalReferenceParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// ListSupportCaseMessagesParams defines parameters for ListSupportCaseMessages.
+type ListSupportCaseMessagesParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateSupportCaseMessageParams defines parameters for CreateSupportCaseMessage.
+type CreateSupportCaseMessageParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// ListTenantInvitationsParams defines parameters for ListTenantInvitations.
+type ListTenantInvitationsParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// CreateTenantInvitationParams defines parameters for CreateTenantInvitation.
+type CreateTenantInvitationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+
+	// IdempotencyKey Opaque caller-generated key for one logical mutation. Reuse it only with identical inputs for documented retries; maximum length is 255 characters.
+	IdempotencyKey IdempotencyKey `json:"Idempotency-Key"`
+}
+
+// RevokeTenantInvitationParams defines parameters for RevokeTenantInvitation.
+type RevokeTenantInvitationParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// AcceptTenantInvitationParams defines parameters for AcceptTenantInvitation.
+type AcceptTenantInvitationParams struct {
+	// Origin Exact management-console origin required for the unauthenticated browser submission.
+	Origin string `json:"Origin"`
+}
+
+// ListTenantMembersParams defines parameters for ListTenantMembers.
+type ListTenantMembersParams struct {
+	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
+	Cursor *Cursor `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// Limit Maximum number of records to return.
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
+// RemoveTenantMemberParams defines parameters for RemoveTenantMember.
+type RemoveTenantMemberParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// UpdateTenantMemberParams defines parameters for UpdateTenantMember.
+type UpdateTenantMemberParams struct {
+	// Origin Exact configured management-console origin required on every state-changing browser request, including unauthenticated authentication ceremonies.
+	Origin Origin `json:"Origin"`
+}
+
+// RevokeOAuthTokenFormdataRequestBody defines body for RevokeOAuthToken for application/x-www-form-urlencoded ContentType.
+type RevokeOAuthTokenFormdataRequestBody = OAuthRevocationRequest
+
+// ExchangeOAuthAuthorizationCodeFormdataRequestBody defines body for ExchangeOAuthAuthorizationCode for application/x-www-form-urlencoded ContentType.
+type ExchangeOAuthAuthorizationCodeFormdataRequestBody = OAuthTokenRequest
+
+// CreateAuthorizationDecisionJSONRequestBody defines body for CreateAuthorizationDecision for application/json ContentType.
+type CreateAuthorizationDecisionJSONRequestBody = CreateAuthorizationDecisionRequest
 
 // SignupJSONRequestBody defines body for Signup for application/json ContentType.
 type SignupJSONRequestBody = SignupRequest
+
+// CreateTenantEmailVerificationRequestJSONRequestBody defines body for CreateTenantEmailVerificationRequest for application/json ContentType.
+type CreateTenantEmailVerificationRequestJSONRequestBody = EmailVerificationRequest
+
+// VerifyTenantMemberEmailJSONRequestBody defines body for VerifyTenantMemberEmail for application/json ContentType.
+type VerifyTenantMemberEmailJSONRequestBody = CompleteEmailVerificationRequest
+
+// CreateTenantMemberLoginAttemptJSONRequestBody defines body for CreateTenantMemberLoginAttempt for application/json ContentType.
+type CreateTenantMemberLoginAttemptJSONRequestBody = TenantMemberLoginAttemptRequest
+
+// VerifyTenantMemberLoginPasswordJSONRequestBody defines body for VerifyTenantMemberLoginPassword for application/json ContentType.
+type VerifyTenantMemberLoginPasswordJSONRequestBody = PasswordRequest
+
+// CreateTenantMemberWebAuthnAuthenticationCeremonyJSONRequestBody defines body for CreateTenantMemberWebAuthnAuthenticationCeremony for application/json ContentType.
+type CreateTenantMemberWebAuthnAuthenticationCeremonyJSONRequestBody = TenantMemberWebAuthnModeRequest
+
+// VerifyTenantMemberWebAuthnAuthenticationJSONRequestBody defines body for VerifyTenantMemberWebAuthnAuthentication for application/json ContentType.
+type VerifyTenantMemberWebAuthnAuthenticationJSONRequestBody = TenantMemberWebAuthnFinishRequest
+
+// CreateInitialTenantMemberWebAuthnRegistrationCeremonyJSONRequestBody defines body for CreateInitialTenantMemberWebAuthnRegistrationCeremony for application/json ContentType.
+type CreateInitialTenantMemberWebAuthnRegistrationCeremonyJSONRequestBody = TenantMemberWebAuthnRegistrationRequest
+
+// VerifyInitialTenantMemberWebAuthnRegistrationJSONRequestBody defines body for VerifyInitialTenantMemberWebAuthnRegistration for application/json ContentType.
+type VerifyInitialTenantMemberWebAuthnRegistrationJSONRequestBody = TenantMemberWebAuthnFinishRequest
+
+// CreateTenantPasswordResetRequestJSONRequestBody defines body for CreateTenantPasswordResetRequest for application/json ContentType.
+type CreateTenantPasswordResetRequestJSONRequestBody = PasswordResetRequest
+
+// ResetTenantMemberPasswordJSONRequestBody defines body for ResetTenantMemberPassword for application/json ContentType.
+type ResetTenantMemberPasswordJSONRequestBody = CompletePasswordResetRequest
+
+// UpdateTenantMemberWebAuthnCredentialJSONRequestBody defines body for UpdateTenantMemberWebAuthnCredential for application/json ContentType.
+type UpdateTenantMemberWebAuthnCredentialJSONRequestBody = UpdateTenantMemberWebAuthnCredentialRequest
+
+// CreateTenantMemberWebAuthnRegistrationCeremonyJSONRequestBody defines body for CreateTenantMemberWebAuthnRegistrationCeremony for application/json ContentType.
+type CreateTenantMemberWebAuthnRegistrationCeremonyJSONRequestBody = TenantMemberWebAuthnRegistrationRequest
+
+// VerifyTenantMemberWebAuthnRegistrationJSONRequestBody defines body for VerifyTenantMemberWebAuthnRegistration for application/json ContentType.
+type VerifyTenantMemberWebAuthnRegistrationJSONRequestBody = TenantMemberWebAuthnFinishRequest
+
+// CreateOAuthApplicationJSONRequestBody defines body for CreateOAuthApplication for application/json ContentType.
+type CreateOAuthApplicationJSONRequestBody = CreateOAuthApplicationRequest
+
+// UpdateOAuthApplicationJSONRequestBody defines body for UpdateOAuthApplication for application/json ContentType.
+type UpdateOAuthApplicationJSONRequestBody = UpdateOAuthApplicationRequest
+
+// CreateOAuthClientSecretJSONRequestBody defines body for CreateOAuthClientSecret for application/json ContentType.
+type CreateOAuthClientSecretJSONRequestBody = CreateOAuthClientSecretRequest
+
+// CreateOAuthApplicationGrantJSONRequestBody defines body for CreateOAuthApplicationGrant for application/json ContentType.
+type CreateOAuthApplicationGrantJSONRequestBody = CreateOAuthApplicationGrantRequest
+
+// UpdateOAuthApplicationGrantJSONRequestBody defines body for UpdateOAuthApplicationGrant for application/json ContentType.
+type UpdateOAuthApplicationGrantJSONRequestBody = UpdateOAuthApplicationGrantRequest
+
+// DecideOAuthAuthorizationRequestJSONRequestBody defines body for DecideOAuthAuthorizationRequest for application/json ContentType.
+type DecideOAuthAuthorizationRequestJSONRequestBody = OAuthAuthorizationDecisionRequest
+
+// InspectOAuthAuthorizationRequestJSONRequestBody defines body for InspectOAuthAuthorizationRequest for application/json ContentType.
+type InspectOAuthAuthorizationRequestJSONRequestBody = InspectOAuthAuthorizationRequest
 
 // CreateProjectJSONRequestBody defines body for CreateProject for application/json ContentType.
 type CreateProjectJSONRequestBody = CreateProjectRequest
 
 // UpdateProjectJSONRequestBody defines body for UpdateProject for application/json ContentType.
 type UpdateProjectJSONRequestBody = UpdateProjectRequest
-
-// CreateApiKeyJSONRequestBody defines body for CreateApiKey for application/json ContentType.
-type CreateApiKeyJSONRequestBody = NameRequest
-
-// RenameApiKeyJSONRequestBody defines body for RenameApiKey for application/json ContentType.
-type RenameApiKeyJSONRequestBody = NameRequest
 
 // CreateOriginJSONRequestBody defines body for CreateOrigin for application/json ContentType.
 type CreateOriginJSONRequestBody = CreateOriginRequest
@@ -973,6 +3510,15 @@ type IntrospectProjectUserSessionJSONRequestBody = SessionReferenceRequest
 // RevokeProjectUserSessionJSONRequestBody defines body for RevokeProjectUserSession for application/json ContentType.
 type RevokeProjectUserSessionJSONRequestBody = SessionReferenceRequest
 
+// CreateServiceAccountJSONRequestBody defines body for CreateServiceAccount for application/json ContentType.
+type CreateServiceAccountJSONRequestBody = CreateServiceAccountRequest
+
+// UpdateServiceAccountJSONRequestBody defines body for UpdateServiceAccount for application/json ContentType.
+type UpdateServiceAccountJSONRequestBody = UpdateServiceAccountRequest
+
+// CreateServiceCredentialJSONRequestBody defines body for CreateServiceCredential for application/json ContentType.
+type CreateServiceCredentialJSONRequestBody = CreateServiceCredentialRequest
+
 // CreateProjectUserJSONRequestBody defines body for CreateProjectUser for application/json ContentType.
 type CreateProjectUserJSONRequestBody = CreateProjectUserRequest
 
@@ -982,29 +3528,185 @@ type UpdateProjectUserJSONRequestBody = UpdateProjectUserRequest
 // ReplaceProjectUserPasswordJSONRequestBody defines body for ReplaceProjectUserPassword for application/json ContentType.
 type ReplaceProjectUserPasswordJSONRequestBody = PasswordRequest
 
+// CreateResourceServerJSONRequestBody defines body for CreateResourceServer for application/json ContentType.
+type CreateResourceServerJSONRequestBody = CreateResourceServerRequest
+
+// UpdateResourceServerJSONRequestBody defines body for UpdateResourceServer for application/json ContentType.
+type UpdateResourceServerJSONRequestBody = UpdateResourceServerRequest
+
+// CreateResourceServerScopeJSONRequestBody defines body for CreateResourceServerScope for application/json ContentType.
+type CreateResourceServerScopeJSONRequestBody = CreateResourceServerScopeRequest
+
+// UpdateResourceServerScopeJSONRequestBody defines body for UpdateResourceServerScope for application/json ContentType.
+type UpdateResourceServerScopeJSONRequestBody = UpdateResourceServerScopeRequest
+
+// CreateSupportCaseJSONRequestBody defines body for CreateSupportCase for application/json ContentType.
+type CreateSupportCaseJSONRequestBody = CreateSupportCaseRequest
+
+// UpdateSupportCaseJSONRequestBody defines body for UpdateSupportCase for application/json ContentType.
+type UpdateSupportCaseJSONRequestBody = UpdateSupportCaseRequest
+
+// CreateSupportCaseAttachmentMultipartRequestBody defines body for CreateSupportCaseAttachment for multipart/form-data ContentType.
+type CreateSupportCaseAttachmentMultipartRequestBody = CreateSupportCaseAttachmentRequest
+
+// CreateSupportCaseExternalReferenceJSONRequestBody defines body for CreateSupportCaseExternalReference for application/json ContentType.
+type CreateSupportCaseExternalReferenceJSONRequestBody = CreateSupportCaseExternalReferenceRequest
+
+// CreateSupportCaseMessageJSONRequestBody defines body for CreateSupportCaseMessage for application/json ContentType.
+type CreateSupportCaseMessageJSONRequestBody = CreateSupportCaseMessageRequest
+
+// CreateTenantInvitationJSONRequestBody defines body for CreateTenantInvitation for application/json ContentType.
+type CreateTenantInvitationJSONRequestBody = CreateTenantInvitationRequest
+
+// AcceptTenantInvitationJSONRequestBody defines body for AcceptTenantInvitation for application/json ContentType.
+type AcceptTenantInvitationJSONRequestBody = AcceptTenantInvitationRequest
+
+// UpdateTenantMemberJSONRequestBody defines body for UpdateTenantMember for application/json ContentType.
+type UpdateTenantMemberJSONRequestBody = UpdateTenantMemberRequest
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Discover OpenID Provider metadata
+	// (GET /.well-known/openid-configuration)
+	GetOpenIdConfiguration(w http.ResponseWriter, r *http.Request)
 	// Check whether the API process is running
 	// (GET /health/live)
 	Live(w http.ResponseWriter, r *http.Request)
 	// Check whether the API and database are ready
 	// (GET /health/ready)
 	Ready(w http.ResponseWriter, r *http.Request)
+	// Begin OAuth authorization code flow
+	// (GET /oauth/authorize)
+	AuthorizeOAuthApplication(w http.ResponseWriter, r *http.Request, params AuthorizeOAuthApplicationParams)
+	// Get OAuth token verification keys
+	// (GET /oauth/jwks)
+	GetOAuthJwks(w http.ResponseWriter, r *http.Request)
+	// Revoke an OAuth access token
+	// (POST /oauth/revoke)
+	RevokeOAuthToken(w http.ResponseWriter, r *http.Request)
+	// Exchange an authorization code
+	// (POST /oauth/token)
+	ExchangeOAuthAuthorizationCode(w http.ResponseWriter, r *http.Request)
+	// Get claims for an authorized Tenant Member
+	// (GET /oauth/userinfo)
+	GetOAuthUserInfo(w http.ResponseWriter, r *http.Request)
 	// List Tenant activity
 	// (GET /v1/activity)
 	ListTenantActivity(w http.ResponseWriter, r *http.Request, params ListTenantActivityParams)
-	// Sign in a Tenant Member
-	// (POST /v1/console/auth/login)
-	Login(w http.ResponseWriter, r *http.Request, params LoginParams)
+	// Evaluate one resource operation
+	// (POST /v1/authorization/decisions)
+	CreateAuthorizationDecision(w http.ResponseWriter, r *http.Request)
 	// Sign out a Tenant Member
 	// (POST /v1/console/auth/logout)
 	Logout(w http.ResponseWriter, r *http.Request, params LogoutParams)
 	// Get the current console session
 	// (GET /v1/console/auth/session)
 	GetConsoleSession(w http.ResponseWriter, r *http.Request)
+	// List the current Tenant Member's sessions
+	// (GET /v1/console/auth/sessions)
+	ListTenantMemberSessions(w http.ResponseWriter, r *http.Request, params ListTenantMemberSessionsParams)
+	// Revoke one management-console session
+	// (DELETE /v1/console/auth/sessions/{session_uid})
+	RevokeTenantMemberSession(w http.ResponseWriter, r *http.Request, sessionUid MemberSessionUid, params RevokeTenantMemberSessionParams)
 	// Create a Tenant and its owner
 	// (POST /v1/console/auth/signup)
 	Signup(w http.ResponseWriter, r *http.Request, params SignupParams)
+	// Request Tenant Member email verification
+	// (POST /v1/console/email-verification-requests)
+	CreateTenantEmailVerificationRequest(w http.ResponseWriter, r *http.Request, params CreateTenantEmailVerificationRequestParams)
+	// Verify a Tenant Member email
+	// (POST /v1/console/email-verifications)
+	VerifyTenantMemberEmail(w http.ResponseWriter, r *http.Request, params VerifyTenantMemberEmailParams)
+	// Start a Tenant Member login
+	// (POST /v1/console/login-attempts)
+	CreateTenantMemberLoginAttempt(w http.ResponseWriter, r *http.Request, params CreateTenantMemberLoginAttemptParams)
+	// Verify the password factor
+	// (POST /v1/console/login-attempts/{login_attempt_uid}/password-verifications)
+	VerifyTenantMemberLoginPassword(w http.ResponseWriter, r *http.Request, loginAttemptUid LoginAttemptUid, params VerifyTenantMemberLoginPasswordParams)
+	// Start Tenant Member WebAuthn authentication
+	// (POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-authentication-ceremonies)
+	CreateTenantMemberWebAuthnAuthenticationCeremony(w http.ResponseWriter, r *http.Request, loginAttemptUid LoginAttemptUid, params CreateTenantMemberWebAuthnAuthenticationCeremonyParams)
+	// Complete Tenant Member WebAuthn authentication
+	// (POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-authentication-verifications)
+	VerifyTenantMemberWebAuthnAuthentication(w http.ResponseWriter, r *http.Request, loginAttemptUid LoginAttemptUid, params VerifyTenantMemberWebAuthnAuthenticationParams)
+	// Start initial Tenant Member WebAuthn enrollment
+	// (POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-registration-ceremonies)
+	CreateInitialTenantMemberWebAuthnRegistrationCeremony(w http.ResponseWriter, r *http.Request, loginAttemptUid LoginAttemptUid, params CreateInitialTenantMemberWebAuthnRegistrationCeremonyParams)
+	// Complete initial Tenant Member WebAuthn enrollment
+	// (POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-registration-verifications)
+	VerifyInitialTenantMemberWebAuthnRegistration(w http.ResponseWriter, r *http.Request, loginAttemptUid LoginAttemptUid, params VerifyInitialTenantMemberWebAuthnRegistrationParams)
+	// Request a Tenant Member password reset
+	// (POST /v1/console/password-reset-requests)
+	CreateTenantPasswordResetRequest(w http.ResponseWriter, r *http.Request, params CreateTenantPasswordResetRequestParams)
+	// Reset a Tenant Member password
+	// (POST /v1/console/password-resets)
+	ResetTenantMemberPassword(w http.ResponseWriter, r *http.Request, params ResetTenantMemberPasswordParams)
+	// List the current Tenant Member's WebAuthn credentials
+	// (GET /v1/console/webauthn-credentials)
+	ListTenantMemberWebAuthnCredentials(w http.ResponseWriter, r *http.Request)
+	// Delete a management WebAuthn credential
+	// (DELETE /v1/console/webauthn-credentials/{credential_uid})
+	DeleteTenantMemberWebAuthnCredential(w http.ResponseWriter, r *http.Request, credentialUid TenantMemberWebAuthnCredentialUid, params DeleteTenantMemberWebAuthnCredentialParams)
+	// Rename a management WebAuthn credential
+	// (PATCH /v1/console/webauthn-credentials/{credential_uid})
+	UpdateTenantMemberWebAuthnCredential(w http.ResponseWriter, r *http.Request, credentialUid TenantMemberWebAuthnCredentialUid, params UpdateTenantMemberWebAuthnCredentialParams)
+	// Start management WebAuthn credential enrollment
+	// (POST /v1/console/webauthn-registration-ceremonies)
+	CreateTenantMemberWebAuthnRegistrationCeremony(w http.ResponseWriter, r *http.Request, params CreateTenantMemberWebAuthnRegistrationCeremonyParams)
+	// Complete management WebAuthn credential enrollment
+	// (POST /v1/console/webauthn-registration-verifications)
+	VerifyTenantMemberWebAuthnRegistration(w http.ResponseWriter, r *http.Request, params VerifyTenantMemberWebAuthnRegistrationParams)
+	// List OAuth Applications
+	// (GET /v1/oauth/applications)
+	ListOAuthApplications(w http.ResponseWriter, r *http.Request, params ListOAuthApplicationsParams)
+	// Create an OAuth Application
+	// (POST /v1/oauth/applications)
+	CreateOAuthApplication(w http.ResponseWriter, r *http.Request, params CreateOAuthApplicationParams)
+	// Delete an OAuth Application
+	// (DELETE /v1/oauth/applications/{application_uid})
+	DeleteOAuthApplication(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, params DeleteOAuthApplicationParams)
+	// Get an OAuth Application
+	// (GET /v1/oauth/applications/{application_uid})
+	GetOAuthApplication(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid)
+	// Update an OAuth Application
+	// (PATCH /v1/oauth/applications/{application_uid})
+	UpdateOAuthApplication(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, params UpdateOAuthApplicationParams)
+	// List OAuth client secrets
+	// (GET /v1/oauth/applications/{application_uid}/client-secrets)
+	ListOAuthClientSecrets(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid)
+	// Create an OAuth client secret
+	// (POST /v1/oauth/applications/{application_uid}/client-secrets)
+	CreateOAuthClientSecret(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, params CreateOAuthClientSecretParams)
+	// Revoke an OAuth client secret
+	// (DELETE /v1/oauth/applications/{application_uid}/client-secrets/{secret_uid})
+	RevokeOAuthClientSecret(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, secretUid OAuthClientSecretUid, params RevokeOAuthClientSecretParams)
+	// List an OAuth Application's Resource Server grants
+	// (GET /v1/oauth/applications/{application_uid}/grants)
+	ListOAuthApplicationGrants(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid)
+	// Grant an OAuth Application access to a Resource Server
+	// (POST /v1/oauth/applications/{application_uid}/grants)
+	CreateOAuthApplicationGrant(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, params CreateOAuthApplicationGrantParams)
+	// Delete an OAuth Application grant
+	// (DELETE /v1/oauth/applications/{application_uid}/grants/{grant_uid})
+	DeleteOAuthApplicationGrant(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, grantUid OAuthApplicationGrantUid, params DeleteOAuthApplicationGrantParams)
+	// Get an OAuth Application grant
+	// (GET /v1/oauth/applications/{application_uid}/grants/{grant_uid})
+	GetOAuthApplicationGrant(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, grantUid OAuthApplicationGrantUid)
+	// Update an OAuth Application grant
+	// (PATCH /v1/oauth/applications/{application_uid}/grants/{grant_uid})
+	UpdateOAuthApplicationGrant(w http.ResponseWriter, r *http.Request, applicationUid OAuthApplicationUid, grantUid OAuthApplicationGrantUid, params UpdateOAuthApplicationGrantParams)
+	// Approve or deny an OAuth consent request
+	// (POST /v1/oauth/authorization-requests/decision)
+	DecideOAuthAuthorizationRequest(w http.ResponseWriter, r *http.Request, params DecideOAuthAuthorizationRequestParams)
+	// Inspect an OAuth consent request
+	// (POST /v1/oauth/authorization-requests/inspect)
+	InspectOAuthAuthorizationRequest(w http.ResponseWriter, r *http.Request, params InspectOAuthAuthorizationRequestParams)
+	// List the current Tenant Member's OAuth consents
+	// (GET /v1/oauth/consents)
+	ListOAuthConsents(w http.ResponseWriter, r *http.Request, params ListOAuthConsentsParams)
+	// Revoke the current Tenant Member's OAuth consent
+	// (DELETE /v1/oauth/consents/{consent_uid})
+	RevokeOAuthConsent(w http.ResponseWriter, r *http.Request, consentUid OAuthConsentUid, params RevokeOAuthConsentParams)
 	// List Projects
 	// (GET /v1/projects)
 	ListProjects(w http.ResponseWriter, r *http.Request, params ListProjectsParams)
@@ -1020,21 +3722,6 @@ type ServerInterface interface {
 	// List Project activity
 	// (GET /v1/projects/{project_uid}/activity)
 	ListProjectActivity(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params ListProjectActivityParams)
-	// List Project API keys
-	// (GET /v1/projects/{project_uid}/api-keys)
-	ListApiKeys(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
-	// Create a Project API key
-	// (POST /v1/projects/{project_uid}/api-keys)
-	CreateApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params CreateApiKeyParams)
-	// Revoke a Project API key
-	// (DELETE /v1/projects/{project_uid}/api-keys/{key_uid})
-	RevokeApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, keyUid KeyUid, params RevokeApiKeyParams)
-	// Rename a Project API key
-	// (PATCH /v1/projects/{project_uid}/api-keys/{key_uid})
-	RenameApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, keyUid KeyUid, params RenameApiKeyParams)
-	// Rotate a Project API key
-	// (POST /v1/projects/{project_uid}/api-keys/{key_uid}/rotate)
-	RotateApiKey(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, keyUid KeyUid, params RotateApiKeyParams)
 	// List allowed origins
 	// (GET /v1/projects/{project_uid}/origins)
 	ListOrigins(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
@@ -1083,6 +3770,33 @@ type ServerInterface interface {
 	// Revoke a Project User session
 	// (POST /v1/projects/{project_uid}/runtime/sessions/revoke)
 	RevokeProjectUserSession(w http.ResponseWriter, r *http.Request, projectUid ProjectUid)
+	// List Project service accounts
+	// (GET /v1/projects/{project_uid}/service-accounts)
+	ListServiceAccounts(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params ListServiceAccountsParams)
+	// Create a Project service account
+	// (POST /v1/projects/{project_uid}/service-accounts)
+	CreateServiceAccount(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params CreateServiceAccountParams)
+	// Delete a Project service account
+	// (DELETE /v1/projects/{project_uid}/service-accounts/{service_account_uid})
+	DeleteServiceAccount(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid, params DeleteServiceAccountParams)
+	// Get a Project service account
+	// (GET /v1/projects/{project_uid}/service-accounts/{service_account_uid})
+	GetServiceAccount(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid)
+	// Update a Project service account
+	// (PATCH /v1/projects/{project_uid}/service-accounts/{service_account_uid})
+	UpdateServiceAccount(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid, params UpdateServiceAccountParams)
+	// List service-account credentials
+	// (GET /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials)
+	ListServiceCredentials(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid, params ListServiceCredentialsParams)
+	// Issue a service-account credential
+	// (POST /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials)
+	CreateServiceCredential(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid, params CreateServiceCredentialParams)
+	// Revoke a service-account credential
+	// (DELETE /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials/{credential_uid})
+	RevokeServiceCredential(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid, credentialUid ServiceCredentialUid, params RevokeServiceCredentialParams)
+	// Get a service-account credential
+	// (GET /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials/{credential_uid})
+	GetServiceCredential(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, serviceAccountUid ServiceAccountUid, credentialUid ServiceCredentialUid)
 	// List Project Users
 	// (GET /v1/projects/{project_uid}/users)
 	ListProjectUsers(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, params ListProjectUsersParams)
@@ -1104,6 +3818,102 @@ type ServerInterface interface {
 	// Revoke all Project User sessions
 	// (POST /v1/projects/{project_uid}/users/{user_uid}/sessions/revoke)
 	RevokeProjectUserSessions(w http.ResponseWriter, r *http.Request, projectUid ProjectUid, userUid UserUid)
+	// List Resource Servers
+	// (GET /v1/resource-servers)
+	ListResourceServers(w http.ResponseWriter, r *http.Request, params ListResourceServersParams)
+	// Create a Resource Server
+	// (POST /v1/resource-servers)
+	CreateResourceServer(w http.ResponseWriter, r *http.Request, params CreateResourceServerParams)
+	// Delete a Resource Server
+	// (DELETE /v1/resource-servers/{resource_server_uid})
+	DeleteResourceServer(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, params DeleteResourceServerParams)
+	// Get a Resource Server
+	// (GET /v1/resource-servers/{resource_server_uid})
+	GetResourceServer(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid)
+	// Update a Resource Server
+	// (PATCH /v1/resource-servers/{resource_server_uid})
+	UpdateResourceServer(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, params UpdateResourceServerParams)
+	// List Resource Server scopes
+	// (GET /v1/resource-servers/{resource_server_uid}/scopes)
+	ListResourceServerScopes(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid)
+	// Create a Resource Server scope
+	// (POST /v1/resource-servers/{resource_server_uid}/scopes)
+	CreateResourceServerScope(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, params CreateResourceServerScopeParams)
+	// Delete a Resource Server scope
+	// (DELETE /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid})
+	DeleteResourceServerScope(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, scopeUid ResourceServerScopeUid, params DeleteResourceServerScopeParams)
+	// Get a Resource Server scope
+	// (GET /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid})
+	GetResourceServerScope(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, scopeUid ResourceServerScopeUid)
+	// Update a Resource Server scope
+	// (PATCH /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid})
+	UpdateResourceServerScope(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, scopeUid ResourceServerScopeUid, params UpdateResourceServerScopeParams)
+	// List accessible Support Cases
+	// (GET /v1/support/cases)
+	ListSupportCases(w http.ResponseWriter, r *http.Request, params ListSupportCasesParams)
+	// Create a Support Case
+	// (POST /v1/support/cases)
+	CreateSupportCase(w http.ResponseWriter, r *http.Request, params CreateSupportCaseParams)
+	// Get a Support Case
+	// (GET /v1/support/cases/{case_uid})
+	GetSupportCase(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid)
+	// Update a Support Case
+	// (PATCH /v1/support/cases/{case_uid})
+	UpdateSupportCase(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params UpdateSupportCaseParams)
+	// List Support Case attachments
+	// (GET /v1/support/cases/{case_uid}/attachments)
+	ListSupportCaseAttachments(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params ListSupportCaseAttachmentsParams)
+	// Upload a Support Case attachment
+	// (POST /v1/support/cases/{case_uid}/attachments)
+	CreateSupportCaseAttachment(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params CreateSupportCaseAttachmentParams)
+	// Get Support Case attachment metadata
+	// (GET /v1/support/cases/{case_uid}/attachments/{attachment_uid})
+	GetSupportCaseAttachment(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, attachmentUid SupportCaseAttachmentUid)
+	// Download Support Case attachment content
+	// (GET /v1/support/cases/{case_uid}/attachments/{attachment_uid}/content)
+	DownloadSupportCaseAttachment(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, attachmentUid SupportCaseAttachmentUid)
+	// List immutable Support Case events
+	// (GET /v1/support/cases/{case_uid}/events)
+	ListSupportCaseEvents(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params ListSupportCaseEventsParams)
+	// List Support Case external references
+	// (GET /v1/support/cases/{case_uid}/external-references)
+	ListSupportCaseExternalReferences(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params ListSupportCaseExternalReferencesParams)
+	// Link an external Support Case record
+	// (POST /v1/support/cases/{case_uid}/external-references)
+	CreateSupportCaseExternalReference(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params CreateSupportCaseExternalReferenceParams)
+	// Unlink an external Support Case record
+	// (DELETE /v1/support/cases/{case_uid}/external-references/{external_reference_uid})
+	DeleteSupportCaseExternalReference(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, externalReferenceUid SupportCaseExternalReferenceUid, params DeleteSupportCaseExternalReferenceParams)
+	// List Support Case messages
+	// (GET /v1/support/cases/{case_uid}/messages)
+	ListSupportCaseMessages(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params ListSupportCaseMessagesParams)
+	// Add a Support Case message
+	// (POST /v1/support/cases/{case_uid}/messages)
+	CreateSupportCaseMessage(w http.ResponseWriter, r *http.Request, caseUid SupportCaseUid, params CreateSupportCaseMessageParams)
+	// List Tenant invitations
+	// (GET /v1/tenant/invitations)
+	ListTenantInvitations(w http.ResponseWriter, r *http.Request, params ListTenantInvitationsParams)
+	// Invite a Tenant Member
+	// (POST /v1/tenant/invitations)
+	CreateTenantInvitation(w http.ResponseWriter, r *http.Request, params CreateTenantInvitationParams)
+	// Revoke a pending Tenant invitation
+	// (DELETE /v1/tenant/invitations/{invitation_uid})
+	RevokeTenantInvitation(w http.ResponseWriter, r *http.Request, invitationUid InvitationUid, params RevokeTenantInvitationParams)
+	// Accept a Tenant invitation
+	// (POST /v1/tenant/invitations/{invitation_uid}/accept)
+	AcceptTenantInvitation(w http.ResponseWriter, r *http.Request, invitationUid InvitationUid, params AcceptTenantInvitationParams)
+	// List Tenant Members
+	// (GET /v1/tenant/members)
+	ListTenantMembers(w http.ResponseWriter, r *http.Request, params ListTenantMembersParams)
+	// Remove a Tenant Member
+	// (DELETE /v1/tenant/members/{member_uid})
+	RemoveTenantMember(w http.ResponseWriter, r *http.Request, memberUid MemberUid, params RemoveTenantMemberParams)
+	// Get a Tenant Member
+	// (GET /v1/tenant/members/{member_uid})
+	GetTenantMember(w http.ResponseWriter, r *http.Request, memberUid MemberUid)
+	// Update a Tenant Member's role or status
+	// (PATCH /v1/tenant/members/{member_uid})
+	UpdateTenantMember(w http.ResponseWriter, r *http.Request, memberUid MemberUid, params UpdateTenantMemberParams)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -1114,6 +3924,20 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// GetOpenIdConfiguration operation middleware
+func (siw *ServerInterfaceWrapper) GetOpenIdConfiguration(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOpenIdConfiguration(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
 
 // Live operation middleware
 func (siw *ServerInterfaceWrapper) Live(w http.ResponseWriter, r *http.Request) {
@@ -1134,6 +3958,230 @@ func (siw *ServerInterfaceWrapper) Ready(w http.ResponseWriter, r *http.Request)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Ready(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// AuthorizeOAuthApplication operation middleware
+func (siw *ServerInterfaceWrapper) AuthorizeOAuthApplication(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params AuthorizeOAuthApplicationParams
+
+	// ------------- Required query parameter "response_type" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "response_type", r.URL.Query(), &params.ResponseType, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "response_type"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "response_type", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "client_id" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "client_id", r.URL.Query(), &params.ClientId, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "client_id"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "client_id", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "redirect_uri" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "redirect_uri", r.URL.Query(), &params.RedirectUri, runtime.BindQueryParameterOptions{Type: "string", Format: "uri"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "redirect_uri"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "redirect_uri", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "scope" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "scope", r.URL.Query(), &params.Scope, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "scope"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "resource" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "resource", r.URL.Query(), &params.Resource, runtime.BindQueryParameterOptions{Type: "string", Format: "uri"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "resource"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "state" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "state", r.URL.Query(), &params.State, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "state"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "state", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "nonce" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "nonce", r.URL.Query(), &params.Nonce, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "nonce"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "nonce", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "code_challenge" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "code_challenge", r.URL.Query(), &params.CodeChallenge, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "code_challenge"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "code_challenge", Err: err})
+		}
+		return
+	}
+
+	// ------------- Required query parameter "code_challenge_method" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, true, "code_challenge_method", r.URL.Query(), &params.CodeChallengeMethod, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "code_challenge_method"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "code_challenge_method", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "response_mode" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "response_mode", r.URL.Query(), &params.ResponseMode, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "response_mode"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "response_mode", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.AuthorizeOAuthApplication(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetOAuthJwks operation middleware
+func (siw *ServerInterfaceWrapper) GetOAuthJwks(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOAuthJwks(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeOAuthToken operation middleware
+func (siw *ServerInterfaceWrapper) RevokeOAuthToken(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, OauthClientSecretScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeOAuthToken(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ExchangeOAuthAuthorizationCode operation middleware
+func (siw *ServerInterfaceWrapper) ExchangeOAuthAuthorizationCode(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, OauthClientSecretScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ExchangeOAuthAuthorizationCode(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetOAuthUserInfo operation middleware
+func (siw *ServerInterfaceWrapper) GetOAuthUserInfo(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, OauthAccessTokenScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOAuthUserInfo(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1195,38 +4243,17 @@ func (siw *ServerInterfaceWrapper) ListTenantActivity(w http.ResponseWriter, r *
 	handler.ServeHTTP(w, r)
 }
 
-// Login operation middleware
-func (siw *ServerInterfaceWrapper) Login(w http.ResponseWriter, r *http.Request) {
+// CreateAuthorizationDecision operation middleware
+func (siw *ServerInterfaceWrapper) CreateAuthorizationDecision(w http.ResponseWriter, r *http.Request) {
 
-	var err error
-	_ = err
+	ctx := r.Context()
 
-	// Parameter object where we will unmarshal all parameters from the context
-	var params LoginParams
+	ctx = context.WithValue(ctx, OauthAccessTokenScopes, []string{})
 
-	headers := r.Header
-
-	// ------------- Optional header parameter "Origin" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
-		var Origin Origin
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
-			return
-		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
-		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
-			return
-		}
-
-		params.Origin = &Origin
-
-	}
+	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.Login(w, r, params)
+		siw.Handler.CreateAuthorizationDecision(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1253,7 +4280,7 @@ func (siw *ServerInterfaceWrapper) Logout(w http.ResponseWriter, r *http.Request
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -1262,14 +4289,18 @@ func (siw *ServerInterfaceWrapper) Logout(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1303,6 +4334,118 @@ func (siw *ServerInterfaceWrapper) GetConsoleSession(w http.ResponseWriter, r *h
 	handler.ServeHTTP(w, r)
 }
 
+// ListTenantMemberSessions operation middleware
+func (siw *ServerInterfaceWrapper) ListTenantMemberSessions(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTenantMemberSessionsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListTenantMemberSessions(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeTenantMemberSession operation middleware
+func (siw *ServerInterfaceWrapper) RevokeTenantMemberSession(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "session_uid" -------------
+	var sessionUid MemberSessionUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "session_uid", r.PathValue("session_uid"), &sessionUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "session_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeTenantMemberSessionParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeTenantMemberSession(w, r, sessionUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // Signup operation middleware
 func (siw *ServerInterfaceWrapper) Signup(w http.ResponseWriter, r *http.Request) {
 
@@ -1314,7 +4457,7 @@ func (siw *ServerInterfaceWrapper) Signup(w http.ResponseWriter, r *http.Request
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -1323,18 +4466,2005 @@ func (siw *ServerInterfaceWrapper) Signup(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.Signup(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenantEmailVerificationRequest operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenantEmailVerificationRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateTenantEmailVerificationRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenantEmailVerificationRequest(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyTenantMemberEmail operation middleware
+func (siw *ServerInterfaceWrapper) VerifyTenantMemberEmail(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyTenantMemberEmailParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyTenantMemberEmail(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenantMemberLoginAttempt operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenantMemberLoginAttempt(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateTenantMemberLoginAttemptParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenantMemberLoginAttempt(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyTenantMemberLoginPassword operation middleware
+func (siw *ServerInterfaceWrapper) VerifyTenantMemberLoginPassword(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "login_attempt_uid" -------------
+	var loginAttemptUid LoginAttemptUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "login_attempt_uid", r.PathValue("login_attempt_uid"), &loginAttemptUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "login_attempt_uid", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyTenantMemberLoginPasswordParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login-Secret" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login-Secret")]; found {
+		var XComplicatedAuthLoginSecret LoginAttemptClientSecret
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login-Secret", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login-Secret", valueList[0], &XComplicatedAuthLoginSecret, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLoginSecret = XComplicatedAuthLoginSecret
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login-Secret is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyTenantMemberLoginPassword(w, r, loginAttemptUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenantMemberWebAuthnAuthenticationCeremony operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenantMemberWebAuthnAuthenticationCeremony(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "login_attempt_uid" -------------
+	var loginAttemptUid LoginAttemptUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "login_attempt_uid", r.PathValue("login_attempt_uid"), &loginAttemptUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "login_attempt_uid", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateTenantMemberWebAuthnAuthenticationCeremonyParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login-Secret" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login-Secret")]; found {
+		var XComplicatedAuthLoginSecret LoginAttemptClientSecret
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login-Secret", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login-Secret", valueList[0], &XComplicatedAuthLoginSecret, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLoginSecret = XComplicatedAuthLoginSecret
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login-Secret is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenantMemberWebAuthnAuthenticationCeremony(w, r, loginAttemptUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyTenantMemberWebAuthnAuthentication operation middleware
+func (siw *ServerInterfaceWrapper) VerifyTenantMemberWebAuthnAuthentication(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "login_attempt_uid" -------------
+	var loginAttemptUid LoginAttemptUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "login_attempt_uid", r.PathValue("login_attempt_uid"), &loginAttemptUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "login_attempt_uid", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyTenantMemberWebAuthnAuthenticationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login-Secret" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login-Secret")]; found {
+		var XComplicatedAuthLoginSecret LoginAttemptClientSecret
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login-Secret", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login-Secret", valueList[0], &XComplicatedAuthLoginSecret, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLoginSecret = XComplicatedAuthLoginSecret
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login-Secret is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyTenantMemberWebAuthnAuthentication(w, r, loginAttemptUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateInitialTenantMemberWebAuthnRegistrationCeremony operation middleware
+func (siw *ServerInterfaceWrapper) CreateInitialTenantMemberWebAuthnRegistrationCeremony(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "login_attempt_uid" -------------
+	var loginAttemptUid LoginAttemptUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "login_attempt_uid", r.PathValue("login_attempt_uid"), &loginAttemptUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "login_attempt_uid", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateInitialTenantMemberWebAuthnRegistrationCeremonyParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login-Secret" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login-Secret")]; found {
+		var XComplicatedAuthLoginSecret LoginAttemptClientSecret
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login-Secret", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login-Secret", valueList[0], &XComplicatedAuthLoginSecret, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLoginSecret = XComplicatedAuthLoginSecret
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login-Secret is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateInitialTenantMemberWebAuthnRegistrationCeremony(w, r, loginAttemptUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyInitialTenantMemberWebAuthnRegistration operation middleware
+func (siw *ServerInterfaceWrapper) VerifyInitialTenantMemberWebAuthnRegistration(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "login_attempt_uid" -------------
+	var loginAttemptUid LoginAttemptUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "login_attempt_uid", r.PathValue("login_attempt_uid"), &loginAttemptUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "login_attempt_uid", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyInitialTenantMemberWebAuthnRegistrationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-ComplicatedAuth-Login-Secret" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-ComplicatedAuth-Login-Secret")]; found {
+		var XComplicatedAuthLoginSecret LoginAttemptClientSecret
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-ComplicatedAuth-Login-Secret", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-ComplicatedAuth-Login-Secret", valueList[0], &XComplicatedAuthLoginSecret, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+			return
+		}
+
+		params.XComplicatedAuthLoginSecret = XComplicatedAuthLoginSecret
+
+	} else {
+		err := fmt.Errorf("Header parameter X-ComplicatedAuth-Login-Secret is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-ComplicatedAuth-Login-Secret", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyInitialTenantMemberWebAuthnRegistration(w, r, loginAttemptUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenantPasswordResetRequest operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenantPasswordResetRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateTenantPasswordResetRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenantPasswordResetRequest(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ResetTenantMemberPassword operation middleware
+func (siw *ServerInterfaceWrapper) ResetTenantMemberPassword(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ResetTenantMemberPasswordParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ResetTenantMemberPassword(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListTenantMemberWebAuthnCredentials operation middleware
+func (siw *ServerInterfaceWrapper) ListTenantMemberWebAuthnCredentials(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListTenantMemberWebAuthnCredentials(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteTenantMemberWebAuthnCredential operation middleware
+func (siw *ServerInterfaceWrapper) DeleteTenantMemberWebAuthnCredential(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "credential_uid" -------------
+	var credentialUid TenantMemberWebAuthnCredentialUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "credential_uid", r.PathValue("credential_uid"), &credentialUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "credential_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteTenantMemberWebAuthnCredentialParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteTenantMemberWebAuthnCredential(w, r, credentialUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateTenantMemberWebAuthnCredential operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTenantMemberWebAuthnCredential(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "credential_uid" -------------
+	var credentialUid TenantMemberWebAuthnCredentialUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "credential_uid", r.PathValue("credential_uid"), &credentialUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "credential_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateTenantMemberWebAuthnCredentialParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTenantMemberWebAuthnCredential(w, r, credentialUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenantMemberWebAuthnRegistrationCeremony operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenantMemberWebAuthnRegistrationCeremony(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateTenantMemberWebAuthnRegistrationCeremonyParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenantMemberWebAuthnRegistrationCeremony(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// VerifyTenantMemberWebAuthnRegistration operation middleware
+func (siw *ServerInterfaceWrapper) VerifyTenantMemberWebAuthnRegistration(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params VerifyTenantMemberWebAuthnRegistrationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyTenantMemberWebAuthnRegistration(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListOAuthApplications operation middleware
+func (siw *ServerInterfaceWrapper) ListOAuthApplications(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListOAuthApplicationsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListOAuthApplications(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateOAuthApplication operation middleware
+func (siw *ServerInterfaceWrapper) CreateOAuthApplication(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateOAuthApplicationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateOAuthApplication(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteOAuthApplication operation middleware
+func (siw *ServerInterfaceWrapper) DeleteOAuthApplication(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteOAuthApplicationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteOAuthApplication(w, r, applicationUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetOAuthApplication operation middleware
+func (siw *ServerInterfaceWrapper) GetOAuthApplication(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOAuthApplication(w, r, applicationUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateOAuthApplication operation middleware
+func (siw *ServerInterfaceWrapper) UpdateOAuthApplication(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateOAuthApplicationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateOAuthApplication(w, r, applicationUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListOAuthClientSecrets operation middleware
+func (siw *ServerInterfaceWrapper) ListOAuthClientSecrets(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListOAuthClientSecrets(w, r, applicationUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateOAuthClientSecret operation middleware
+func (siw *ServerInterfaceWrapper) CreateOAuthClientSecret(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateOAuthClientSecretParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateOAuthClientSecret(w, r, applicationUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeOAuthClientSecret operation middleware
+func (siw *ServerInterfaceWrapper) RevokeOAuthClientSecret(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "secret_uid" -------------
+	var secretUid OAuthClientSecretUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "secret_uid", r.PathValue("secret_uid"), &secretUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "secret_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeOAuthClientSecretParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeOAuthClientSecret(w, r, applicationUid, secretUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListOAuthApplicationGrants operation middleware
+func (siw *ServerInterfaceWrapper) ListOAuthApplicationGrants(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListOAuthApplicationGrants(w, r, applicationUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateOAuthApplicationGrant operation middleware
+func (siw *ServerInterfaceWrapper) CreateOAuthApplicationGrant(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateOAuthApplicationGrantParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateOAuthApplicationGrant(w, r, applicationUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteOAuthApplicationGrant operation middleware
+func (siw *ServerInterfaceWrapper) DeleteOAuthApplicationGrant(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "grant_uid" -------------
+	var grantUid OAuthApplicationGrantUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "grant_uid", r.PathValue("grant_uid"), &grantUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "grant_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteOAuthApplicationGrantParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteOAuthApplicationGrant(w, r, applicationUid, grantUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetOAuthApplicationGrant operation middleware
+func (siw *ServerInterfaceWrapper) GetOAuthApplicationGrant(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "grant_uid" -------------
+	var grantUid OAuthApplicationGrantUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "grant_uid", r.PathValue("grant_uid"), &grantUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "grant_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetOAuthApplicationGrant(w, r, applicationUid, grantUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateOAuthApplicationGrant operation middleware
+func (siw *ServerInterfaceWrapper) UpdateOAuthApplicationGrant(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "application_uid" -------------
+	var applicationUid OAuthApplicationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "application_uid", r.PathValue("application_uid"), &applicationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "application_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "grant_uid" -------------
+	var grantUid OAuthApplicationGrantUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "grant_uid", r.PathValue("grant_uid"), &grantUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "grant_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateOAuthApplicationGrantParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateOAuthApplicationGrant(w, r, applicationUid, grantUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DecideOAuthAuthorizationRequest operation middleware
+func (siw *ServerInterfaceWrapper) DecideOAuthAuthorizationRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DecideOAuthAuthorizationRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DecideOAuthAuthorizationRequest(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// InspectOAuthAuthorizationRequest operation middleware
+func (siw *ServerInterfaceWrapper) InspectOAuthAuthorizationRequest(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params InspectOAuthAuthorizationRequestParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.InspectOAuthAuthorizationRequest(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListOAuthConsents operation middleware
+func (siw *ServerInterfaceWrapper) ListOAuthConsents(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListOAuthConsentsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListOAuthConsents(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeOAuthConsent operation middleware
+func (siw *ServerInterfaceWrapper) RevokeOAuthConsent(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "consent_uid" -------------
+	var consentUid OAuthConsentUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "consent_uid", r.PathValue("consent_uid"), &consentUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "consent_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeOAuthConsentParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeOAuthConsent(w, r, consentUid, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1413,7 +6543,7 @@ func (siw *ServerInterfaceWrapper) CreateProject(w http.ResponseWriter, r *http.
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -1422,14 +6552,18 @@ func (siw *ServerInterfaceWrapper) CreateProject(w http.ResponseWriter, r *http.
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1501,7 +6635,7 @@ func (siw *ServerInterfaceWrapper) UpdateProject(w http.ResponseWriter, r *http.
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -1510,14 +6644,18 @@ func (siw *ServerInterfaceWrapper) UpdateProject(w http.ResponseWriter, r *http.
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1592,289 +6730,6 @@ func (siw *ServerInterfaceWrapper) ListProjectActivity(w http.ResponseWriter, r 
 	handler.ServeHTTP(w, r)
 }
 
-// ListApiKeys operation middleware
-func (siw *ServerInterfaceWrapper) ListApiKeys(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.ListApiKeys(w, r, projectUid)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// CreateApiKey operation middleware
-func (siw *ServerInterfaceWrapper) CreateApiKey(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params CreateApiKeyParams
-
-	headers := r.Header
-
-	// ------------- Optional header parameter "Origin" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
-		var Origin Origin
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
-			return
-		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
-		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
-			return
-		}
-
-		params.Origin = &Origin
-
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.CreateApiKey(w, r, projectUid, params)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// RevokeApiKey operation middleware
-func (siw *ServerInterfaceWrapper) RevokeApiKey(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "key_uid" -------------
-	var keyUid KeyUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "key_uid", r.PathValue("key_uid"), &keyUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params RevokeApiKeyParams
-
-	headers := r.Header
-
-	// ------------- Optional header parameter "Origin" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
-		var Origin Origin
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
-			return
-		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
-		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
-			return
-		}
-
-		params.Origin = &Origin
-
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.RevokeApiKey(w, r, projectUid, keyUid, params)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// RenameApiKey operation middleware
-func (siw *ServerInterfaceWrapper) RenameApiKey(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "key_uid" -------------
-	var keyUid KeyUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "key_uid", r.PathValue("key_uid"), &keyUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params RenameApiKeyParams
-
-	headers := r.Header
-
-	// ------------- Optional header parameter "Origin" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
-		var Origin Origin
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
-			return
-		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
-		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
-			return
-		}
-
-		params.Origin = &Origin
-
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.RenameApiKey(w, r, projectUid, keyUid, params)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
-// RotateApiKey operation middleware
-func (siw *ServerInterfaceWrapper) RotateApiKey(w http.ResponseWriter, r *http.Request) {
-
-	var err error
-	_ = err
-
-	// ------------- Path parameter "project_uid" -------------
-	var projectUid ProjectUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
-		return
-	}
-
-	// ------------- Path parameter "key_uid" -------------
-	var keyUid KeyUid
-
-	err = runtime.BindStyledParameterWithOptions("simple", "key_uid", r.PathValue("key_uid"), &keyUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "key_uid", Err: err})
-		return
-	}
-
-	ctx := r.Context()
-
-	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
-
-	r = r.WithContext(ctx)
-
-	// Parameter object where we will unmarshal all parameters from the context
-	var params RotateApiKeyParams
-
-	headers := r.Header
-
-	// ------------- Optional header parameter "Origin" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
-		var Origin Origin
-		n := len(valueList)
-		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
-			return
-		}
-
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
-		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
-			return
-		}
-
-		params.Origin = &Origin
-
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.RotateApiKey(w, r, projectUid, keyUid, params)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r)
-}
-
 // ListOrigins operation middleware
 func (siw *ServerInterfaceWrapper) ListOrigins(w http.ResponseWriter, r *http.Request) {
 
@@ -1933,7 +6788,7 @@ func (siw *ServerInterfaceWrapper) CreateOrigin(w http.ResponseWriter, r *http.R
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -1942,14 +6797,18 @@ func (siw *ServerInterfaceWrapper) CreateOrigin(w http.ResponseWriter, r *http.R
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -1998,7 +6857,7 @@ func (siw *ServerInterfaceWrapper) DeleteOrigin(w http.ResponseWriter, r *http.R
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -2007,14 +6866,18 @@ func (siw *ServerInterfaceWrapper) DeleteOrigin(w http.ResponseWriter, r *http.R
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -2045,7 +6908,7 @@ func (siw *ServerInterfaceWrapper) DeleteProjectUserBiometric(w http.ResponseWri
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2105,7 +6968,7 @@ func (siw *ServerInterfaceWrapper) EnrollProjectUserBiometric(w http.ResponseWri
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2165,7 +7028,7 @@ func (siw *ServerInterfaceWrapper) BeginFidoEnrollment(w http.ResponseWriter, r 
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2225,7 +7088,7 @@ func (siw *ServerInterfaceWrapper) FinishFidoEnrollment(w http.ResponseWriter, r
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2285,7 +7148,7 @@ func (siw *ServerInterfaceWrapper) VerifyProjectUserBiometricLogin(w http.Respon
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2345,7 +7208,7 @@ func (siw *ServerInterfaceWrapper) BeginFirstFidoEnrollment(w http.ResponseWrite
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2405,7 +7268,7 @@ func (siw *ServerInterfaceWrapper) FinishFirstFidoEnrollment(w http.ResponseWrit
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2465,7 +7328,7 @@ func (siw *ServerInterfaceWrapper) BeginProjectUserFidoLogin(w http.ResponseWrit
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2525,7 +7388,7 @@ func (siw *ServerInterfaceWrapper) FinishProjectUserFidoLogin(w http.ResponseWri
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2585,7 +7448,7 @@ func (siw *ServerInterfaceWrapper) VerifyProjectUserLoginPassword(w http.Respons
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2645,7 +7508,7 @@ func (siw *ServerInterfaceWrapper) StartProjectUserLogin(w http.ResponseWriter, 
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2677,7 +7540,7 @@ func (siw *ServerInterfaceWrapper) IntrospectProjectUserSession(w http.ResponseW
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2709,12 +7572,671 @@ func (siw *ServerInterfaceWrapper) RevokeProjectUserSession(w http.ResponseWrite
 
 	ctx := r.Context()
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RevokeProjectUserSession(w, r, projectUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListServiceAccounts operation middleware
+func (siw *ServerInterfaceWrapper) ListServiceAccounts(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListServiceAccountsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListServiceAccounts(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateServiceAccount operation middleware
+func (siw *ServerInterfaceWrapper) CreateServiceAccount(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateServiceAccountParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateServiceAccount(w, r, projectUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteServiceAccount operation middleware
+func (siw *ServerInterfaceWrapper) DeleteServiceAccount(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteServiceAccountParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteServiceAccount(w, r, projectUid, serviceAccountUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetServiceAccount operation middleware
+func (siw *ServerInterfaceWrapper) GetServiceAccount(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetServiceAccount(w, r, projectUid, serviceAccountUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateServiceAccount operation middleware
+func (siw *ServerInterfaceWrapper) UpdateServiceAccount(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateServiceAccountParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateServiceAccount(w, r, projectUid, serviceAccountUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListServiceCredentials operation middleware
+func (siw *ServerInterfaceWrapper) ListServiceCredentials(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListServiceCredentialsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListServiceCredentials(w, r, projectUid, serviceAccountUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateServiceCredential operation middleware
+func (siw *ServerInterfaceWrapper) CreateServiceCredential(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateServiceCredentialParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateServiceCredential(w, r, projectUid, serviceAccountUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeServiceCredential operation middleware
+func (siw *ServerInterfaceWrapper) RevokeServiceCredential(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "credential_uid" -------------
+	var credentialUid ServiceCredentialUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "credential_uid", r.PathValue("credential_uid"), &credentialUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "credential_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeServiceCredentialParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeServiceCredential(w, r, projectUid, serviceAccountUid, credentialUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetServiceCredential operation middleware
+func (siw *ServerInterfaceWrapper) GetServiceCredential(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "project_uid" -------------
+	var projectUid ProjectUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "project_uid", r.PathValue("project_uid"), &projectUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "service_account_uid" -------------
+	var serviceAccountUid ServiceAccountUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "service_account_uid", r.PathValue("service_account_uid"), &serviceAccountUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "service_account_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "credential_uid" -------------
+	var credentialUid ServiceCredentialUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "credential_uid", r.PathValue("credential_uid"), &credentialUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "credential_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetServiceCredential(w, r, projectUid, serviceAccountUid, credentialUid)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -2743,7 +8265,7 @@ func (siw *ServerInterfaceWrapper) ListProjectUsers(w http.ResponseWriter, r *ht
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2806,7 +8328,7 @@ func (siw *ServerInterfaceWrapper) CreateProjectUser(w http.ResponseWriter, r *h
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2849,7 +8371,7 @@ func (siw *ServerInterfaceWrapper) GetProjectUser(w http.ResponseWriter, r *http
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2892,7 +8414,7 @@ func (siw *ServerInterfaceWrapper) UpdateProjectUser(w http.ResponseWriter, r *h
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -2901,7 +8423,7 @@ func (siw *ServerInterfaceWrapper) UpdateProjectUser(w http.ResponseWriter, r *h
 
 	headers := r.Header
 
-	// ------------- Optional header parameter "Origin" -------------
+	// ------------- Required header parameter "Origin" -------------
 	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
 		var Origin Origin
 		n := len(valueList)
@@ -2910,14 +8432,18 @@ func (siw *ServerInterfaceWrapper) UpdateProjectUser(w http.ResponseWriter, r *h
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: "uri"})
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
 		if err != nil {
 			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
 			return
 		}
 
-		params.Origin = &Origin
+		params.Origin = Origin
 
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
 	}
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -2968,7 +8494,7 @@ func (siw *ServerInterfaceWrapper) DeletePasskey(w http.ResponseWriter, r *http.
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -3011,7 +8537,7 @@ func (siw *ServerInterfaceWrapper) ReplaceProjectUserPassword(w http.ResponseWri
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
@@ -3054,12 +8580,2066 @@ func (siw *ServerInterfaceWrapper) RevokeProjectUserSessions(w http.ResponseWrit
 
 	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
 
-	ctx = context.WithValue(ctx, ProjectApiKeyScopes, []string{})
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
 
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.RevokeProjectUserSessions(w, r, projectUid, userUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListResourceServers operation middleware
+func (siw *ServerInterfaceWrapper) ListResourceServers(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListResourceServersParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListResourceServers(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateResourceServer operation middleware
+func (siw *ServerInterfaceWrapper) CreateResourceServer(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateResourceServerParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateResourceServer(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteResourceServer operation middleware
+func (siw *ServerInterfaceWrapper) DeleteResourceServer(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteResourceServerParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteResourceServer(w, r, resourceServerUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetResourceServer operation middleware
+func (siw *ServerInterfaceWrapper) GetResourceServer(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetResourceServer(w, r, resourceServerUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateResourceServer operation middleware
+func (siw *ServerInterfaceWrapper) UpdateResourceServer(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateResourceServerParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateResourceServer(w, r, resourceServerUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListResourceServerScopes operation middleware
+func (siw *ServerInterfaceWrapper) ListResourceServerScopes(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListResourceServerScopes(w, r, resourceServerUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateResourceServerScope operation middleware
+func (siw *ServerInterfaceWrapper) CreateResourceServerScope(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateResourceServerScopeParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateResourceServerScope(w, r, resourceServerUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteResourceServerScope operation middleware
+func (siw *ServerInterfaceWrapper) DeleteResourceServerScope(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "scope_uid" -------------
+	var scopeUid ResourceServerScopeUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_uid", r.PathValue("scope_uid"), &scopeUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteResourceServerScopeParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteResourceServerScope(w, r, resourceServerUid, scopeUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetResourceServerScope operation middleware
+func (siw *ServerInterfaceWrapper) GetResourceServerScope(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "scope_uid" -------------
+	var scopeUid ResourceServerScopeUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_uid", r.PathValue("scope_uid"), &scopeUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetResourceServerScope(w, r, resourceServerUid, scopeUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateResourceServerScope operation middleware
+func (siw *ServerInterfaceWrapper) UpdateResourceServerScope(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "resource_server_uid" -------------
+	var resourceServerUid ResourceServerUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "resource_server_uid", r.PathValue("resource_server_uid"), &resourceServerUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "resource_server_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "scope_uid" -------------
+	var scopeUid ResourceServerScopeUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "scope_uid", r.PathValue("scope_uid"), &scopeUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "scope_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateResourceServerScopeParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateResourceServerScope(w, r, resourceServerUid, scopeUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListSupportCases operation middleware
+func (siw *ServerInterfaceWrapper) ListSupportCases(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSupportCasesParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "status" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "status", r.URL.Query(), &params.Status, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "status"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "status", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "category" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "category", r.URL.Query(), &params.Category, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "category"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "category", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "project_uid" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "project_uid", r.URL.Query(), &params.ProjectUid, runtime.BindQueryParameterOptions{Type: "string", Format: "uuid"})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "project_uid"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "project_uid", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSupportCases(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateSupportCase operation middleware
+func (siw *ServerInterfaceWrapper) CreateSupportCase(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateSupportCaseParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateSupportCase(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetSupportCase operation middleware
+func (siw *ServerInterfaceWrapper) GetSupportCase(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSupportCase(w, r, caseUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateSupportCase operation middleware
+func (siw *ServerInterfaceWrapper) UpdateSupportCase(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateSupportCaseParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "If-Match" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("If-Match")]; found {
+		var IfMatch IfMatch
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "If-Match", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "If-Match", valueList[0], &IfMatch, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "If-Match", Err: err})
+			return
+		}
+
+		params.IfMatch = IfMatch
+
+	} else {
+		err := fmt.Errorf("Header parameter If-Match is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "If-Match", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateSupportCase(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListSupportCaseAttachments operation middleware
+func (siw *ServerInterfaceWrapper) ListSupportCaseAttachments(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSupportCaseAttachmentsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSupportCaseAttachments(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateSupportCaseAttachment operation middleware
+func (siw *ServerInterfaceWrapper) CreateSupportCaseAttachment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateSupportCaseAttachmentParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateSupportCaseAttachment(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetSupportCaseAttachment operation middleware
+func (siw *ServerInterfaceWrapper) GetSupportCaseAttachment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "attachment_uid" -------------
+	var attachmentUid SupportCaseAttachmentUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "attachment_uid", r.PathValue("attachment_uid"), &attachmentUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "attachment_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetSupportCaseAttachment(w, r, caseUid, attachmentUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DownloadSupportCaseAttachment operation middleware
+func (siw *ServerInterfaceWrapper) DownloadSupportCaseAttachment(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "attachment_uid" -------------
+	var attachmentUid SupportCaseAttachmentUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "attachment_uid", r.PathValue("attachment_uid"), &attachmentUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "attachment_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DownloadSupportCaseAttachment(w, r, caseUid, attachmentUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListSupportCaseEvents operation middleware
+func (siw *ServerInterfaceWrapper) ListSupportCaseEvents(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSupportCaseEventsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSupportCaseEvents(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListSupportCaseExternalReferences operation middleware
+func (siw *ServerInterfaceWrapper) ListSupportCaseExternalReferences(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSupportCaseExternalReferencesParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSupportCaseExternalReferences(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateSupportCaseExternalReference operation middleware
+func (siw *ServerInterfaceWrapper) CreateSupportCaseExternalReference(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateSupportCaseExternalReferenceParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateSupportCaseExternalReference(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// DeleteSupportCaseExternalReference operation middleware
+func (siw *ServerInterfaceWrapper) DeleteSupportCaseExternalReference(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	// ------------- Path parameter "external_reference_uid" -------------
+	var externalReferenceUid SupportCaseExternalReferenceUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "external_reference_uid", r.PathValue("external_reference_uid"), &externalReferenceUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "external_reference_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params DeleteSupportCaseExternalReferenceParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.DeleteSupportCaseExternalReference(w, r, caseUid, externalReferenceUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListSupportCaseMessages operation middleware
+func (siw *ServerInterfaceWrapper) ListSupportCaseMessages(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListSupportCaseMessagesParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListSupportCaseMessages(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateSupportCaseMessage operation middleware
+func (siw *ServerInterfaceWrapper) CreateSupportCaseMessage(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "case_uid" -------------
+	var caseUid SupportCaseUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "case_uid", r.PathValue("case_uid"), &caseUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "case_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateSupportCaseMessageParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateSupportCaseMessage(w, r, caseUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListTenantInvitations operation middleware
+func (siw *ServerInterfaceWrapper) ListTenantInvitations(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTenantInvitationsParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListTenantInvitations(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateTenantInvitation operation middleware
+func (siw *ServerInterfaceWrapper) CreateTenantInvitation(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateTenantInvitationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey IdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateTenantInvitation(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeTenantInvitation operation middleware
+func (siw *ServerInterfaceWrapper) RevokeTenantInvitation(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "invitation_uid" -------------
+	var invitationUid InvitationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "invitation_uid", r.PathValue("invitation_uid"), &invitationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "invitation_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RevokeTenantInvitationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeTenantInvitation(w, r, invitationUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// AcceptTenantInvitation operation middleware
+func (siw *ServerInterfaceWrapper) AcceptTenantInvitation(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "invitation_uid" -------------
+	var invitationUid InvitationUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "invitation_uid", r.PathValue("invitation_uid"), &invitationUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "invitation_uid", Err: err})
+		return
+	}
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params AcceptTenantInvitationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin string
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.AcceptTenantInvitation(w, r, invitationUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// ListTenantMembers operation middleware
+func (siw *ServerInterfaceWrapper) ListTenantMembers(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params ListTenantMembersParams
+
+	// ------------- Optional query parameter "cursor" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "cursor", r.URL.Query(), &params.Cursor, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "cursor"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "cursor", Err: err})
+		}
+		return
+	}
+
+	// ------------- Optional query parameter "limit" -------------
+
+	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", r.URL.Query(), &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: ""})
+	if err != nil {
+		var requiredError *runtime.RequiredParameterError
+		if errors.As(err, &requiredError) {
+			siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "limit"})
+		} else {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "limit", Err: err})
+		}
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.ListTenantMembers(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RemoveTenantMember operation middleware
+func (siw *ServerInterfaceWrapper) RemoveTenantMember(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "member_uid" -------------
+	var memberUid MemberUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_uid", r.PathValue("member_uid"), &memberUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params RemoveTenantMemberParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RemoveTenantMember(w, r, memberUid, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetTenantMember operation middleware
+func (siw *ServerInterfaceWrapper) GetTenantMember(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "member_uid" -------------
+	var memberUid MemberUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_uid", r.PathValue("member_uid"), &memberUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTenantMember(w, r, memberUid)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// UpdateTenantMember operation middleware
+func (siw *ServerInterfaceWrapper) UpdateTenantMember(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "member_uid" -------------
+	var memberUid MemberUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "member_uid", r.PathValue("member_uid"), &memberUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "member_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ConsoleSessionScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UpdateTenantMemberParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Origin" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Origin")]; found {
+		var Origin Origin
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Origin", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Origin", valueList[0], &Origin, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: "uri"})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Origin", Err: err})
+			return
+		}
+
+		params.Origin = Origin
+
+	} else {
+		err := fmt.Errorf("Header parameter Origin is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Origin", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.UpdateTenantMember(w, r, memberUid, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -3189,23 +10769,58 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/.well-known/openid-configuration", wrapper.GetOpenIdConfiguration)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/health/live", wrapper.Live)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/health/ready", wrapper.Ready)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/oauth/authorize", wrapper.AuthorizeOAuthApplication)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/oauth/jwks", wrapper.GetOAuthJwks)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/oauth/revoke", wrapper.RevokeOAuthToken)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/oauth/token", wrapper.ExchangeOAuthAuthorizationCode)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/oauth/userinfo", wrapper.GetOAuthUserInfo)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/activity", wrapper.ListTenantActivity)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/auth/login", wrapper.Login)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/authorization/decisions", wrapper.CreateAuthorizationDecision)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/auth/logout", wrapper.Logout)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/console/auth/session", wrapper.GetConsoleSession)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/console/auth/sessions", wrapper.ListTenantMemberSessions)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/console/auth/sessions/{session_uid}", wrapper.RevokeTenantMemberSession)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/auth/signup", wrapper.Signup)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/email-verification-requests", wrapper.CreateTenantEmailVerificationRequest)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/email-verifications", wrapper.VerifyTenantMemberEmail)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/login-attempts", wrapper.CreateTenantMemberLoginAttempt)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/login-attempts/{login_attempt_uid}/password-verifications", wrapper.VerifyTenantMemberLoginPassword)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/login-attempts/{login_attempt_uid}/webauthn-authentication-ceremonies", wrapper.CreateTenantMemberWebAuthnAuthenticationCeremony)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/login-attempts/{login_attempt_uid}/webauthn-authentication-verifications", wrapper.VerifyTenantMemberWebAuthnAuthentication)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/login-attempts/{login_attempt_uid}/webauthn-registration-ceremonies", wrapper.CreateInitialTenantMemberWebAuthnRegistrationCeremony)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/login-attempts/{login_attempt_uid}/webauthn-registration-verifications", wrapper.VerifyInitialTenantMemberWebAuthnRegistration)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/password-reset-requests", wrapper.CreateTenantPasswordResetRequest)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/password-resets", wrapper.ResetTenantMemberPassword)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/console/webauthn-credentials", wrapper.ListTenantMemberWebAuthnCredentials)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/console/webauthn-credentials/{credential_uid}", wrapper.DeleteTenantMemberWebAuthnCredential)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/console/webauthn-credentials/{credential_uid}", wrapper.UpdateTenantMemberWebAuthnCredential)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/webauthn-registration-ceremonies", wrapper.CreateTenantMemberWebAuthnRegistrationCeremony)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/webauthn-registration-verifications", wrapper.VerifyTenantMemberWebAuthnRegistration)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/applications", wrapper.ListOAuthApplications)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/oauth/applications", wrapper.CreateOAuthApplication)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}", wrapper.DeleteOAuthApplication)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}", wrapper.GetOAuthApplication)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}", wrapper.UpdateOAuthApplication)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/client-secrets", wrapper.ListOAuthClientSecrets)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/client-secrets", wrapper.CreateOAuthClientSecret)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/client-secrets/{secret_uid}", wrapper.RevokeOAuthClientSecret)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/grants", wrapper.ListOAuthApplicationGrants)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/grants", wrapper.CreateOAuthApplicationGrant)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/grants/{grant_uid}", wrapper.DeleteOAuthApplicationGrant)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/grants/{grant_uid}", wrapper.GetOAuthApplicationGrant)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}/grants/{grant_uid}", wrapper.UpdateOAuthApplicationGrant)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/oauth/authorization-requests/decision", wrapper.DecideOAuthAuthorizationRequest)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/oauth/authorization-requests/inspect", wrapper.InspectOAuthAuthorizationRequest)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/consents", wrapper.ListOAuthConsents)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/oauth/consents/{consent_uid}", wrapper.RevokeOAuthConsent)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects", wrapper.ListProjects)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects", wrapper.CreateProject)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}", wrapper.GetProject)
 	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/projects/{project_uid}", wrapper.UpdateProject)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/activity", wrapper.ListProjectActivity)
-	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/api-keys", wrapper.ListApiKeys)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/api-keys", wrapper.CreateApiKey)
-	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/api-keys/{key_uid}", wrapper.RevokeApiKey)
-	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/projects/{project_uid}/api-keys/{key_uid}", wrapper.RenameApiKey)
-	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/api-keys/{key_uid}/rotate", wrapper.RotateApiKey)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/origins", wrapper.ListOrigins)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/origins", wrapper.CreateOrigin)
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/origins/{origin_uid}", wrapper.DeleteOrigin)
@@ -3222,6 +10837,15 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/login/start", wrapper.StartProjectUserLogin)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/sessions/introspect", wrapper.IntrospectProjectUserSession)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/runtime/sessions/revoke", wrapper.RevokeProjectUserSession)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts", wrapper.ListServiceAccounts)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts", wrapper.CreateServiceAccount)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}", wrapper.DeleteServiceAccount)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}", wrapper.GetServiceAccount)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}", wrapper.UpdateServiceAccount)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials", wrapper.ListServiceCredentials)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials", wrapper.CreateServiceCredential)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials/{credential_uid}", wrapper.RevokeServiceCredential)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials/{credential_uid}", wrapper.GetServiceCredential)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/users", wrapper.ListProjectUsers)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/users", wrapper.CreateProjectUser)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/projects/{project_uid}/users/{user_uid}", wrapper.GetProjectUser)
@@ -3229,6 +10853,38 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/projects/{project_uid}/users/{user_uid}/passkeys/{credential_uid}", wrapper.DeletePasskey)
 	m.HandleFunc(http.MethodPut+" "+options.BaseURL+"/v1/projects/{project_uid}/users/{user_uid}/password", wrapper.ReplaceProjectUserPassword)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/projects/{project_uid}/users/{user_uid}/sessions/revoke", wrapper.RevokeProjectUserSessions)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/resource-servers", wrapper.ListResourceServers)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/resource-servers", wrapper.CreateResourceServer)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}", wrapper.DeleteResourceServer)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}", wrapper.GetResourceServer)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}", wrapper.UpdateResourceServer)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes", wrapper.ListResourceServerScopes)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes", wrapper.CreateResourceServerScope)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", wrapper.DeleteResourceServerScope)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", wrapper.GetResourceServerScope)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", wrapper.UpdateResourceServerScope)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases", wrapper.ListSupportCases)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/support/cases", wrapper.CreateSupportCase)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}", wrapper.GetSupportCase)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/support/cases/{case_uid}", wrapper.UpdateSupportCase)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}/attachments", wrapper.ListSupportCaseAttachments)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/support/cases/{case_uid}/attachments", wrapper.CreateSupportCaseAttachment)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}/attachments/{attachment_uid}", wrapper.GetSupportCaseAttachment)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}/attachments/{attachment_uid}/content", wrapper.DownloadSupportCaseAttachment)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}/events", wrapper.ListSupportCaseEvents)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}/external-references", wrapper.ListSupportCaseExternalReferences)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/support/cases/{case_uid}/external-references", wrapper.CreateSupportCaseExternalReference)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/support/cases/{case_uid}/external-references/{external_reference_uid}", wrapper.DeleteSupportCaseExternalReference)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}/messages", wrapper.ListSupportCaseMessages)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/support/cases/{case_uid}/messages", wrapper.CreateSupportCaseMessage)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/tenant/invitations", wrapper.ListTenantInvitations)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/tenant/invitations", wrapper.CreateTenantInvitation)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/tenant/invitations/{invitation_uid}", wrapper.RevokeTenantInvitation)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/tenant/invitations/{invitation_uid}/accept", wrapper.AcceptTenantInvitation)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/tenant/members", wrapper.ListTenantMembers)
+	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/tenant/members/{member_uid}", wrapper.RemoveTenantMember)
+	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/tenant/members/{member_uid}", wrapper.GetTenantMember)
+	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/tenant/members/{member_uid}", wrapper.UpdateTenantMember)
 
 	return m
 }

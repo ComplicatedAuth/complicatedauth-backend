@@ -14,6 +14,7 @@ func TestValidateOrigin(t *testing.T) {
 		valid              bool
 	}{
 		{"localhost development", "http://localhost:3000", "localhost", true},
+		{"localhost subdomain development", "http://customer.localhost:3000", "customer.localhost", true},
 		{"https exact", "https://example.com", "example.com", true},
 		{"https subdomain", "https://app.example.com", "example.com", true},
 		{"insecure remote", "http://example.com", "example.com", false},
@@ -27,6 +28,23 @@ func TestValidateOrigin(t *testing.T) {
 				t.Fatalf("valid=%v err=%v", test.valid, err)
 			}
 		})
+	}
+}
+
+func TestValidatePublicOrigin(t *testing.T) {
+	tests := map[string]bool{
+		"https://api.example.com":          true,
+		"http://localhost:3000":            true,
+		"http://console.localhost:3000":    true,
+		"http://127.0.0.1:3000":            true,
+		"http://192.0.2.10:3000":           false,
+		"http://management.example.com":    false,
+		"https://api.example.com/unwanted": false,
+	}
+	for origin, expected := range tests {
+		if got := validatePublicOrigin("TEST_ORIGIN", origin) == nil; got != expected {
+			t.Errorf("validatePublicOrigin(%q)=%v want %v", origin, got, expected)
+		}
 	}
 }
 
@@ -62,6 +80,7 @@ func TestTrustedProxyParsingAndClientIP(t *testing.T) {
 func TestLegacySingleFactorRoutesAreNotRegistered(t *testing.T) {
 	handler := New(Config{}, nil, slog.New(slog.NewTextHandler(io.Discard, nil))).Handler()
 	paths := []string{
+		"/v1/console/auth/login",
 		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/password/authenticate",
 		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/passkeys/authentication/options",
 		"/v1/projects/00000000-0000-0000-0000-000000000000/runtime/passkeys/authentication/verify",

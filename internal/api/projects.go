@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	security "github.com/dokosoko/complicatedauth-backend/internal/auth"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -182,7 +181,7 @@ func (s *Server) updateProject(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) loadProject(ctx context.Context, tenantUID, projectUID string) (Project, error) {
 	var p Project
-	err := s.db.QueryRow(ctx, `SELECT uid,name,environment,status,rp_id,rp_name,(rp_id_locked_at IS NOT NULL),created_at,(SELECT count(*) FROM project_origins WHERE project_uid=projects.uid),(SELECT count(*) FROM project_users WHERE project_uid=projects.uid),(SELECT count(*) FROM project_api_keys WHERE project_uid=projects.uid AND status='active') FROM projects WHERE uid=$1 AND tenant_uid=$2`, projectUID, tenantUID).Scan(&p.UID, &p.Name, &p.Environment, &p.Status, &p.RPID, &p.RPName, &p.RPIDLocked, &p.CreatedAt, &p.OriginCount, &p.UserCount, &p.APIKeyCount)
+	err := s.db.QueryRow(ctx, `SELECT uid,name,environment,status,rp_id,rp_name,(rp_id_locked_at IS NOT NULL),created_at,(SELECT count(*) FROM project_origins WHERE project_uid=projects.uid),(SELECT count(*) FROM project_users WHERE project_uid=projects.uid),(SELECT count(*) FROM project_service_accounts WHERE project_uid=projects.uid AND status='active' AND deleted_at IS NULL) FROM projects WHERE uid=$1 AND tenant_uid=$2`, projectUID, tenantUID).Scan(&p.UID, &p.Name, &p.Environment, &p.Status, &p.RPID, &p.RPName, &p.RPIDLocked, &p.CreatedAt, &p.OriginCount, &p.UserCount, &p.ServiceAccountCount)
 	if err != nil {
 		return p, err
 	}
@@ -264,119 +263,6 @@ func (s *Server) deleteOrigin(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(204)
 }
 
-func (s *Server) listAPIKeys(w http.ResponseWriter, r *http.Request) {
-	p := mustPrincipal(r)
-	if !s.ownsProject(r.Context(), p.TenantUID, r.PathValue("project_uid")) {
-		fail(w, r, 404, "not_found", "project not found")
-		return
-	}
-	rows, err := s.db.Query(r.Context(), `SELECT uid,name,prefix,status,created_at,last_used_at,revoked_at FROM project_api_keys WHERE project_uid=$1 ORDER BY created_at DESC`, r.PathValue("project_uid"))
-	if err != nil {
-		fail(w, r, 500, "internal_error", "could not load keys")
-		return
-	}
-	defer rows.Close()
-	items := []APIKey{}
-	for rows.Next() {
-		var k APIKey
-		if rows.Scan(&k.UID, &k.Name, &k.Prefix, &k.Status, &k.CreatedAt, &k.LastUsedAt, &k.RevokedAt) == nil {
-			items = append(items, k)
-		}
-	}
-	writeJSON(w, 200, map[string]any{"items": items})
-}
-func (s *Server) createAPIKey(w http.ResponseWriter, r *http.Request) {
-	p := mustPrincipal(r)
-	projectUID := r.PathValue("project_uid")
-	if !s.ownsProject(r.Context(), p.TenantUID, projectUID) {
-		fail(w, r, 404, "not_found", "project not found")
-		return
-	}
-	var in struct{ Name string }
-	if !decode(w, r, &in) {
-		return
-	}
-	in.Name = strings.TrimSpace(in.Name)
-	if in.Name == "" {
-		fail(w, r, 422, "validation_failed", "name is required")
-		return
-	}
-	key, err := s.issueAPIKey(r.Context(), projectUID, uuid.NewString(), in.Name)
-	if err != nil {
-		fail(w, r, 500, "internal_error", "could not create key")
-		return
-	}
-	s.audit(r.Context(), p.TenantUID, projectUID, "tenant_member", p.MemberUID, "api_key.created", "api_key", key.UID, nil, r)
-	writeJSON(w, 201, key)
-}
-func (s *Server) issueAPIKey(ctx context.Context, projectUID, keyUID, name string) (APIKey, error) {
-	token, err := security.RandomToken()
-	if err != nil {
-		return APIKey{}, err
-	}
-	prefix := "ca_pk_" + strings.ReplaceAll(uuid.NewString()[:8], "-", "")
-	secret := prefix + "." + token
-	key := APIKey{UID: keyUID, Name: name, Prefix: prefix, Status: "active", CreatedAt: time.Now().UTC(), Secret: secret}
-	_, err = s.db.Exec(ctx, `INSERT INTO project_api_keys(uid,project_uid,name,prefix,secret_hash) VALUES($1,$2,$3,$4,$5)`, key.UID, projectUID, key.Name, key.Prefix, security.SecretHash(s.cfg.SecretHashKey, secret))
-	return key, err
-}
-func (s *Server) renameAPIKey(w http.ResponseWriter, r *http.Request) {
-	p := mustPrincipal(r)
-	projectUID := r.PathValue("project_uid")
-	if !s.ownsProject(r.Context(), p.TenantUID, projectUID) {
-		fail(w, r, 404, "not_found", "project not found")
-		return
-	}
-	var in struct{ Name string }
-	if !decode(w, r, &in) {
-		return
-	}
-	in.Name = strings.TrimSpace(in.Name)
-	var k APIKey
-	err := s.db.QueryRow(r.Context(), `UPDATE project_api_keys SET name=$3 WHERE uid=$1 AND project_uid=$2 RETURNING uid,name,prefix,status,created_at,last_used_at,revoked_at`, r.PathValue("key_uid"), projectUID, in.Name).Scan(&k.UID, &k.Name, &k.Prefix, &k.Status, &k.CreatedAt, &k.LastUsedAt, &k.RevokedAt)
-	if err != nil {
-		fail(w, r, 404, "not_found", "key not found")
-		return
-	}
-	s.audit(r.Context(), p.TenantUID, projectUID, "tenant_member", p.MemberUID, "api_key.renamed", "api_key", k.UID, nil, r)
-	writeJSON(w, 200, k)
-}
-func (s *Server) rotateAPIKey(w http.ResponseWriter, r *http.Request) {
-	p := mustPrincipal(r)
-	projectUID, keyUID := r.PathValue("project_uid"), r.PathValue("key_uid")
-	if !s.ownsProject(r.Context(), p.TenantUID, projectUID) {
-		fail(w, r, 404, "not_found", "project not found")
-		return
-	}
-	token, _ := security.RandomToken()
-	prefix := "ca_pk_" + uuid.NewString()[:8]
-	secret := prefix + "." + token
-	var k APIKey
-	err := s.db.QueryRow(r.Context(), `UPDATE project_api_keys SET prefix=$3,secret_hash=$4,status='active',revoked_at=NULL WHERE uid=$1 AND project_uid=$2 AND status='active' RETURNING uid,name,prefix,status,created_at,last_used_at,revoked_at`, keyUID, projectUID, prefix, security.SecretHash(s.cfg.SecretHashKey, secret)).Scan(&k.UID, &k.Name, &k.Prefix, &k.Status, &k.CreatedAt, &k.LastUsedAt, &k.RevokedAt)
-	if err != nil {
-		fail(w, r, 404, "not_found", "active key not found")
-		return
-	}
-	k.Secret = secret
-	s.audit(r.Context(), p.TenantUID, projectUID, "tenant_member", p.MemberUID, "api_key.rotated", "api_key", k.UID, nil, r)
-	writeJSON(w, 200, k)
-}
-func (s *Server) revokeAPIKey(w http.ResponseWriter, r *http.Request) {
-	p := mustPrincipal(r)
-	projectUID := r.PathValue("project_uid")
-	if !s.ownsProject(r.Context(), p.TenantUID, projectUID) {
-		fail(w, r, 404, "not_found", "project not found")
-		return
-	}
-	result, err := s.db.Exec(r.Context(), `UPDATE project_api_keys SET status='revoked',revoked_at=now() WHERE uid=$1 AND project_uid=$2 AND status='active'`, r.PathValue("key_uid"), projectUID)
-	if err != nil || result.RowsAffected() == 0 {
-		fail(w, r, 404, "not_found", "active key not found")
-		return
-	}
-	s.audit(r.Context(), p.TenantUID, projectUID, "tenant_member", p.MemberUID, "api_key.revoked", "api_key", r.PathValue("key_uid"), nil, r)
-	w.WriteHeader(204)
-}
-
 func (s *Server) ownsProject(ctx context.Context, tenantUID, projectUID string) bool {
 	var exists bool
 	_ = s.db.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM projects WHERE uid=$1 AND tenant_uid=$2)`, projectUID, tenantUID).Scan(&exists)
@@ -397,8 +283,7 @@ func validateOrigin(raw, rpID string) (string, error) {
 		return "", errors.New("Origin must contain only scheme, host, and optional port")
 	}
 	host := strings.ToLower(u.Hostname())
-	loopback := host == "localhost" || net.ParseIP(host) != nil && net.ParseIP(host).IsLoopback()
-	if u.Scheme != "https" && !(u.Scheme == "http" && loopback) {
+	if u.Scheme != "https" && !(u.Scheme == "http" && isLocalDevelopmentHostname(host)) {
 		return "", errors.New("Origin must use HTTPS except for localhost or loopback")
 	}
 	if host != rpID && !strings.HasSuffix(host, "."+rpID) {

@@ -34,7 +34,7 @@ func (s *Server) runtimePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	user, _ := s.loadProjectUser(r.Context(), projectUID, userUID)
 	tenant, _ := s.projectTenant(r.Context(), projectUID)
-	s.audit(r.Context(), tenant, projectUID, "api_key", contextString(r, "apiKeyUID"), "project_user.password_authenticated", "project_user", userUID, nil, r)
+	s.audit(r.Context(), tenant, projectUID, "service_account", contextString(r, "serviceAccountUID"), "project_user.password_authenticated", "project_user", userUID, map[string]any{"service_credential_uid": contextString(r, "serviceCredentialUID")}, r)
 	writeJSON(w, 200, map[string]any{"session_reference": token, "expires_at": expires, "project_user": user})
 }
 

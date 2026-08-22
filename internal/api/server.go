@@ -11,11 +11,12 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	security "github.com/dokosoko/complicatedauth-backend/internal/auth"
+	"github.com/dokosoko/complicatedauth-backend/internal/store"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -25,19 +26,19 @@ type contextKey string
 
 const principalKey contextKey = "consolePrincipal"
 
-type principal struct{ TenantUID, MemberUID, SessionUID string }
-type attempt struct {
-	Count int
-	Reset time.Time
+type principal struct {
+	TenantUID, MemberUID, SessionUID, Role string
+	AuthenticationAssurance                string
 }
 
 type Server struct {
-	cfg           Config
-	db            *pgxpool.Pool
-	log           *slog.Logger
-	loginMu       sync.Mutex
-	loginAttempts map[string]attempt
-	biometrics    biometricProvider
+	cfg         Config
+	db          *pgxpool.Pool
+	log         *slog.Logger
+	rateLimits  *store.RateLimiter
+	idempotency *store.IdempotencyStore
+	biometrics  biometricProvider
+	email       emailSender
 }
 
 func New(cfg Config, db *pgxpool.Pool, logger *slog.Logger) *Server {
@@ -45,7 +46,7 @@ func New(cfg Config, db *pgxpool.Pool, logger *slog.Logger) *Server {
 }
 
 func newServer(cfg Config, db *pgxpool.Pool, logger *slog.Logger, biometrics biometricProvider) *Server {
-	return &Server{cfg: cfg, db: db, log: logger, loginAttempts: make(map[string]attempt), biometrics: biometrics}
+	return &Server{cfg: cfg, db: db, log: logger, rateLimits: store.NewRateLimiter(db), idempotency: store.NewIdempotencyStore(db), biometrics: biometrics, email: configuredEmailSender(cfg)}
 }
 
 func (s *Server) Handler() http.Handler {
@@ -54,46 +55,123 @@ func (s *Server) Handler() http.Handler {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
 	mux.HandleFunc("GET /health/ready", s.ready)
+	mux.HandleFunc("GET /.well-known/openid-configuration", s.oidcDiscovery)
+	mux.HandleFunc("GET /oauth/jwks", s.oauthJWKS)
+	mux.HandleFunc("GET /oauth/authorize", s.oauthAuthorize)
+	mux.HandleFunc("POST /oauth/token", s.oauthToken)
+	mux.HandleFunc("GET /oauth/userinfo", s.oauthUserInfo)
+	mux.HandleFunc("POST /oauth/revoke", s.oauthRevoke)
 	mux.Handle("POST /v1/console/auth/signup", s.csrf(http.HandlerFunc(s.signup)))
-	mux.Handle("POST /v1/console/auth/login", s.csrf(http.HandlerFunc(s.login)))
-	mux.Handle("POST /v1/console/auth/logout", s.console(http.HandlerFunc(s.logout)))
-	mux.Handle("GET /v1/console/auth/session", s.console(http.HandlerFunc(s.session)))
+	mux.Handle("POST /v1/console/login-attempts", s.csrf(http.HandlerFunc(s.createTenantMemberLoginAttempt)))
+	mux.Handle("POST /v1/console/login-attempts/{login_attempt_uid}/password-verifications", s.csrf(http.HandlerFunc(s.verifyTenantMemberLoginPassword)))
+	mux.Handle("POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-authentication-ceremonies", s.csrf(http.HandlerFunc(s.beginTenantMemberWebAuthnLogin)))
+	mux.Handle("POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-authentication-verifications", s.csrf(http.HandlerFunc(s.finishTenantMemberWebAuthnLogin)))
+	mux.Handle("POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-registration-ceremonies", s.csrf(http.HandlerFunc(s.beginInitialTenantMemberWebAuthnEnrollment)))
+	mux.Handle("POST /v1/console/login-attempts/{login_attempt_uid}/webauthn-registration-verifications", s.csrf(http.HandlerFunc(s.finishInitialTenantMemberWebAuthnEnrollment)))
+	mux.Handle("POST /v1/console/email-verification-requests", s.csrf(http.HandlerFunc(s.createTenantEmailVerificationRequest)))
+	mux.Handle("POST /v1/console/email-verifications", s.csrf(http.HandlerFunc(s.verifyTenantEmail)))
+	mux.Handle("POST /v1/console/password-reset-requests", s.csrf(http.HandlerFunc(s.createTenantPasswordResetRequest)))
+	mux.Handle("POST /v1/console/password-resets", s.csrf(http.HandlerFunc(s.resetTenantMemberPassword)))
+	mux.Handle("POST /v1/console/auth/logout", s.consoleSession(http.HandlerFunc(s.logout)))
+	mux.Handle("GET /v1/console/auth/session", s.consoleSession(http.HandlerFunc(s.session)))
+	mux.Handle("GET /v1/console/auth/sessions", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listMemberSessions)))
+	mux.Handle("DELETE /v1/console/auth/sessions/{session_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.revokeMemberSession)))
+	mux.Handle("GET /v1/console/webauthn-credentials", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listTenantMemberWebAuthnCredentials)))
+	mux.Handle("POST /v1/console/webauthn-registration-ceremonies", s.consoleSession(http.HandlerFunc(s.beginSessionTenantMemberWebAuthnEnrollment)))
+	mux.Handle("POST /v1/console/webauthn-registration-verifications", s.consoleSession(http.HandlerFunc(s.finishSessionTenantMemberWebAuthnEnrollment)))
+	mux.Handle("PATCH /v1/console/webauthn-credentials/{credential_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.updateTenantMemberWebAuthnCredential)))
+	mux.Handle("DELETE /v1/console/webauthn-credentials/{credential_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.deleteTenantMemberWebAuthnCredential)))
 
-	mux.Handle("GET /v1/projects", s.console(http.HandlerFunc(s.listProjects)))
-	mux.Handle("POST /v1/projects", s.console(http.HandlerFunc(s.createProject)))
-	mux.Handle("GET /v1/projects/{project_uid}", s.console(http.HandlerFunc(s.getProjectHandler)))
-	mux.Handle("PATCH /v1/projects/{project_uid}", s.console(http.HandlerFunc(s.updateProject)))
-	mux.Handle("GET /v1/projects/{project_uid}/origins", s.console(http.HandlerFunc(s.listOrigins)))
-	mux.Handle("POST /v1/projects/{project_uid}/origins", s.console(http.HandlerFunc(s.createOrigin)))
-	mux.Handle("DELETE /v1/projects/{project_uid}/origins/{origin_uid}", s.console(http.HandlerFunc(s.deleteOrigin)))
-	mux.Handle("GET /v1/projects/{project_uid}/api-keys", s.console(http.HandlerFunc(s.listAPIKeys)))
-	mux.Handle("POST /v1/projects/{project_uid}/api-keys", s.console(http.HandlerFunc(s.createAPIKey)))
-	mux.Handle("PATCH /v1/projects/{project_uid}/api-keys/{key_uid}", s.console(http.HandlerFunc(s.renameAPIKey)))
-	mux.Handle("POST /v1/projects/{project_uid}/api-keys/{key_uid}/rotate", s.console(http.HandlerFunc(s.rotateAPIKey)))
-	mux.Handle("DELETE /v1/projects/{project_uid}/api-keys/{key_uid}", s.console(http.HandlerFunc(s.revokeAPIKey)))
-	mux.Handle("GET /v1/projects/{project_uid}/users", s.consoleOrAPIKey(http.HandlerFunc(s.listProjectUsers)))
-	mux.Handle("POST /v1/projects/{project_uid}/users", s.consoleOrAPIKey(http.HandlerFunc(s.createProjectUser)))
-	mux.Handle("GET /v1/projects/{project_uid}/users/{user_uid}", s.consoleOrAPIKey(http.HandlerFunc(s.getProjectUserHandler)))
-	mux.Handle("PATCH /v1/projects/{project_uid}/users/{user_uid}", s.consoleOrAPIKey(http.HandlerFunc(s.updateProjectUser)))
-	mux.Handle("PUT /v1/projects/{project_uid}/users/{user_uid}/password", s.consoleOrAPIKey(http.HandlerFunc(s.replaceProjectUserPassword)))
-	mux.Handle("POST /v1/projects/{project_uid}/users/{user_uid}/sessions/revoke", s.consoleOrAPIKey(http.HandlerFunc(s.revokeProjectUserSessions)))
-	mux.Handle("DELETE /v1/projects/{project_uid}/users/{user_uid}/passkeys/{credential_uid}", s.consoleOrAPIKey(http.HandlerFunc(s.deletePasskey)))
-	mux.Handle("GET /v1/projects/{project_uid}/activity", s.console(http.HandlerFunc(s.listActivity)))
-	mux.Handle("GET /v1/activity", s.console(http.HandlerFunc(s.listActivity)))
+	mux.Handle("GET /v1/tenant/members", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listTenantMembers)))
+	mux.Handle("GET /v1/tenant/members/{member_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.getTenantMember)))
+	mux.Handle("PATCH /v1/tenant/members/{member_uid}", s.consoleAuthorized(permissionManageTenant, http.HandlerFunc(s.updateTenantMember)))
+	mux.Handle("DELETE /v1/tenant/members/{member_uid}", s.consoleAuthorized(permissionManageTenant, http.HandlerFunc(s.removeTenantMember)))
+	mux.Handle("GET /v1/tenant/invitations", s.consoleAuthorized(permissionManageTenant, http.HandlerFunc(s.listTenantInvitations)))
+	mux.Handle("POST /v1/tenant/invitations", s.consoleAuthorized(permissionManageTenant, http.HandlerFunc(s.createTenantInvitation)))
+	mux.Handle("DELETE /v1/tenant/invitations/{invitation_uid}", s.consoleAuthorized(permissionManageTenant, http.HandlerFunc(s.revokeTenantInvitation)))
+	mux.Handle("POST /v1/tenant/invitations/{invitation_uid}/accept", s.csrf(http.HandlerFunc(s.acceptTenantInvitation)))
+	mux.Handle("GET /v1/oauth/applications", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listOAuthApplications)))
+	mux.Handle("POST /v1/oauth/applications", s.consoleAuthorized(permissionManageOAuth, http.HandlerFunc(s.createOAuthApplication)))
+	mux.Handle("GET /v1/oauth/applications/{application_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.getOAuthApplication)))
+	mux.Handle("PATCH /v1/oauth/applications/{application_uid}", s.consoleAuthorized(permissionManageOAuth, http.HandlerFunc(s.updateOAuthApplication)))
+	mux.Handle("DELETE /v1/oauth/applications/{application_uid}", s.consoleAuthorized(permissionManageOAuth, http.HandlerFunc(s.deleteOAuthApplication)))
+	mux.Handle("GET /v1/oauth/applications/{application_uid}/client-secrets", s.consoleAuthorized(permissionManageOAuth, http.HandlerFunc(s.listOAuthClientSecrets)))
+	mux.Handle("POST /v1/oauth/applications/{application_uid}/client-secrets", s.consoleAuthorized(permissionManageOAuth, http.HandlerFunc(s.createOAuthClientSecret)))
+	mux.Handle("DELETE /v1/oauth/applications/{application_uid}/client-secrets/{secret_uid}", s.consoleAuthorized(permissionManageOAuth, http.HandlerFunc(s.revokeOAuthClientSecret)))
+	mux.Handle("POST /v1/oauth/authorization-requests/inspect", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.inspectOAuthAuthorizationRequest)))
+	mux.Handle("POST /v1/oauth/authorization-requests/decision", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.decideOAuthAuthorizationRequest)))
+	mux.Handle("GET /v1/oauth/consents", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listOAuthConsents)))
+	mux.Handle("DELETE /v1/oauth/consents/{consent_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.revokeOAuthConsent)))
+	mux.Handle("GET /v1/resource-servers", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listResourceServers)))
+	mux.Handle("POST /v1/resource-servers", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.createResourceServer)))
+	mux.Handle("GET /v1/resource-servers/{resource_server_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.getResourceServer)))
+	mux.Handle("PATCH /v1/resource-servers/{resource_server_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.updateResourceServer)))
+	mux.Handle("DELETE /v1/resource-servers/{resource_server_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.deleteResourceServer)))
+	mux.Handle("GET /v1/resource-servers/{resource_server_uid}/scopes", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listResourceServerScopes)))
+	mux.Handle("POST /v1/resource-servers/{resource_server_uid}/scopes", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.createResourceServerScope)))
+	mux.Handle("GET /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.getResourceServerScope)))
+	mux.Handle("PATCH /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.updateResourceServerScope)))
+	mux.Handle("DELETE /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.deleteResourceServerScope)))
+	mux.Handle("GET /v1/oauth/applications/{application_uid}/grants", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listOAuthApplicationGrants)))
+	mux.Handle("POST /v1/oauth/applications/{application_uid}/grants", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.createOAuthApplicationGrant)))
+	mux.Handle("GET /v1/oauth/applications/{application_uid}/grants/{grant_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.getOAuthApplicationGrant)))
+	mux.Handle("PATCH /v1/oauth/applications/{application_uid}/grants/{grant_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.updateOAuthApplicationGrant)))
+	mux.Handle("DELETE /v1/oauth/applications/{application_uid}/grants/{grant_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.deleteOAuthApplicationGrant)))
+	mux.Handle("POST /v1/authorization/decisions", s.oauthResourceAuthorized(http.HandlerFunc(s.createAuthorizationDecision)))
 
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/start", s.apiKey(http.HandlerFunc(s.startProjectUserLogin)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/password", s.apiKey(http.HandlerFunc(s.verifyProjectUserLoginPassword)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/options", s.apiKey(http.HandlerFunc(s.beginFidoLogin)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/verify", s.apiKey(http.HandlerFunc(s.finishFidoLogin)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/options", s.apiKey(http.HandlerFunc(s.beginFirstFidoEnrollment)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/verify", s.apiKey(http.HandlerFunc(s.finishFirstFidoEnrollment)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/biometric", s.apiKey(http.HandlerFunc(s.verifyBiometricLogin)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/fido/registration/options", s.apiKey(http.HandlerFunc(s.beginFidoEnrollment)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/fido/registration/verify", s.apiKey(http.HandlerFunc(s.finishFidoEnrollment)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/biometric/enrollment", s.apiKey(http.HandlerFunc(s.enrollBiometric)))
-	mux.Handle("DELETE /v1/projects/{project_uid}/runtime/biometric/enrollment", s.apiKey(http.HandlerFunc(s.deleteBiometricEnrollment)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/sessions/introspect", s.apiKey(http.HandlerFunc(s.runtimeIntrospect)))
-	mux.Handle("POST /v1/projects/{project_uid}/runtime/sessions/revoke", s.apiKey(http.HandlerFunc(s.runtimeRevoke)))
+	mux.Handle("GET /v1/projects", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listProjects)))
+	mux.Handle("POST /v1/projects", s.consoleAuthorized(permissionManageProjects, http.HandlerFunc(s.createProject)))
+	mux.Handle("GET /v1/projects/{project_uid}", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.getProjectHandler)))
+	mux.Handle("PATCH /v1/projects/{project_uid}", s.consoleAuthorized(permissionManageProjects, http.HandlerFunc(s.updateProject)))
+	mux.Handle("GET /v1/projects/{project_uid}/origins", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listOrigins)))
+	mux.Handle("POST /v1/projects/{project_uid}/origins", s.consoleAuthorized(permissionManageProjects, http.HandlerFunc(s.createOrigin)))
+	mux.Handle("DELETE /v1/projects/{project_uid}/origins/{origin_uid}", s.consoleAuthorized(permissionManageProjects, http.HandlerFunc(s.deleteOrigin)))
+	mux.Handle("GET /v1/projects/{project_uid}/service-accounts", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.listServiceAccounts)))
+	mux.Handle("POST /v1/projects/{project_uid}/service-accounts", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.createServiceAccount)))
+	mux.Handle("GET /v1/projects/{project_uid}/service-accounts/{service_account_uid}", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.getServiceAccount)))
+	mux.Handle("PATCH /v1/projects/{project_uid}/service-accounts/{service_account_uid}", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.updateServiceAccount)))
+	mux.Handle("DELETE /v1/projects/{project_uid}/service-accounts/{service_account_uid}", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.deleteServiceAccount)))
+	mux.Handle("GET /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.listServiceCredentials)))
+	mux.Handle("POST /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.createServiceCredential)))
+	mux.Handle("GET /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials/{credential_uid}", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.getServiceCredential)))
+	mux.Handle("DELETE /v1/projects/{project_uid}/service-accounts/{service_account_uid}/credentials/{credential_uid}", s.consoleAuthorized(permissionManageCredentials, http.HandlerFunc(s.revokeServiceCredential)))
+	mux.Handle("GET /v1/projects/{project_uid}/users", s.consoleOrServiceCredential(permissionRead, serviceScopeProjectUsersRead, http.HandlerFunc(s.listProjectUsers)))
+	mux.Handle("POST /v1/projects/{project_uid}/users", s.consoleOrServiceCredential(permissionManageUsers, serviceScopeProjectUsersWrite, http.HandlerFunc(s.createProjectUser)))
+	mux.Handle("GET /v1/projects/{project_uid}/users/{user_uid}", s.consoleOrServiceCredential(permissionRead, serviceScopeProjectUsersRead, http.HandlerFunc(s.getProjectUserHandler)))
+	mux.Handle("PATCH /v1/projects/{project_uid}/users/{user_uid}", s.consoleOrServiceCredential(permissionManageUsers, serviceScopeProjectUsersWrite, http.HandlerFunc(s.updateProjectUser)))
+	mux.Handle("PUT /v1/projects/{project_uid}/users/{user_uid}/password", s.consoleOrServiceCredential(permissionManageUsers, serviceScopeProjectUsersWrite, http.HandlerFunc(s.replaceProjectUserPassword)))
+	mux.Handle("POST /v1/projects/{project_uid}/users/{user_uid}/sessions/revoke", s.consoleOrServiceCredential(permissionSupportUsers, serviceScopeSessionsManage, http.HandlerFunc(s.revokeProjectUserSessions)))
+	mux.Handle("DELETE /v1/projects/{project_uid}/users/{user_uid}/passkeys/{credential_uid}", s.consoleOrServiceCredential(permissionManageUsers, serviceScopeProjectUsersWrite, http.HandlerFunc(s.deletePasskey)))
+	mux.Handle("GET /v1/support/cases", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.listSupportCases)))
+	mux.Handle("POST /v1/support/cases", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesWrite, http.HandlerFunc(s.createSupportCase)))
+	mux.Handle("GET /v1/support/cases/{case_uid}", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.getSupportCase)))
+	mux.Handle("PATCH /v1/support/cases/{case_uid}", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesWrite, http.HandlerFunc(s.updateSupportCase)))
+	mux.Handle("GET /v1/support/cases/{case_uid}/messages", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.listSupportCaseMessages)))
+	mux.Handle("POST /v1/support/cases/{case_uid}/messages", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesWrite, http.HandlerFunc(s.createSupportCaseMessage)))
+	mux.Handle("GET /v1/support/cases/{case_uid}/attachments", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.listSupportCaseAttachments)))
+	mux.Handle("POST /v1/support/cases/{case_uid}/attachments", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesWrite, http.HandlerFunc(s.createSupportCaseAttachment)))
+	mux.Handle("GET /v1/support/cases/{case_uid}/attachments/{attachment_uid}", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.getSupportCaseAttachment)))
+	mux.Handle("GET /v1/support/cases/{case_uid}/attachments/{attachment_uid}/content", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.downloadSupportCaseAttachment)))
+	mux.Handle("GET /v1/support/cases/{case_uid}/events", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.listSupportCaseEvents)))
+	mux.Handle("GET /v1/support/cases/{case_uid}/external-references", s.consoleAuthorized(permissionManageSupport, http.HandlerFunc(s.listSupportCaseExternalReferences)))
+	mux.Handle("POST /v1/support/cases/{case_uid}/external-references", s.consoleAuthorized(permissionManageSupport, http.HandlerFunc(s.createSupportCaseExternalReference)))
+	mux.Handle("DELETE /v1/support/cases/{case_uid}/external-references/{external_reference_uid}", s.consoleAuthorized(permissionManageSupport, http.HandlerFunc(s.deleteSupportCaseExternalReference)))
+	mux.Handle("GET /v1/projects/{project_uid}/activity", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listActivity)))
+	mux.Handle("GET /v1/activity", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listActivity)))
+
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/start", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.startProjectUserLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/password", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.verifyProjectUserLoginPassword)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/options", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.beginFidoLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/verify", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.finishFidoLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/options", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.beginFirstFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/fido/enrollment/verify", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.finishFirstFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/login/biometric", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.verifyBiometricLogin)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/fido/registration/options", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.beginFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/fido/registration/verify", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.finishFidoEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/biometric/enrollment", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.enrollBiometric)))
+	mux.Handle("DELETE /v1/projects/{project_uid}/runtime/biometric/enrollment", s.serviceCredential(serviceScopeAuthentication, http.HandlerFunc(s.deleteBiometricEnrollment)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/sessions/introspect", s.serviceCredential(serviceScopeSessionsManage, http.HandlerFunc(s.runtimeIntrospect)))
+	mux.Handle("POST /v1/projects/{project_uid}/runtime/sessions/revoke", s.serviceCredential(serviceScopeSessionsManage, http.HandlerFunc(s.runtimeRevoke)))
 	return s.requestLog(s.securityHeaders(mux))
 }
 
@@ -150,7 +228,7 @@ func (s *Server) csrf(next http.Handler) http.Handler {
 	})
 }
 
-func (s *Server) console(next http.Handler) http.Handler {
+func (s *Server) consoleSession(next http.Handler) http.Handler {
 	return s.csrf(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("complicatedauth_session")
 		if err != nil {
@@ -159,9 +237,9 @@ func (s *Server) console(next http.Handler) http.Handler {
 		}
 		var p principal
 		var expires, idle time.Time
-		err = s.db.QueryRow(r.Context(), `SELECT s.uid, s.tenant_uid, s.tenant_member_uid, s.expires_at, s.idle_expires_at
+		err = s.db.QueryRow(r.Context(), `SELECT s.uid, s.tenant_uid, s.tenant_member_uid, m.role, s.authentication_assurance, s.expires_at, s.idle_expires_at
 			FROM tenant_member_sessions s JOIN tenant_members m ON m.uid=s.tenant_member_uid
-			WHERE s.session_secret_hash=$1 AND s.revoked_at IS NULL AND m.status='active'`, security.SessionHash(cookie.Value)).Scan(&p.SessionUID, &p.TenantUID, &p.MemberUID, &expires, &idle)
+			WHERE s.session_secret_hash=$1 AND s.revoked_at IS NULL AND m.status='active'`, security.SessionHash(cookie.Value)).Scan(&p.SessionUID, &p.TenantUID, &p.MemberUID, &p.Role, &p.AuthenticationAssurance, &expires, &idle)
 		if err != nil || time.Now().After(expires) || time.Now().After(idle) {
 			fail(w, r, http.StatusUnauthorized, "unauthenticated", "authentication required")
 			return
@@ -171,36 +249,74 @@ func (s *Server) console(next http.Handler) http.Handler {
 	}))
 }
 
-func (s *Server) apiKey(next http.Handler) http.Handler {
+func (s *Server) serviceCredential(requiredScope string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		value := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
+		scheme, value, found := strings.Cut(r.Header.Get("Authorization"), " ")
+		if !found || !strings.EqualFold(scheme, "Bearer") {
+			w.Header().Set("WWW-Authenticate", `Bearer realm="complicatedauth"`)
+			fail(w, r, http.StatusUnauthorized, "invalid_service_credential", "valid Project service credential required")
+			return
+		}
 		idx := strings.LastIndex(value, ".")
 		if idx < 1 {
-			fail(w, r, http.StatusUnauthorized, "invalid_api_key", "valid project API key required")
+			w.Header().Set("WWW-Authenticate", `Bearer error="invalid_token"`)
+			fail(w, r, http.StatusUnauthorized, "invalid_service_credential", "valid Project service credential required")
 			return
 		}
 		prefix := value[:idx]
-		var keyUID, projectUID string
+		var credentialUID, accountUID, projectUID, tenantUID string
 		var stored []byte
-		err := s.db.QueryRow(r.Context(), `SELECT uid, project_uid, secret_hash FROM project_api_keys WHERE prefix=$1 AND status='active'`, prefix).Scan(&keyUID, &projectUID, &stored)
+		var scopes []string
+		err := s.db.QueryRow(r.Context(), `SELECT c.uid,a.uid,a.project_uid,p.tenant_uid,c.secret_hash,a.scopes FROM project_service_credentials c JOIN project_service_accounts a ON a.uid=c.service_account_uid JOIN projects p ON p.uid=a.project_uid WHERE c.prefix=$1 AND c.status='active' AND c.expires_at>now() AND a.status='active' AND a.deleted_at IS NULL AND p.status='active'`, prefix).Scan(&credentialUID, &accountUID, &projectUID, &tenantUID, &stored, &scopes)
 		got := security.SecretHash(s.cfg.SecretHashKey, value)
-		if err != nil || subtle.ConstantTimeCompare(stored, got) != 1 || projectUID != r.PathValue("project_uid") {
-			fail(w, r, http.StatusUnauthorized, "invalid_api_key", "valid project API key required")
+		pathProjectUID := r.PathValue("project_uid")
+		if err != nil || subtle.ConstantTimeCompare(stored, got) != 1 || (pathProjectUID != "" && projectUID != pathProjectUID) {
+			w.Header().Set("WWW-Authenticate", `Bearer error="invalid_token"`)
+			fail(w, r, http.StatusUnauthorized, "invalid_service_credential", "valid Project service credential required")
 			return
 		}
-		_, _ = s.db.Exec(r.Context(), `UPDATE project_api_keys SET last_used_at=now() WHERE uid=$1`, keyUID)
-		ctx := context.WithValue(r.Context(), contextKey("apiKeyUID"), keyUID)
-		next.ServeHTTP(w, r.WithContext(context.WithValue(ctx, contextKey("apiProjectUID"), projectUID)))
+		allowed := false
+		for _, scope := range scopes {
+			if scope == requiredScope {
+				allowed = true
+				break
+			}
+		}
+		if !allowed {
+			w.Header().Set("WWW-Authenticate", fmt.Sprintf(`Bearer error="insufficient_scope", scope=%q`, requiredScope))
+			fail(w, r, http.StatusForbidden, "insufficient_scope", "service account does not grant the required scope")
+			return
+		}
+		_, _ = s.db.Exec(r.Context(), `UPDATE project_service_credentials SET last_used_at=now() WHERE uid=$1 AND (last_used_at IS NULL OR last_used_at<now()-interval '1 minute')`, credentialUID)
+		ctx := context.WithValue(r.Context(), contextKey("serviceCredentialUID"), credentialUID)
+		ctx = context.WithValue(ctx, contextKey("serviceAccountUID"), accountUID)
+		ctx = context.WithValue(ctx, contextKey("serviceTenantUID"), tenantUID)
+		next.ServeHTTP(w, r.WithContext(context.WithValue(ctx, contextKey("serviceProjectUID"), projectUID)))
 	})
 }
 
-func (s *Server) consoleOrAPIKey(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if strings.HasPrefix(r.Header.Get("Authorization"), "Bearer ") {
-			s.apiKey(next).ServeHTTP(w, r)
+func (s *Server) consoleAuthorized(permission string, next http.Handler) http.Handler {
+	return s.consoleSession(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if mustPrincipal(r).AuthenticationAssurance != "strong" {
+			fail(w, r, http.StatusForbidden, "strong_authentication_required", "complete passkey or security-key setup before using the management API")
 			return
 		}
-		s.console(next).ServeHTTP(w, r)
+		if !roleAllows(mustPrincipal(r).Role, permission) {
+			fail(w, r, http.StatusForbidden, "forbidden", "the Tenant Member role does not permit this operation")
+			return
+		}
+		next.ServeHTTP(w, r)
+	}))
+}
+
+func (s *Server) consoleOrServiceCredential(permission, requiredScope string, next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		scheme, _, hasCredentials := strings.Cut(r.Header.Get("Authorization"), " ")
+		if hasCredentials && strings.EqualFold(scheme, "Bearer") {
+			s.serviceCredential(requiredScope, next).ServeHTTP(w, r)
+			return
+		}
+		s.consoleAuthorized(permission, next).ServeHTTP(w, r)
 	})
 }
 
@@ -252,6 +368,9 @@ func (s *Server) signup(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		_, err = tx.Exec(r.Context(), `INSERT INTO audit_events(uid,tenant_uid,actor_type,actor_uid,action,target_type,target_uid) VALUES($1,$2,'tenant_member',$3,'tenant.created','tenant',$2)`, uuid.NewString(), tenantUID, memberUID)
 	}
+	if err == nil {
+		err = s.insertTenantEmailVerification(r.Context(), tx, memberUID, tenantUID, in.Email, in.DisplayName, in.TenantName)
+	}
 	if err != nil {
 		if strings.Contains(err.Error(), "email_normalized") {
 			fail(w, r, 409, "email_exists", "an account with this email already exists")
@@ -265,46 +384,7 @@ func (s *Server) signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.setMemberCookie(w, token, expires)
-	writeJSON(w, 201, ConsoleSession{Tenant: Tenant{tenantUID, in.TenantName, slug}, Member: TenantMember{memberUID, in.Email, in.DisplayName, "owner"}, ExpiresAt: expires})
-}
-
-func (s *Server) login(w http.ResponseWriter, r *http.Request) {
-	var in struct{ Email, Password string }
-	if !decode(w, r, &in) {
-		return
-	}
-	email := normalizeEmail(in.Email)
-	key := s.clientIP(r) + ":" + email
-	if s.loginLimited(key) {
-		fail(w, r, 429, "rate_limited", "too many login attempts; try again later")
-		return
-	}
-	var tenant Tenant
-	var member TenantMember
-	var hash, status string
-	err := s.db.QueryRow(r.Context(), `SELECT t.uid,t.name,t.slug,m.uid,m.email,m.display_name,m.role,m.password_hash,m.status FROM tenant_members m JOIN tenants t ON t.uid=m.tenant_uid WHERE m.email_normalized=$1`, email).Scan(&tenant.UID, &tenant.Name, &tenant.Slug, &member.UID, &member.Email, &member.DisplayName, &member.Role, &hash, &status)
-	valid, rehash := security.VerifyPassword(hash, in.Password)
-	if err != nil || !valid || status != "active" {
-		s.recordLoginFailure(key)
-		fail(w, r, 401, "invalid_credentials", "email or password is incorrect")
-		return
-	}
-	s.clearLoginFailures(key)
-	if rehash {
-		if next, e := security.HashPassword(in.Password); e == nil {
-			_, _ = s.db.Exec(r.Context(), `UPDATE tenant_members SET password_hash=$2,updated_at=now() WHERE uid=$1`, member.UID, next)
-		}
-	}
-	token, _ := security.RandomToken()
-	expires, idle := time.Now().Add(s.cfg.MemberAbsoluteTTL), time.Now().Add(s.cfg.MemberIdleTTL)
-	_, err = s.db.Exec(r.Context(), `INSERT INTO tenant_member_sessions(uid,tenant_member_uid,tenant_uid,session_secret_hash,expires_at,idle_expires_at) VALUES($1,$2,$3,$4,$5,$6)`, uuid.NewString(), member.UID, tenant.UID, security.SessionHash(token), expires, idle)
-	if err != nil {
-		fail(w, r, 500, "internal_error", "could not create session")
-		return
-	}
-	s.setMemberCookie(w, token, expires)
-	s.audit(r.Context(), tenant.UID, "", "tenant_member", member.UID, "tenant_member.login", "tenant_member", member.UID, nil, r)
-	writeJSON(w, 200, ConsoleSession{Tenant: tenant, Member: member, ExpiresAt: expires})
+	writeJSON(w, 201, ConsoleSession{Tenant: Tenant{tenantUID, in.TenantName, slug}, Member: TenantMember{UID: memberUID, Email: in.Email, DisplayName: in.DisplayName, Role: "owner", Status: "active", CreatedAt: time.Now()}, AuthenticationAssurance: "bootstrap", ExpiresAt: expires})
 }
 
 func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
@@ -317,7 +397,7 @@ func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
 func (s *Server) session(w http.ResponseWriter, r *http.Request) {
 	p := mustPrincipal(r)
 	var result ConsoleSession
-	err := s.db.QueryRow(r.Context(), `SELECT t.uid,t.name,t.slug,m.uid,m.email,m.display_name,m.role,s.expires_at FROM tenant_member_sessions s JOIN tenant_members m ON m.uid=s.tenant_member_uid JOIN tenants t ON t.uid=s.tenant_uid WHERE s.uid=$1`, p.SessionUID).Scan(&result.Tenant.UID, &result.Tenant.Name, &result.Tenant.Slug, &result.Member.UID, &result.Member.Email, &result.Member.DisplayName, &result.Member.Role, &result.ExpiresAt)
+	err := s.db.QueryRow(r.Context(), `SELECT t.uid,t.name,t.slug,m.uid,m.email,m.display_name,m.role,m.status,m.email_verified_at IS NOT NULL,m.created_at,s.authentication_assurance,s.expires_at FROM tenant_member_sessions s JOIN tenant_members m ON m.uid=s.tenant_member_uid JOIN tenants t ON t.uid=s.tenant_uid WHERE s.uid=$1`, p.SessionUID).Scan(&result.Tenant.UID, &result.Tenant.Name, &result.Tenant.Slug, &result.Member.UID, &result.Member.Email, &result.Member.DisplayName, &result.Member.Role, &result.Member.Status, &result.Member.EmailVerified, &result.Member.CreatedAt, &result.AuthenticationAssurance, &result.ExpiresAt)
 	if err != nil {
 		fail(w, r, 401, "unauthenticated", "authentication required")
 		return
@@ -329,26 +409,34 @@ func (s *Server) setMemberCookie(w http.ResponseWriter, token string, expires ti
 	http.SetCookie(w, &http.Cookie{Name: "complicatedauth_session", Value: token, Path: "/", HttpOnly: true, Secure: s.cfg.CookieSecure, SameSite: http.SameSiteLaxMode, Expires: expires})
 }
 
-func (s *Server) loginLimited(key string) bool {
-	s.loginMu.Lock()
-	defer s.loginMu.Unlock()
-	a, ok := s.loginAttempts[key]
-	return ok && a.Count >= 5 && time.Now().Before(a.Reset)
-}
-func (s *Server) recordLoginFailure(key string) {
-	s.loginMu.Lock()
-	defer s.loginMu.Unlock()
-	a := s.loginAttempts[key]
-	if time.Now().After(a.Reset) {
-		a = attempt{Reset: time.Now().Add(15 * time.Minute)}
+func (s *Server) takeRateLimit(w http.ResponseWriter, r *http.Request, policy, key string, limit int, window time.Duration) bool {
+	keyHash := security.SecretHash(s.cfg.SecretHashKey, policy+"\x00"+key)
+	result, err := s.rateLimits.Take(r.Context(), policy, keyHash, limit, window)
+	if err != nil {
+		s.log.Error("rate limit unavailable", "request_id", r.Context().Value(contextKey("requestID")), "policy", policy, "error", err)
+		fail(w, r, http.StatusServiceUnavailable, "dependency_unavailable", "request safety dependency is unavailable")
+		return false
 	}
-	a.Count++
-	s.loginAttempts[key] = a
+	if result.Allowed {
+		return true
+	}
+	seconds := int64(result.RetryAfter / time.Second)
+	if result.RetryAfter%time.Second != 0 {
+		seconds++
+	}
+	if seconds < 1 {
+		seconds = 1
+	}
+	w.Header().Set("Retry-After", strconv.FormatInt(seconds, 10))
+	fail(w, r, http.StatusTooManyRequests, "rate_limited", "too many attempts; retry later")
+	return false
 }
-func (s *Server) clearLoginFailures(key string) {
-	s.loginMu.Lock()
-	defer s.loginMu.Unlock()
-	delete(s.loginAttempts, key)
+
+func (s *Server) resetRateLimit(r *http.Request, policy, key string) {
+	keyHash := security.SecretHash(s.cfg.SecretHashKey, policy+"\x00"+key)
+	if err := s.rateLimits.Reset(r.Context(), policy, keyHash); err != nil {
+		s.log.Warn("rate limit reset failed", "request_id", r.Context().Value(contextKey("requestID")), "policy", policy, "error", err)
+	}
 }
 
 var slugInvalid = regexp.MustCompile(`[^a-z0-9]+`)

@@ -26,9 +26,7 @@ func (s *Server) startProjectUserLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	email := normalizeEmail(in.Email)
-	key := s.clientIP(r) + ":" + r.PathValue("project_uid") + ":login"
-	if s.loginLimited(key) {
-		fail(w, r, http.StatusTooManyRequests, "rate_limited", "too many login attempts; try again later")
+	if !s.takeRateLimit(w, r, "project_login_start", r.PathValue("project_uid")+"\x00"+s.clientIP(r), 50, 15*time.Minute) {
 		return
 	}
 	var userUID *string
@@ -51,6 +49,9 @@ func (s *Server) startProjectUserLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) verifyProjectUserLoginPassword(w http.ResponseWriter, r *http.Request) {
+	if !s.takeRateLimit(w, r, "project_login_password", r.PathValue("project_uid")+"\x00"+s.clientIP(r), 10, 15*time.Minute) {
+		return
+	}
 	attempt, ok := s.resolveLoginAttempt(r)
 	if !ok {
 		fail(w, r, 401, "invalid_login", "login attempt is invalid or expired")
@@ -66,7 +67,6 @@ func (s *Server) verifyProjectUserLoginPassword(w http.ResponseWriter, r *http.R
 	err := s.db.QueryRow(r.Context(), `SELECT password_hash FROM project_users WHERE uid=$1 AND project_uid=$2 AND status='active'`, attempt.UserUID, r.PathValue("project_uid")).Scan(&hash)
 	valid, _ := security.VerifyPassword(hash.String, in.Password)
 	if err != nil || !hash.Valid || !valid {
-		s.recordLoginFailure(s.clientIP(r) + ":" + r.PathValue("project_uid") + ":login")
 		fail(w, r, 401, "invalid_credentials", "credentials are incorrect")
 		return
 	}

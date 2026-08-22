@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS oauth_access_tokens;
+DROP TABLE IF EXISTS oauth_subjects;
+DROP TABLE IF EXISTS oauth_consents;
+DROP TABLE IF EXISTS oauth_authorization_codes;
+DROP TABLE IF EXISTS oauth_authorization_requests;
+DROP TABLE IF EXISTS oauth_signing_keys;
+DROP TABLE IF EXISTS oauth_client_secrets;
+DROP TABLE IF EXISTS oauth_application_redirect_uris;
+DROP TABLE IF EXISTS oauth_applications;

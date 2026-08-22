@@ -42,7 +42,13 @@ func main() {
 		logger.Error("migrate database", "error", err)
 		os.Exit(1)
 	}
-	server := &http.Server{Addr: cfg.ListenAddress, Handler: api.New(cfg, pool, logger).Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: 60 * time.Second}
+	apiServer := api.New(cfg, pool, logger)
+	if err = apiServer.Initialize(ctx); err != nil {
+		logger.Error("initialize API", "error", err)
+		os.Exit(1)
+	}
+	go apiServer.RunBackgroundJobs(ctx)
+	server := &http.Server{Addr: cfg.ListenAddress, Handler: apiServer.Handler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 15 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: 60 * time.Second}
 	go func() {
 		<-ctx.Done()
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)

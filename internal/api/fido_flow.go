@@ -173,6 +173,7 @@ func (s *Server) beginFirstFidoEnrollment(w http.ResponseWriter, r *http.Request
 		attestation = protocol.PreferDirectAttestation
 	}
 	options, session, err := wa.BeginRegistration(user,
+		webauthn.WithExclusions(webauthn.Credentials(user.Credentials).CredentialDescriptors()),
 		webauthn.WithAuthenticatorSelection(protocol.AuthenticatorSelection{
 			AuthenticatorAttachment: attachment,
 			ResidentKey:             protocol.ResidentKeyRequirementRequired,
@@ -298,6 +299,7 @@ func (s *Server) beginFidoEnrollment(w http.ResponseWriter, r *http.Request) {
 		attestation = protocol.PreferDirectAttestation
 	}
 	options, session, err := wa.BeginRegistration(wu,
+		webauthn.WithExclusions(webauthn.Credentials(wu.Credentials).CredentialDescriptors()),
 		webauthn.WithAuthenticatorSelection(protocol.AuthenticatorSelection{
 			AuthenticatorAttachment: attachment,
 			ResidentKey:             protocol.ResidentKeyRequirementRequired,

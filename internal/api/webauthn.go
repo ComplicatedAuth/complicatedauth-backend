@@ -92,7 +92,10 @@ func (s *Server) beginRegistration(w http.ResponseWriter, r *http.Request) {
 		fail(w, r, 404, "not_found", "Project User not found")
 		return
 	}
-	options, session, err := wa.BeginRegistration(wu, webauthn.WithResidentKeyRequirement(protocol.ResidentKeyRequirementRequired))
+	options, session, err := wa.BeginRegistration(wu,
+		webauthn.WithExclusions(webauthn.Credentials(wu.Credentials).CredentialDescriptors()),
+		webauthn.WithResidentKeyRequirement(protocol.ResidentKeyRequirementRequired),
+	)
 	if err != nil {
 		fail(w, r, 422, "webauthn_begin_failed", err.Error())
 		return
