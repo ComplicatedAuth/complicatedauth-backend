@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	security "github.com/dokosoko/complicatedauth-backend/internal/auth"
+	security "github.com/complicatedauth/complicatedauth-backend/internal/auth"
 	"github.com/google/uuid"
 )
 

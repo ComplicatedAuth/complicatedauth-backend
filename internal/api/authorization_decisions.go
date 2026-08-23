@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	security "github.com/dokosoko/complicatedauth-backend/internal/auth"
+	security "github.com/complicatedauth/complicatedauth-backend/internal/auth"
 )
 
 const oauthResourcePrincipalKey contextKey = "oauthResourcePrincipal"

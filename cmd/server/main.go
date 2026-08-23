@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dokosoko/complicatedauth-backend/internal/api"
-	"github.com/dokosoko/complicatedauth-backend/internal/store"
+	"github.com/complicatedauth/complicatedauth-backend/internal/api"
+	"github.com/complicatedauth/complicatedauth-backend/internal/store"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

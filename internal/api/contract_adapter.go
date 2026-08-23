@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/dokosoko/complicatedauth-backend/internal/contract"
+	"github.com/complicatedauth/complicatedauth-backend/internal/contract"
 )
 
 // ContractAdapter makes every generated operation an explicit compile-time

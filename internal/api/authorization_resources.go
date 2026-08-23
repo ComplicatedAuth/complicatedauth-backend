@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dokosoko/complicatedauth-backend/internal/store"
+	"github.com/complicatedauth/complicatedauth-backend/internal/store"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )

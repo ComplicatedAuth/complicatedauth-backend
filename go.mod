@@ -1,4 +1,4 @@
-module github.com/dokosoko/complicatedauth-backend
+module github.com/complicatedauth/complicatedauth-backend
 
 go 1.25.0
 

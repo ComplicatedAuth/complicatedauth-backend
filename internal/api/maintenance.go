@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/dokosoko/complicatedauth-backend/internal/store"
+	"github.com/complicatedauth/complicatedauth-backend/internal/store"
 	"github.com/google/uuid"
 )
 
