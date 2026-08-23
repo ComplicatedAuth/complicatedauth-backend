@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"sort"
@@ -220,7 +219,7 @@ func normalizeRedirectURIs(values []string) ([]string, error) {
 			return nil, fmt.Errorf("redirect URI %q must be absolute and must not contain credentials or a fragment", value)
 		}
 		hostname := parsed.Hostname()
-		developmentHTTP := parsed.Scheme == "http" && (hostname == "localhost" || net.ParseIP(hostname) != nil)
+		developmentHTTP := parsed.Scheme == "http" && isLocalDevelopmentHostname(hostname)
 		if parsed.Scheme != "https" && !developmentHTTP {
 			return nil, fmt.Errorf("redirect URI %q must use HTTPS except for localhost or literal-IP development", value)
 		}

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -108,7 +107,7 @@ func normalizeResourceIdentifier(value string) (string, error) {
 	if err != nil || parsed.Scheme == "" || parsed.Host == "" || parsed.User != nil || parsed.Fragment != "" || parsed.RawQuery != "" {
 		return "", errors.New("identifier must be an absolute URI without credentials, query, or fragment")
 	}
-	developmentHTTP := parsed.Scheme == "http" && (parsed.Hostname() == "localhost" || net.ParseIP(parsed.Hostname()) != nil)
+	developmentHTTP := parsed.Scheme == "http" && isLocalDevelopmentHostname(parsed.Hostname())
 	if parsed.Scheme != "https" && !developmentHTTP {
 		return "", errors.New("identifier must use HTTPS except for localhost or literal-IP development")
 	}

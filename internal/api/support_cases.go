@@ -207,7 +207,7 @@ func normalizeSupportDiagnostics(value *SupportDiagnostics) error {
 	}
 	if value.CurrentURL != "" {
 		parsed, err := url.Parse(value.CurrentURL)
-		if err != nil || parsed.Scheme == "" || parsed.Host == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Scheme != "https" && !(parsed.Scheme == "http" && parsed.Hostname() == "localhost")) {
+		if err != nil || parsed.Scheme == "" || parsed.Host == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Scheme != "https" && !(parsed.Scheme == "http" && isLocalDevelopmentHostname(parsed.Hostname()))) {
 			return errors.New("diagnostics.current_url must be HTTPS, or localhost HTTP, without credentials, query, or fragment")
 		}
 	}

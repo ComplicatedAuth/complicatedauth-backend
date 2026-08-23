@@ -56,6 +56,24 @@ func TestValidRPID(t *testing.T) {
 	}
 }
 
+func TestLocalhostSubdomainsAreAcceptedByOAuthContracts(t *testing.T) {
+	if got, err := normalizeResourceIdentifier("http://api.complicatedauth.localhost:38080"); err != nil || got != "http://api.complicatedauth.localhost:38080" {
+		t.Fatalf("resource identifier=%q err=%v", got, err)
+	}
+	redirects, err := normalizeRedirectURIs([]string{"http://localhost:8080/oauth/callback"})
+	if err != nil || len(redirects) != 1 || redirects[0] != "http://localhost:8080/oauth/callback" {
+		t.Fatalf("redirects=%v err=%v", redirects, err)
+	}
+	for _, raw := range []string{"http://complicatedauth.localhost.example:38080", "http://localhost.example:38080"} {
+		if _, err := normalizeResourceIdentifier(raw); err == nil {
+			t.Fatalf("lookalike resource identifier %q was accepted", raw)
+		}
+		if _, err := normalizeRedirectURIs([]string{raw + "/oauth/callback"}); err == nil {
+			t.Fatalf("lookalike redirect URI %q was accepted", raw)
+		}
+	}
+}
+
 func TestTrustedProxyParsingAndClientIP(t *testing.T) {
 	proxies, err := parseTrustedProxies("10.0.0.0/8, 192.0.2.4")
 	if err != nil || len(proxies) != 2 {

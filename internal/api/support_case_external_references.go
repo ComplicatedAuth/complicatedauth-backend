@@ -125,7 +125,7 @@ func normalizeSupportExternalReference(provider, externalID, rawURL, label strin
 	}
 	if rawURL != "" {
 		parsed, err := url.Parse(rawURL)
-		if err != nil || parsed.Scheme == "" || parsed.Host == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Scheme != "https" && !(parsed.Scheme == "http" && parsed.Hostname() == "localhost")) {
+		if err != nil || parsed.Scheme == "" || parsed.Host == "" || parsed.User != nil || parsed.RawQuery != "" || parsed.Fragment != "" || (parsed.Scheme != "https" && !(parsed.Scheme == "http" && isLocalDevelopmentHostname(parsed.Hostname()))) {
 			return "", "", "", "", errors.New("url must be HTTPS, or localhost HTTP, without credentials, query, or fragment")
 		}
 	}
