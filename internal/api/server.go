@@ -118,6 +118,7 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("PATCH /v1/oauth/applications/{application_uid}/grants/{grant_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.updateOAuthApplicationGrant)))
 	mux.Handle("DELETE /v1/oauth/applications/{application_uid}/grants/{grant_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.deleteOAuthApplicationGrant)))
 	mux.Handle("POST /v1/authorization/decisions", s.oauthResourceAuthorized(http.HandlerFunc(s.createAuthorizationDecision)))
+	mux.Handle("POST /v1/access/evaluations", s.oauthResourceAuthorized(http.HandlerFunc(s.createAccessEvaluation)))
 
 	mux.Handle("GET /v1/projects", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listProjects)))
 	mux.Handle("POST /v1/projects", s.consoleAuthorized(permissionManageProjects, http.HandlerFunc(s.createProject)))
@@ -143,6 +144,7 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("POST /v1/projects/{project_uid}/users/{user_uid}/sessions/revoke", s.consoleOrServiceCredential(permissionSupportUsers, serviceScopeSessionsManage, http.HandlerFunc(s.revokeProjectUserSessions)))
 	mux.Handle("DELETE /v1/projects/{project_uid}/users/{user_uid}/passkeys/{credential_uid}", s.consoleOrServiceCredential(permissionManageUsers, serviceScopeProjectUsersWrite, http.HandlerFunc(s.deletePasskey)))
 	mux.Handle("GET /v1/support/cases", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.listSupportCases)))
+	mux.Handle("POST /v1/support-submissions", s.serviceCredential(serviceScopeSupportCasesWrite, http.HandlerFunc(s.createSupportSubmission)))
 	mux.Handle("POST /v1/support/cases", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesWrite, http.HandlerFunc(s.createSupportCase)))
 	mux.Handle("GET /v1/support/cases/{case_uid}", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesRead, http.HandlerFunc(s.getSupportCase)))
 	mux.Handle("PATCH /v1/support/cases/{case_uid}", s.consoleOrServiceCredential(permissionManageSupport, serviceScopeSupportCasesWrite, http.HandlerFunc(s.updateSupportCase)))

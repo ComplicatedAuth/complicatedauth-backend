@@ -84,22 +84,11 @@ func (s *Server) createAuthorizationDecision(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	p := mustOAuthResourcePrincipal(r)
-	rows, err := s.db.Query(r.Context(), `SELECT name FROM resource_server_scopes WHERE resource_server_uid=$1 AND status='active' AND deleted_at IS NULL AND name=ANY($2::text[]) ORDER BY name`, p.ResourceServerUID, p.Scopes)
+	capabilities, err := s.currentOAuthCapabilities(r.Context(), p)
 	if err != nil {
 		fail(w, r, http.StatusServiceUnavailable, "authorization_unavailable", "authorization decision is temporarily unavailable")
 		return
 	}
-	capabilities := []string{}
-	for rows.Next() {
-		var capability string
-		if scanErr := rows.Scan(&capability); scanErr != nil {
-			rows.Close()
-			fail(w, r, http.StatusServiceUnavailable, "authorization_unavailable", "authorization decision is temporarily unavailable")
-			return
-		}
-		capabilities = append(capabilities, capability)
-	}
-	rows.Close()
 	var operationExists bool
 	err = s.db.QueryRow(r.Context(), `SELECT EXISTS(SELECT 1 FROM resource_server_scopes WHERE resource_server_uid=$1 AND name=$2 AND status='active' AND deleted_at IS NULL)`, p.ResourceServerUID, in.Operation).Scan(&operationExists)
 	if err != nil {
@@ -130,4 +119,37 @@ func (s *Server) createAuthorizationDecision(w http.ResponseWriter, r *http.Requ
 	}
 	w.Header().Set("Cache-Control", "private, no-store")
 	writeJSON(w, http.StatusOK, decision)
+}
+
+func (s *Server) currentOAuthCapabilities(ctx context.Context, p oauthResourcePrincipal) ([]string, error) {
+	rows, err := s.db.Query(ctx, `
+		SELECT scope.name
+		FROM resource_server_scopes scope
+		JOIN resource_servers resource ON resource.uid=scope.resource_server_uid
+		JOIN oauth_application_grant_scopes assignment ON assignment.scope_uid=scope.uid
+		JOIN oauth_application_grants grant_record ON grant_record.uid=assignment.grant_uid
+		JOIN oauth_applications application ON application.uid=grant_record.application_uid
+		JOIN tenant_members member ON member.uid=$3
+		WHERE scope.resource_server_uid=$1 AND scope.status='active' AND scope.deleted_at IS NULL
+		  AND scope.name=ANY($2::text[])
+		  AND resource.status='active' AND resource.deleted_at IS NULL
+		  AND grant_record.application_uid=$4 AND grant_record.resource_server_uid=$1
+		  AND grant_record.status='active' AND grant_record.deleted_at IS NULL
+		  AND application.status='active' AND application.deleted_at IS NULL
+		  AND member.status='active'
+		ORDER BY scope.name
+	`, p.ResourceServerUID, p.Scopes, p.MemberUID, p.ApplicationUID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	capabilities := []string{}
+	for rows.Next() {
+		var capability string
+		if err = rows.Scan(&capability); err != nil {
+			return nil, err
+		}
+		capabilities = append(capabilities, capability)
+	}
+	return capabilities, rows.Err()
 }

@@ -158,6 +158,111 @@ func (e CreateTenantInvitationRequestRole) Valid() bool {
 	}
 }
 
+// Defines values for ExternalBugReportSeverity.
+const (
+	ExternalBugReportSeverityCritical ExternalBugReportSeverity = "critical"
+	ExternalBugReportSeverityHigh     ExternalBugReportSeverity = "high"
+	ExternalBugReportSeverityLow      ExternalBugReportSeverity = "low"
+	ExternalBugReportSeverityMedium   ExternalBugReportSeverity = "medium"
+	ExternalBugReportSeverityUnknown  ExternalBugReportSeverity = "unknown"
+)
+
+// Valid indicates whether the value is a known member of the ExternalBugReportSeverity enum.
+func (e ExternalBugReportSeverity) Valid() bool {
+	switch e {
+	case ExternalBugReportSeverityCritical:
+		return true
+	case ExternalBugReportSeverityHigh:
+		return true
+	case ExternalBugReportSeverityLow:
+		return true
+	case ExternalBugReportSeverityMedium:
+		return true
+	case ExternalBugReportSeverityUnknown:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExternalFeedbackReportCategory.
+const (
+	Documentation  ExternalFeedbackReportCategory = "documentation"
+	FeatureRequest ExternalFeedbackReportCategory = "feature_request"
+	General        ExternalFeedbackReportCategory = "general"
+	Other          ExternalFeedbackReportCategory = "other"
+	Performance    ExternalFeedbackReportCategory = "performance"
+	Usability      ExternalFeedbackReportCategory = "usability"
+)
+
+// Valid indicates whether the value is a known member of the ExternalFeedbackReportCategory enum.
+func (e ExternalFeedbackReportCategory) Valid() bool {
+	switch e {
+	case Documentation:
+		return true
+	case FeatureRequest:
+		return true
+	case General:
+		return true
+	case Other:
+		return true
+	case Performance:
+		return true
+	case Usability:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExternalSupportSubmissionKind.
+const (
+	ExternalSupportSubmissionKindBug      ExternalSupportSubmissionKind = "bug"
+	ExternalSupportSubmissionKindFeedback ExternalSupportSubmissionKind = "feedback"
+)
+
+// Valid indicates whether the value is a known member of the ExternalSupportSubmissionKind enum.
+func (e ExternalSupportSubmissionKind) Valid() bool {
+	switch e {
+	case ExternalSupportSubmissionKindBug:
+		return true
+	case ExternalSupportSubmissionKindFeedback:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExternalSupportSubmissionSchemaVersion.
+const (
+	N20260820 ExternalSupportSubmissionSchemaVersion = "2026-08-20"
+)
+
+// Valid indicates whether the value is a known member of the ExternalSupportSubmissionSchemaVersion enum.
+func (e ExternalSupportSubmissionSchemaVersion) Valid() bool {
+	switch e {
+	case N20260820:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ExternalSupportSubmissionSource.
+const (
+	PrivateMcp ExternalSupportSubmissionSource = "private_mcp"
+)
+
+// Valid indicates whether the value is a known member of the ExternalSupportSubmissionSource enum.
+func (e ExternalSupportSubmissionSource) Valid() bool {
+	switch e {
+	case PrivateMcp:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for FactorVerifiedFactor.
 const (
 	Password FactorVerifiedFactor = "password"
@@ -673,19 +778,19 @@ func (e ServiceCredentialSecretStatus) Valid() bool {
 
 // Defines values for SupportCaseCategory.
 const (
-	Bug      SupportCaseCategory = "bug"
-	Feedback SupportCaseCategory = "feedback"
-	Question SupportCaseCategory = "question"
+	SupportCaseCategoryBug      SupportCaseCategory = "bug"
+	SupportCaseCategoryFeedback SupportCaseCategory = "feedback"
+	SupportCaseCategoryQuestion SupportCaseCategory = "question"
 )
 
 // Valid indicates whether the value is a known member of the SupportCaseCategory enum.
 func (e SupportCaseCategory) Valid() bool {
 	switch e {
-	case Bug:
+	case SupportCaseCategoryBug:
 		return true
-	case Feedback:
+	case SupportCaseCategoryFeedback:
 		return true
-	case Question:
+	case SupportCaseCategoryQuestion:
 		return true
 	default:
 		return false
@@ -730,22 +835,22 @@ func (e SupportCaseMessageVisibility) Valid() bool {
 
 // Defines values for SupportCasePriority.
 const (
-	High   SupportCasePriority = "high"
-	Low    SupportCasePriority = "low"
-	Normal SupportCasePriority = "normal"
-	Urgent SupportCasePriority = "urgent"
+	SupportCasePriorityHigh   SupportCasePriority = "high"
+	SupportCasePriorityLow    SupportCasePriority = "low"
+	SupportCasePriorityNormal SupportCasePriority = "normal"
+	SupportCasePriorityUrgent SupportCasePriority = "urgent"
 )
 
 // Valid indicates whether the value is a known member of the SupportCasePriority enum.
 func (e SupportCasePriority) Valid() bool {
 	switch e {
-	case High:
+	case SupportCasePriorityHigh:
 		return true
-	case Low:
+	case SupportCasePriorityLow:
 		return true
-	case Normal:
+	case SupportCasePriorityNormal:
 		return true
-	case Urgent:
+	case SupportCasePriorityUrgent:
 		return true
 	default:
 		return false
@@ -803,6 +908,21 @@ func (e SupportReporterType) Valid() bool {
 	}
 }
 
+// Defines values for SupportSubmissionReceiptStatus.
+const (
+	SupportSubmissionReceiptStatusAccepted SupportSubmissionReceiptStatus = "accepted"
+)
+
+// Valid indicates whether the value is a known member of the SupportSubmissionReceiptStatus enum.
+func (e SupportSubmissionReceiptStatus) Valid() bool {
+	switch e {
+	case SupportSubmissionReceiptStatusAccepted:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for TenantInvitationRole.
 const (
 	TenantInvitationRoleAdmin     TenantInvitationRole = "admin"
@@ -829,22 +949,22 @@ func (e TenantInvitationRole) Valid() bool {
 
 // Defines values for TenantInvitationStatus.
 const (
-	Accepted TenantInvitationStatus = "accepted"
-	Expired  TenantInvitationStatus = "expired"
-	Pending  TenantInvitationStatus = "pending"
-	Revoked  TenantInvitationStatus = "revoked"
+	TenantInvitationStatusAccepted TenantInvitationStatus = "accepted"
+	TenantInvitationStatusExpired  TenantInvitationStatus = "expired"
+	TenantInvitationStatusPending  TenantInvitationStatus = "pending"
+	TenantInvitationStatusRevoked  TenantInvitationStatus = "revoked"
 )
 
 // Valid indicates whether the value is a known member of the TenantInvitationStatus enum.
 func (e TenantInvitationStatus) Valid() bool {
 	switch e {
-	case Accepted:
+	case TenantInvitationStatusAccepted:
 		return true
-	case Expired:
+	case TenantInvitationStatusExpired:
 		return true
-	case Pending:
+	case TenantInvitationStatusPending:
 		return true
-	case Revoked:
+	case TenantInvitationStatusRevoked:
 		return true
 	default:
 		return false
@@ -1211,6 +1331,18 @@ type AcceptedRequest struct {
 // AcceptedRequestAccepted defines model for AcceptedRequest.Accepted.
 type AcceptedRequestAccepted bool
 
+// AccessEvaluation Idempotent snapshot of current delegated grants whose lifetime never exceeds the authenticated OAuth access token.
+type AccessEvaluation struct {
+	// ExpiresAt Evaluation validity boundary; an external platform must not issue a longer-lived token.
+	ExpiresAt     Timestamp `json:"expires_at"`
+	Grants        []string  `json:"grants"`
+	Id            string    `json:"id"`
+	PolicyVersion *string   `json:"policy_version,omitempty"`
+}
+
+// AccessEvaluationRequest Deliberately empty input; all identity and authorization context comes from the authenticated resource-bound OAuth token.
+type AccessEvaluationRequest = map[string]interface{}
+
 // AuditEvent Immutable security-relevant action with actor, optional target, metadata, and timestamp.
 type AuditEvent struct {
 	Action    string              `json:"action"`
@@ -1472,6 +1604,115 @@ type ErrorEnvelope struct {
 		RequestId string                  `json:"request_id"`
 	} `json:"error"`
 }
+
+// ExternalBugReport Structured external bug report; kind `bug` requires this object and forbids feedback.
+type ExternalBugReport struct {
+	ActualBehavior    *string                    `json:"actual_behavior,omitempty"`
+	AllowContact      *bool                      `json:"allow_contact,omitempty"`
+	Description       string                     `json:"description"`
+	DiagnosticContext *string                    `json:"diagnostic_context,omitempty"`
+	ErrorCode         *string                    `json:"error_code,omitempty"`
+	ErrorMessage      *string                    `json:"error_message,omitempty"`
+	ExpectedBehavior  *string                    `json:"expected_behavior,omitempty"`
+	IntegrationRunId  *string                    `json:"integration_run_id,omitempty"`
+	RelatedTool       *string                    `json:"related_tool,omitempty"`
+	ReproductionSteps *[]string                  `json:"reproduction_steps,omitempty"`
+	Severity          *ExternalBugReportSeverity `json:"severity,omitempty"`
+	StackTrace        *string                    `json:"stack_trace,omitempty"`
+	Summary           string                     `json:"summary"`
+}
+
+// ExternalBugReportSeverity defines model for ExternalBugReport.Severity.
+type ExternalBugReportSeverity string
+
+// ExternalFeedbackReport Structured external feedback report; kind `feedback` requires this object and forbids a bug report.
+type ExternalFeedbackReport struct {
+	AllowContact     *bool                           `json:"allow_contact,omitempty"`
+	Category         *ExternalFeedbackReportCategory `json:"category,omitempty"`
+	IntegrationRunId *string                         `json:"integration_run_id,omitempty"`
+	Message          string                          `json:"message"`
+	Rating           *int                            `json:"rating,omitempty"`
+	RelatedTool      *string                         `json:"related_tool,omitempty"`
+}
+
+// ExternalFeedbackReportCategory defines model for ExternalFeedbackReport.Category.
+type ExternalFeedbackReportCategory string
+
+// ExternalIntegrationContext Published external integration revision and immutable snapshot active when the report was confirmed.
+type ExternalIntegrationContext struct {
+	DisplayName   string  `json:"display_name"`
+	FamilyKey     string  `json:"family_key"`
+	IntegrationId string  `json:"integration_id"`
+	Lifecycle     string  `json:"lifecycle"`
+	ManifestHash  *string `json:"manifest_hash,omitempty"`
+	Revision      int64   `json:"revision"`
+
+	// Snapshot Immutable published integration revision snapshot.
+	Snapshot   *map[string]interface{} `json:"snapshot,omitempty"`
+	VersionKey string                  `json:"version_key"`
+}
+
+// ExternalProductContext Immutable external product/catalog context attached to the support report for routing and diagnosis.
+type ExternalProductContext struct {
+	CatalogRevision  *int64  `json:"catalog_revision,omitempty"`
+	EnvironmentId    *string `json:"environment_id,omitempty"`
+	InstallationId   *string `json:"installation_id,omitempty"`
+	ManifestHash     *string `json:"manifest_hash,omitempty"`
+	ProductId        string  `json:"product_id"`
+	ProductName      string  `json:"product_name"`
+	ProductVersion   *string `json:"product_version,omitempty"`
+	ProductVersionId *string `json:"product_version_id,omitempty"`
+	SelectionSource  *string `json:"selection_source,omitempty"`
+}
+
+// ExternalReporterContext Vendor-owned customer identity derived by the external platform from authenticated claims; contact fields require explicit allow_contact consent.
+type ExternalReporterContext struct {
+	AllowContact bool                 `json:"allow_contact"`
+	DisplayName  *string              `json:"display_name,omitempty"`
+	Email        *openapi_types.Email `json:"email,omitempty"`
+
+	// ExternalCustomerId ComplicatedAuth Tenant identifier derived from the authenticated identity.
+	ExternalCustomerId *string `json:"external_customer_id,omitempty"`
+	InstallationId     *string `json:"installation_id,omitempty"`
+	Principal          struct {
+		Issuer  string `json:"issuer"`
+		Subject string `json:"subject"`
+	} `json:"principal"`
+}
+
+// ExternalSupportSubmission Versioned, consented bug or feedback report together with trusted identity, product, and optional integration context.
+type ExternalSupportSubmission struct {
+	// Bug Structured external bug report; kind `bug` requires this object and forbids feedback.
+	Bug *ExternalBugReport `json:"bug,omitempty"`
+
+	// ConfirmedAt UTC timestamp serialized in RFC 3339 date-time form.
+	ConfirmedAt Timestamp `json:"confirmed_at"`
+
+	// Feedback Structured external feedback report; kind `feedback` requires this object and forbids a bug report.
+	Feedback *ExternalFeedbackReport `json:"feedback,omitempty"`
+
+	// Integration Published external integration revision and immutable snapshot active when the report was confirmed.
+	Integration *ExternalIntegrationContext   `json:"integration,omitempty"`
+	Kind        ExternalSupportSubmissionKind `json:"kind"`
+
+	// Product Immutable external product/catalog context attached to the support report for routing and diagnosis.
+	Product ExternalProductContext `json:"product"`
+
+	// Reporter Vendor-owned customer identity derived by the external platform from authenticated claims; contact fields require explicit allow_contact consent.
+	Reporter      ExternalReporterContext                `json:"reporter"`
+	RequestId     string                                 `json:"request_id"`
+	SchemaVersion ExternalSupportSubmissionSchemaVersion `json:"schema_version"`
+	Source        ExternalSupportSubmissionSource        `json:"source"`
+}
+
+// ExternalSupportSubmissionKind defines model for ExternalSupportSubmission.Kind.
+type ExternalSupportSubmissionKind string
+
+// ExternalSupportSubmissionSchemaVersion defines model for ExternalSupportSubmission.SchemaVersion.
+type ExternalSupportSubmissionSchemaVersion string
+
+// ExternalSupportSubmissionSource defines model for ExternalSupportSubmission.Source.
+type ExternalSupportSubmissionSource string
 
 // FactorVerified Confirmation that the password factor succeeded and the login attempt can continue.
 type FactorVerified struct {
@@ -2294,6 +2535,27 @@ type SupportReporter struct {
 // SupportReporterType defines model for SupportReporter.Type.
 type SupportReporterType string
 
+// SupportSubmissionReceipt Synchronous acknowledgement that identifies the created Support Case; unknown additive response fields may be ignored by external platforms.
+type SupportSubmissionReceipt struct {
+	ExternalId  *string                        `json:"external_id,omitempty"`
+	ExternalUrl *string                        `json:"external_url,omitempty"`
+	Id          string                         `json:"id"`
+	Status      SupportSubmissionReceiptStatus `json:"status"`
+}
+
+// SupportSubmissionReceiptStatus defines model for SupportSubmissionReceipt.Status.
+type SupportSubmissionReceiptStatus string
+
+// SupportSubmissionRequest Durable external support-delivery envelope whose submission identifier also serves as its idempotency key.
+type SupportSubmissionRequest struct {
+	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
+	CreatedAt Timestamp `json:"created_at"`
+
+	// Submission Versioned, consented bug or feedback report together with trusted identity, product, and optional integration context.
+	Submission   ExternalSupportSubmission `json:"submission"`
+	SubmissionId string                    `json:"submission_id"`
+}
+
 // Tenant Administrative owner boundary for Projects and Tenant Members.
 type Tenant struct {
 	Name string `json:"name"`
@@ -2604,11 +2866,17 @@ type WebAuthnOptions struct {
 	PublicKey   map[string]interface{} `json:"public_key"`
 }
 
+// AccessEvaluationIdempotencyKey defines model for AccessEvaluationIdempotencyKey.
+type AccessEvaluationIdempotencyKey = string
+
 // CredentialUid RFC 4122 universally unique identifier.
 type CredentialUid = Uuid
 
 // Cursor defines model for Cursor.
 type Cursor = string
+
+// DokoSokoRequestId defines model for DokoSokoRequestId.
+type DokoSokoRequestId = string
 
 // IdempotencyKey defines model for IdempotencyKey.
 type IdempotencyKey = string
@@ -2682,6 +2950,9 @@ type SupportCaseExternalReferenceUid = Uuid
 // SupportCaseUid RFC 4122 universally unique identifier.
 type SupportCaseUid = Uuid
 
+// SupportSubmissionIdempotencyKey defines model for SupportSubmissionIdempotencyKey.
+type SupportSubmissionIdempotencyKey = string
+
 // TenantMemberWebAuthnCredentialUid RFC 4122 universally unique identifier.
 type TenantMemberWebAuthnCredentialUid = Uuid
 
@@ -2747,6 +3018,15 @@ type AuthorizeOAuthApplicationParamsCodeChallengeMethod string
 
 // AuthorizeOAuthApplicationParamsResponseMode defines parameters for AuthorizeOAuthApplication.
 type AuthorizeOAuthApplicationParamsResponseMode string
+
+// CreateAccessEvaluationParams defines parameters for CreateAccessEvaluation.
+type CreateAccessEvaluationParams struct {
+	// IdempotencyKey Stable for retries of one delegated-access evaluation and unique for the next evaluation. ComplicatedAuth retains the exact result for at least ten minutes.
+	IdempotencyKey AccessEvaluationIdempotencyKey `json:"Idempotency-Key"`
+
+	// XDokoSokoRequestID Unique identifier for one DokoSoko HTTP attempt; retries use a new value and idempotency does not depend on it.
+	XDokoSokoRequestID DokoSokoRequestId `json:"X-DokoSoko-Request-ID"`
+}
 
 // ListTenantActivityParams defines parameters for ListTenantActivity.
 type ListTenantActivityParams struct {
@@ -3237,6 +3517,15 @@ type UpdateResourceServerScopeParams struct {
 	IfMatch IfMatch `json:"If-Match"`
 }
 
+// CreateSupportSubmissionParams defines parameters for CreateSupportSubmission.
+type CreateSupportSubmissionParams struct {
+	// IdempotencyKey Stable external identifier for one logical support submission and its at-least-once delivery retries.
+	IdempotencyKey SupportSubmissionIdempotencyKey `json:"Idempotency-Key"`
+
+	// XDokoSokoRequestID Unique identifier for one DokoSoko HTTP attempt; retries use a new value and idempotency does not depend on it.
+	XDokoSokoRequestID DokoSokoRequestId `json:"X-DokoSoko-Request-ID"`
+}
+
 // ListSupportCasesParams defines parameters for ListSupportCases.
 type ListSupportCasesParams struct {
 	// Cursor Opaque cursor returned as `next_cursor` by the preceding page.
@@ -3399,6 +3688,9 @@ type RevokeOAuthTokenFormdataRequestBody = OAuthRevocationRequest
 // ExchangeOAuthAuthorizationCodeFormdataRequestBody defines body for ExchangeOAuthAuthorizationCode for application/x-www-form-urlencoded ContentType.
 type ExchangeOAuthAuthorizationCodeFormdataRequestBody = OAuthTokenRequest
 
+// CreateAccessEvaluationJSONRequestBody defines body for CreateAccessEvaluation for application/json ContentType.
+type CreateAccessEvaluationJSONRequestBody = AccessEvaluationRequest
+
 // CreateAuthorizationDecisionJSONRequestBody defines body for CreateAuthorizationDecision for application/json ContentType.
 type CreateAuthorizationDecisionJSONRequestBody = CreateAuthorizationDecisionRequest
 
@@ -3540,6 +3832,9 @@ type CreateResourceServerScopeJSONRequestBody = CreateResourceServerScopeRequest
 // UpdateResourceServerScopeJSONRequestBody defines body for UpdateResourceServerScope for application/json ContentType.
 type UpdateResourceServerScopeJSONRequestBody = UpdateResourceServerScopeRequest
 
+// CreateSupportSubmissionJSONRequestBody defines body for CreateSupportSubmission for application/json ContentType.
+type CreateSupportSubmissionJSONRequestBody = SupportSubmissionRequest
+
 // CreateSupportCaseJSONRequestBody defines body for CreateSupportCase for application/json ContentType.
 type CreateSupportCaseJSONRequestBody = CreateSupportCaseRequest
 
@@ -3590,6 +3885,9 @@ type ServerInterface interface {
 	// Get claims for an authorized Tenant Member
 	// (GET /oauth/userinfo)
 	GetOAuthUserInfo(w http.ResponseWriter, r *http.Request)
+	// Evaluate an authenticated delegated identity
+	// (POST /v1/access/evaluations)
+	CreateAccessEvaluation(w http.ResponseWriter, r *http.Request, params CreateAccessEvaluationParams)
 	// List Tenant activity
 	// (GET /v1/activity)
 	ListTenantActivity(w http.ResponseWriter, r *http.Request, params ListTenantActivityParams)
@@ -3848,6 +4146,9 @@ type ServerInterface interface {
 	// Update a Resource Server scope
 	// (PATCH /v1/resource-servers/{resource_server_uid}/scopes/{scope_uid})
 	UpdateResourceServerScope(w http.ResponseWriter, r *http.Request, resourceServerUid ResourceServerUid, scopeUid ResourceServerScopeUid, params UpdateResourceServerScopeParams)
+	// Accept one consented external support submission
+	// (POST /v1/support-submissions)
+	CreateSupportSubmission(w http.ResponseWriter, r *http.Request, params CreateSupportSubmissionParams)
 	// List accessible Support Cases
 	// (GET /v1/support/cases)
 	ListSupportCases(w http.ResponseWriter, r *http.Request, params ListSupportCasesParams)
@@ -4182,6 +4483,80 @@ func (siw *ServerInterfaceWrapper) GetOAuthUserInfo(w http.ResponseWriter, r *ht
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetOAuthUserInfo(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// CreateAccessEvaluation operation middleware
+func (siw *ServerInterfaceWrapper) CreateAccessEvaluation(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, OauthAccessTokenScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateAccessEvaluationParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey AccessEvaluationIdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-DokoSoko-Request-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-DokoSoko-Request-ID")]; found {
+		var XDokoSokoRequestID DokoSokoRequestId
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-DokoSoko-Request-ID", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-DokoSoko-Request-ID", valueList[0], &XDokoSokoRequestID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+			return
+		}
+
+		params.XDokoSokoRequestID = XDokoSokoRequestID
+
+	} else {
+		err := fmt.Errorf("Header parameter X-DokoSoko-Request-ID is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateAccessEvaluation(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -9259,6 +9634,80 @@ func (siw *ServerInterfaceWrapper) UpdateResourceServerScope(w http.ResponseWrit
 	handler.ServeHTTP(w, r)
 }
 
+// CreateSupportSubmission operation middleware
+func (siw *ServerInterfaceWrapper) CreateSupportSubmission(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params CreateSupportSubmissionParams
+
+	headers := r.Header
+
+	// ------------- Required header parameter "Idempotency-Key" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("Idempotency-Key")]; found {
+		var IdempotencyKey SupportSubmissionIdempotencyKey
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "Idempotency-Key", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "Idempotency-Key", valueList[0], &IdempotencyKey, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "Idempotency-Key", Err: err})
+			return
+		}
+
+		params.IdempotencyKey = IdempotencyKey
+
+	} else {
+		err := fmt.Errorf("Header parameter Idempotency-Key is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "Idempotency-Key", Err: err})
+		return
+	}
+
+	// ------------- Required header parameter "X-DokoSoko-Request-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-DokoSoko-Request-ID")]; found {
+		var XDokoSokoRequestID DokoSokoRequestId
+		n := len(valueList)
+		if n != 1 {
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-DokoSoko-Request-ID", Count: n})
+			return
+		}
+
+		err = runtime.BindStyledParameterWithOptions("simple", "X-DokoSoko-Request-ID", valueList[0], &XDokoSokoRequestID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		if err != nil {
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+			return
+		}
+
+		params.XDokoSokoRequestID = XDokoSokoRequestID
+
+	} else {
+		err := fmt.Errorf("Header parameter X-DokoSoko-Request-ID is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+		return
+	}
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateSupportSubmission(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 // ListSupportCases operation middleware
 func (siw *ServerInterfaceWrapper) ListSupportCases(w http.ResponseWriter, r *http.Request) {
 
@@ -10777,6 +11226,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/oauth/revoke", wrapper.RevokeOAuthToken)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/oauth/token", wrapper.ExchangeOAuthAuthorizationCode)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/oauth/userinfo", wrapper.GetOAuthUserInfo)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/access/evaluations", wrapper.CreateAccessEvaluation)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/activity", wrapper.ListTenantActivity)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/authorization/decisions", wrapper.CreateAuthorizationDecision)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/auth/logout", wrapper.Logout)
@@ -10863,6 +11313,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", wrapper.DeleteResourceServerScope)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", wrapper.GetResourceServerScope)
 	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/resource-servers/{resource_server_uid}/scopes/{scope_uid}", wrapper.UpdateResourceServerScope)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/support-submissions", wrapper.CreateSupportSubmission)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases", wrapper.ListSupportCases)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/support/cases", wrapper.CreateSupportCase)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/support/cases/{case_uid}", wrapper.GetSupportCase)

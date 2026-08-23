@@ -81,6 +81,9 @@ func (a *ContractAdapter) RevokeOAuthConsent(w http.ResponseWriter, r *http.Requ
 func (a *ContractAdapter) CreateAuthorizationDecision(w http.ResponseWriter, r *http.Request) {
 	a.server.createAuthorizationDecision(w, r)
 }
+func (a *ContractAdapter) CreateAccessEvaluation(w http.ResponseWriter, r *http.Request, _ contract.CreateAccessEvaluationParams) {
+	a.server.createAccessEvaluation(w, r)
+}
 func (a *ContractAdapter) ListOAuthApplicationGrants(w http.ResponseWriter, r *http.Request, applicationUID contract.OAuthApplicationUid) {
 	r.SetPathValue("application_uid", applicationUID.String())
 	a.server.listOAuthApplicationGrants(w, r)
@@ -269,6 +272,9 @@ func (a *ContractAdapter) RevokeServiceCredential(w http.ResponseWriter, r *http
 }
 func (a *ContractAdapter) ListSupportCases(w http.ResponseWriter, r *http.Request, _ contract.ListSupportCasesParams) {
 	a.server.listSupportCases(w, r)
+}
+func (a *ContractAdapter) CreateSupportSubmission(w http.ResponseWriter, r *http.Request, _ contract.CreateSupportSubmissionParams) {
+	a.server.createSupportSubmission(w, r)
 }
 func (a *ContractAdapter) CreateSupportCase(w http.ResponseWriter, r *http.Request, _ contract.CreateSupportCaseParams) {
 	a.server.createSupportCase(w, r)

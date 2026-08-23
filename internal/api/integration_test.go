@@ -319,6 +319,24 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 	if deniedDecision.Allowed || deniedDecision.DenialReason == nil || *deniedDecision.DenialReason != "missing_capability" {
 		t.Fatalf("unexpected denied authorization decision: %+v", deniedDecision)
 	}
+	accessEvaluationKey := "aeval_" + strings.Repeat("a", 32)
+	var accessEvaluation struct {
+		ID            string    `json:"id"`
+		Grants        []string  `json:"grants"`
+		ExpiresAt     time.Time `json:"expires_at"`
+		PolicyVersion string    `json:"policy_version"`
+	}
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/access/evaluations", map[string]any{}, "", delegatedTokens.AccessToken, map[string]string{"Idempotency-Key": accessEvaluationKey, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("b", 32)}, http.StatusOK, &accessEvaluation)
+	if accessEvaluation.ID != accessEvaluationKey || !scopeContains(accessEvaluation.Grants, "documents.read") || !strings.HasPrefix(accessEvaluation.PolicyVersion, "scope-v1:") || accessEvaluation.ExpiresAt.IsZero() {
+		t.Fatalf("unexpected delegated access evaluation: %+v", accessEvaluation)
+	}
+	var replayedAccessEvaluation struct {
+		ID string `json:"id"`
+	}
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/access/evaluations", map[string]any{}, "", delegatedTokens.AccessToken, map[string]string{"Idempotency-Key": accessEvaluationKey, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("c", 32)}, http.StatusOK, &replayedAccessEvaluation)
+	if replayedAccessEvaluation.ID != accessEvaluation.ID {
+		t.Fatal("access-evaluation retry did not replay the stable result")
+	}
 	requestJSONWithHeaders(t, client, "PATCH", ts.URL+"/v1/oauth/applications/"+confidentialApplication.UID+"/grants/"+applicationGrant.UID, map[string]any{"scope_uids": []string{readScope.UID, writeScope.UID}}, cfg.ConsoleOrigin, "", map[string]string{"If-Match": `"1"`}, http.StatusOK, &OAuthApplicationGrant{})
 	requestJSON(t, client, "POST", ts.URL+"/v1/authorization/decisions", map[string]any{"resource": map[string]any{"type": "document", "id": "doc_123"}, "operation": "documents.read"}, "", delegatedTokens.AccessToken, http.StatusUnauthorized, nil)
 
@@ -445,6 +463,69 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 	if len(supportCases.Items) != 1 || supportCases.Items[0].Subject != supportCase.Subject {
 		t.Fatalf("unexpected service-credential Support Case inbox: %+v", supportCases.Items)
 	}
+	supportSubmissionID := "support_submission_123456"
+	supportSubmission := map[string]any{
+		"submission_id": supportSubmissionID,
+		"created_at":    time.Now().UTC(),
+		"submission": map[string]any{
+			"schema_version": "2026-08-20", "kind": "bug", "source": "private_mcp",
+			"confirmed_at": time.Now().UTC(), "request_id": "external_report_123",
+			"reporter": map[string]any{
+				"principal":            map[string]any{"issuer": cfg.OAuthIssuer, "subject": allowedDecision.Principal.Subject},
+				"external_customer_id": session.Tenant.UID, "allow_contact": false,
+			},
+			"product":     map[string]any{"product_id": "complicatedauth-console", "product_name": "ComplicatedAuth Console"},
+			"integration": map[string]any{"integration_id": "integration_123", "family_key": "complicatedauth", "version_key": "v1", "display_name": "ComplicatedAuth", "lifecycle": "published", "revision": 1},
+			"bug":         map[string]any{"summary": "External login report", "description": "Login failed after redirect.", "severity": "high"},
+		},
+	}
+	var submissionReceipt struct {
+		ID         string `json:"id"`
+		Status     string `json:"status"`
+		ExternalID string `json:"external_id"`
+	}
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", supportSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("d", 32)}, http.StatusAccepted, &submissionReceipt)
+	if submissionReceipt.ID == "" || submissionReceipt.Status != "accepted" || !strings.HasPrefix(submissionReceipt.ExternalID, "SC-") {
+		t.Fatalf("unexpected support-submission receipt: %+v", submissionReceipt)
+	}
+	var replayedSubmissionReceipt struct {
+		ID string `json:"id"`
+	}
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", supportSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("e", 32)}, http.StatusAccepted, &replayedSubmissionReceipt)
+	if replayedSubmissionReceipt.ID != submissionReceipt.ID {
+		t.Fatal("support-submission retry did not replay the created Support Case")
+	}
+	var externalSupportCase SupportCase
+	requestJSON(t, client, "GET", ts.URL+"/v1/support/cases/"+submissionReceipt.ID, nil, "", credential.Secret, http.StatusOK, &externalSupportCase)
+	if externalSupportCase.Priority != "high" || externalSupportCase.AttachmentCount != 1 || externalSupportCase.AttachmentBytes == 0 || externalSupportCase.ProjectUID == nil || *externalSupportCase.ProjectUID != project.UID {
+		t.Fatalf("external support submission was not preserved as expected: %+v", externalSupportCase)
+	}
+	var externalAttachments struct {
+		Items []SupportCaseAttachment `json:"items"`
+	}
+	requestJSON(t, client, "GET", ts.URL+"/v1/support/cases/"+submissionReceipt.ID+"/attachments", nil, "", credential.Secret, http.StatusOK, &externalAttachments)
+	if len(externalAttachments.Items) != 1 || externalAttachments.Items[0].Filename != "external-support-submission.json" || externalAttachments.Items[0].MediaType != "application/json" {
+		t.Fatalf("external support envelope attachment is incomplete: %+v", externalAttachments.Items)
+	}
+	externalEnvelopeRequest, err := http.NewRequest(http.MethodGet, ts.URL+"/v1/support/cases/"+submissionReceipt.ID+"/attachments/"+externalAttachments.Items[0].UID+"/content", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	externalEnvelopeRequest.Header.Set("Authorization", "Bearer "+credential.Secret)
+	externalEnvelopeResponse, err := client.Do(externalEnvelopeRequest)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer externalEnvelopeResponse.Body.Close()
+	var preservedEnvelope map[string]any
+	if externalEnvelopeResponse.StatusCode != http.StatusOK || json.NewDecoder(externalEnvelopeResponse.Body).Decode(&preservedEnvelope) != nil || preservedEnvelope["submission_id"] != supportSubmissionID {
+		t.Fatalf("encrypted external support envelope did not round-trip: status=%d body=%+v", externalEnvelopeResponse.StatusCode, preservedEnvelope)
+	}
+	changedSubmission := map[string]any{}
+	rawSubmission, _ := json.Marshal(supportSubmission)
+	_ = json.Unmarshal(rawSubmission, &changedSubmission)
+	changedSubmission["submission"].(map[string]any)["request_id"] = "changed_external_report"
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", changedSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("f", 32)}, http.StatusConflict, nil)
 	var customerMessage SupportCaseMessage
 	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support/cases/"+supportCase.UID+"/messages", map[string]any{"body": "It happened again.", "author_project_user_uid": user.UID}, "", credential.Secret, map[string]string{"Idempotency-Key": "support_message_customer"}, http.StatusCreated, &customerMessage)
 	if customerMessage.Author.Type != "project_user" || customerMessage.Visibility != "public" {
