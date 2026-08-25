@@ -326,14 +326,14 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 		ExpiresAt     time.Time `json:"expires_at"`
 		PolicyVersion string    `json:"policy_version"`
 	}
-	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/access/evaluations", map[string]any{}, "", delegatedTokens.AccessToken, map[string]string{"Idempotency-Key": accessEvaluationKey, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("b", 32)}, http.StatusOK, &accessEvaluation)
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/access/evaluations", map[string]any{}, "", delegatedTokens.AccessToken, map[string]string{"Idempotency-Key": accessEvaluationKey, "X-External-Request-ID": "req_" + strings.Repeat("b", 32)}, http.StatusOK, &accessEvaluation)
 	if accessEvaluation.ID != accessEvaluationKey || !scopeContains(accessEvaluation.Grants, "documents.read") || !strings.HasPrefix(accessEvaluation.PolicyVersion, "scope-v1:") || accessEvaluation.ExpiresAt.IsZero() {
 		t.Fatalf("unexpected delegated access evaluation: %+v", accessEvaluation)
 	}
 	var replayedAccessEvaluation struct {
 		ID string `json:"id"`
 	}
-	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/access/evaluations", map[string]any{}, "", delegatedTokens.AccessToken, map[string]string{"Idempotency-Key": accessEvaluationKey, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("c", 32)}, http.StatusOK, &replayedAccessEvaluation)
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/access/evaluations", map[string]any{}, "", delegatedTokens.AccessToken, map[string]string{"Idempotency-Key": accessEvaluationKey, "X-External-Request-ID": "req_" + strings.Repeat("c", 32)}, http.StatusOK, &replayedAccessEvaluation)
 	if replayedAccessEvaluation.ID != accessEvaluation.ID {
 		t.Fatal("access-evaluation retry did not replay the stable result")
 	}
@@ -484,14 +484,14 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 		Status     string `json:"status"`
 		ExternalID string `json:"external_id"`
 	}
-	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", supportSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("d", 32)}, http.StatusAccepted, &submissionReceipt)
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", supportSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-External-Request-ID": "req_" + strings.Repeat("d", 32)}, http.StatusAccepted, &submissionReceipt)
 	if submissionReceipt.ID == "" || submissionReceipt.Status != "accepted" || !strings.HasPrefix(submissionReceipt.ExternalID, "SC-") {
 		t.Fatalf("unexpected support-submission receipt: %+v", submissionReceipt)
 	}
 	var replayedSubmissionReceipt struct {
 		ID string `json:"id"`
 	}
-	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", supportSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("e", 32)}, http.StatusAccepted, &replayedSubmissionReceipt)
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", supportSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-External-Request-ID": "req_" + strings.Repeat("e", 32)}, http.StatusAccepted, &replayedSubmissionReceipt)
 	if replayedSubmissionReceipt.ID != submissionReceipt.ID {
 		t.Fatal("support-submission retry did not replay the created Support Case")
 	}
@@ -525,7 +525,7 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 	rawSubmission, _ := json.Marshal(supportSubmission)
 	_ = json.Unmarshal(rawSubmission, &changedSubmission)
 	changedSubmission["submission"].(map[string]any)["request_id"] = "changed_external_report"
-	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", changedSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-DokoSoko-Request-ID": "req_" + strings.Repeat("f", 32)}, http.StatusConflict, nil)
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support-submissions", changedSubmission, "", credential.Secret, map[string]string{"Idempotency-Key": supportSubmissionID, "X-External-Request-ID": "req_" + strings.Repeat("f", 32)}, http.StatusConflict, nil)
 	var customerMessage SupportCaseMessage
 	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/support/cases/"+supportCase.UID+"/messages", map[string]any{"body": "It happened again.", "author_project_user_uid": user.UID}, "", credential.Secret, map[string]string{"Idempotency-Key": "support_message_customer"}, http.StatusCreated, &customerMessage)
 	if customerMessage.Author.Type != "project_user" || customerMessage.Visibility != "public" {

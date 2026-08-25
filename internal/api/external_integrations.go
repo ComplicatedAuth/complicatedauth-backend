@@ -22,7 +22,7 @@ import (
 
 var (
 	accessEvaluationKeyPattern = regexp.MustCompile(`^aeval_[a-f0-9]{32}$`)
-	dokoSokoRequestIDPattern   = regexp.MustCompile(`^req_[a-f0-9]{32}$`)
+	externalRequestIDPattern   = regexp.MustCompile(`^req_[a-f0-9]{32}$`)
 )
 
 func (s *Server) createAccessEvaluation(w http.ResponseWriter, r *http.Request) {
@@ -39,8 +39,8 @@ func (s *Server) createAccessEvaluation(w http.ResponseWriter, r *http.Request) 
 		fail(w, r, http.StatusBadRequest, "invalid_idempotency_key", "Idempotency-Key must match the delegated access-evaluation format")
 		return
 	}
-	if !dokoSokoRequestIDPattern.MatchString(r.Header.Get("X-DokoSoko-Request-ID")) {
-		fail(w, r, http.StatusBadRequest, "invalid_request_id", "X-DokoSoko-Request-ID is invalid")
+	if !externalRequestIDPattern.MatchString(r.Header.Get("X-External-Request-ID")) {
+		fail(w, r, http.StatusBadRequest, "invalid_request_id", "X-External-Request-ID is invalid")
 		return
 	}
 
@@ -94,8 +94,8 @@ func (s *Server) createSupportSubmission(w http.ResponseWriter, r *http.Request)
 		fail(w, r, http.StatusBadRequest, "invalid_idempotency_key", "Idempotency-Key must equal submission_id and contain between 16 and 200 characters")
 		return
 	}
-	if !dokoSokoRequestIDPattern.MatchString(r.Header.Get("X-DokoSoko-Request-ID")) {
-		fail(w, r, http.StatusBadRequest, "invalid_request_id", "X-DokoSoko-Request-ID is invalid")
+	if !externalRequestIDPattern.MatchString(r.Header.Get("X-External-Request-ID")) {
+		fail(w, r, http.StatusBadRequest, "invalid_request_id", "X-External-Request-ID is invalid")
 		return
 	}
 	if err = s.validateSupportSubmission(in, actor); err != nil {

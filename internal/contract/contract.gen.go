@@ -2875,8 +2875,8 @@ type CredentialUid = Uuid
 // Cursor defines model for Cursor.
 type Cursor = string
 
-// DokoSokoRequestId defines model for DokoSokoRequestId.
-type DokoSokoRequestId = string
+// ExternalRequestId defines model for ExternalRequestId.
+type ExternalRequestId = string
 
 // IdempotencyKey defines model for IdempotencyKey.
 type IdempotencyKey = string
@@ -3024,8 +3024,8 @@ type CreateAccessEvaluationParams struct {
 	// IdempotencyKey Stable for retries of one delegated-access evaluation and unique for the next evaluation. ComplicatedAuth retains the exact result for at least ten minutes.
 	IdempotencyKey AccessEvaluationIdempotencyKey `json:"Idempotency-Key"`
 
-	// XDokoSokoRequestID Unique identifier for one DokoSoko HTTP attempt; retries use a new value and idempotency does not depend on it.
-	XDokoSokoRequestID DokoSokoRequestId `json:"X-DokoSoko-Request-ID"`
+	// XExternalRequestID Provider-neutral identifier for one external-platform HTTP attempt; retries use a new value and idempotency does not depend on it.
+	XExternalRequestID ExternalRequestId `json:"X-External-Request-ID"`
 }
 
 // ListTenantActivityParams defines parameters for ListTenantActivity.
@@ -3522,8 +3522,8 @@ type CreateSupportSubmissionParams struct {
 	// IdempotencyKey Stable external identifier for one logical support submission and its at-least-once delivery retries.
 	IdempotencyKey SupportSubmissionIdempotencyKey `json:"Idempotency-Key"`
 
-	// XDokoSokoRequestID Unique identifier for one DokoSoko HTTP attempt; retries use a new value and idempotency does not depend on it.
-	XDokoSokoRequestID DokoSokoRequestId `json:"X-DokoSoko-Request-ID"`
+	// XExternalRequestID Provider-neutral identifier for one external-platform HTTP attempt; retries use a new value and idempotency does not depend on it.
+	XExternalRequestID ExternalRequestId `json:"X-External-Request-ID"`
 }
 
 // ListSupportCasesParams defines parameters for ListSupportCases.
@@ -4532,26 +4532,26 @@ func (siw *ServerInterfaceWrapper) CreateAccessEvaluation(w http.ResponseWriter,
 		return
 	}
 
-	// ------------- Required header parameter "X-DokoSoko-Request-ID" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("X-DokoSoko-Request-ID")]; found {
-		var XDokoSokoRequestID DokoSokoRequestId
+	// ------------- Required header parameter "X-External-Request-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-External-Request-ID")]; found {
+		var XExternalRequestID ExternalRequestId
 		n := len(valueList)
 		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-DokoSoko-Request-ID", Count: n})
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-External-Request-ID", Count: n})
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "X-DokoSoko-Request-ID", valueList[0], &XDokoSokoRequestID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		err = runtime.BindStyledParameterWithOptions("simple", "X-External-Request-ID", valueList[0], &XExternalRequestID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
 		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-External-Request-ID", Err: err})
 			return
 		}
 
-		params.XDokoSokoRequestID = XDokoSokoRequestID
+		params.XExternalRequestID = XExternalRequestID
 
 	} else {
-		err := fmt.Errorf("Header parameter X-DokoSoko-Request-ID is required, but not found")
-		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+		err := fmt.Errorf("Header parameter X-External-Request-ID is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-External-Request-ID", Err: err})
 		return
 	}
 
@@ -9674,26 +9674,26 @@ func (siw *ServerInterfaceWrapper) CreateSupportSubmission(w http.ResponseWriter
 		return
 	}
 
-	// ------------- Required header parameter "X-DokoSoko-Request-ID" -------------
-	if valueList, found := headers[http.CanonicalHeaderKey("X-DokoSoko-Request-ID")]; found {
-		var XDokoSokoRequestID DokoSokoRequestId
+	// ------------- Required header parameter "X-External-Request-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-External-Request-ID")]; found {
+		var XExternalRequestID ExternalRequestId
 		n := len(valueList)
 		if n != 1 {
-			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-DokoSoko-Request-ID", Count: n})
+			siw.ErrorHandlerFunc(w, r, &TooManyValuesForParamError{ParamName: "X-External-Request-ID", Count: n})
 			return
 		}
 
-		err = runtime.BindStyledParameterWithOptions("simple", "X-DokoSoko-Request-ID", valueList[0], &XDokoSokoRequestID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
+		err = runtime.BindStyledParameterWithOptions("simple", "X-External-Request-ID", valueList[0], &XExternalRequestID, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
 		if err != nil {
-			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+			siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "X-External-Request-ID", Err: err})
 			return
 		}
 
-		params.XDokoSokoRequestID = XDokoSokoRequestID
+		params.XExternalRequestID = XExternalRequestID
 
 	} else {
-		err := fmt.Errorf("Header parameter X-DokoSoko-Request-ID is required, but not found")
-		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-DokoSoko-Request-ID", Err: err})
+		err := fmt.Errorf("Header parameter X-External-Request-ID is required, but not found")
+		siw.ErrorHandlerFunc(w, r, &RequiredHeaderError{ParamName: "X-External-Request-ID", Err: err})
 		return
 	}
 
