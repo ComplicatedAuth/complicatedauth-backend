@@ -84,6 +84,16 @@ func (a *ContractAdapter) CreateAuthorizationDecision(w http.ResponseWriter, r *
 func (a *ContractAdapter) CreateAccessEvaluation(w http.ResponseWriter, r *http.Request, _ contract.CreateAccessEvaluationParams) {
 	a.server.createAccessEvaluation(w, r)
 }
+func (a *ContractAdapter) AuthorizeExternalCredentialOperation(w http.ResponseWriter, r *http.Request) {
+	a.server.authorizeExternalCredentialOperation(w, r)
+}
+func (a *ContractAdapter) IssueExternalCredential(w http.ResponseWriter, r *http.Request) {
+	a.server.issueExternalCredential(w, r)
+}
+func (a *ContractAdapter) RevokeExternalCredential(w http.ResponseWriter, r *http.Request, credentialUID contract.ExternalCredentialUid) {
+	r.SetPathValue("credential_uid", credentialUID.String())
+	a.server.revokeExternalCredential(w, r)
+}
 func (a *ContractAdapter) ListOAuthApplicationGrants(w http.ResponseWriter, r *http.Request, applicationUID contract.OAuthApplicationUid) {
 	r.SetPathValue("application_uid", applicationUID.String())
 	a.server.listOAuthApplicationGrants(w, r)

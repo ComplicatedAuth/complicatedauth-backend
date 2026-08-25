@@ -119,6 +119,9 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("DELETE /v1/oauth/applications/{application_uid}/grants/{grant_uid}", s.consoleAuthorized(permissionManageAuthorization, http.HandlerFunc(s.deleteOAuthApplicationGrant)))
 	mux.Handle("POST /v1/authorization/decisions", s.oauthResourceAuthorized(http.HandlerFunc(s.createAuthorizationDecision)))
 	mux.Handle("POST /v1/access/evaluations", s.oauthResourceAuthorized(http.HandlerFunc(s.createAccessEvaluation)))
+	mux.Handle("POST /v1/external-platform/credentials/authorize", s.serviceCredential(serviceScopeExternalCredentialsManage, http.HandlerFunc(s.authorizeExternalCredentialOperation)))
+	mux.Handle("POST /v1/external-platform/credentials", s.serviceCredential(serviceScopeExternalCredentialsManage, http.HandlerFunc(s.issueExternalCredential)))
+	mux.Handle("POST /v1/external-platform/credentials/{credential_uid}/revoke", s.serviceCredential(serviceScopeExternalCredentialsManage, http.HandlerFunc(s.revokeExternalCredential)))
 
 	mux.Handle("GET /v1/projects", s.consoleAuthorized(permissionRead, http.HandlerFunc(s.listProjects)))
 	mux.Handle("POST /v1/projects", s.consoleAuthorized(permissionManageProjects, http.HandlerFunc(s.createProject)))
@@ -269,7 +272,7 @@ func (s *Server) serviceCredential(requiredScope string, next http.Handler) http
 		var credentialUID, accountUID, projectUID, tenantUID string
 		var stored []byte
 		var scopes []string
-		err := s.db.QueryRow(r.Context(), `SELECT c.uid,a.uid,a.project_uid,p.tenant_uid,c.secret_hash,a.scopes FROM project_service_credentials c JOIN project_service_accounts a ON a.uid=c.service_account_uid JOIN projects p ON p.uid=a.project_uid WHERE c.prefix=$1 AND c.status='active' AND c.expires_at>now() AND a.status='active' AND a.deleted_at IS NULL AND p.status='active'`, prefix).Scan(&credentialUID, &accountUID, &projectUID, &tenantUID, &stored, &scopes)
+		err := s.db.QueryRow(r.Context(), `SELECT c.uid,a.uid,a.project_uid,p.tenant_uid,c.secret_hash,COALESCE(c.effective_scopes,a.scopes) FROM project_service_credentials c JOIN project_service_accounts a ON a.uid=c.service_account_uid JOIN projects p ON p.uid=a.project_uid WHERE c.prefix=$1 AND c.status='active' AND c.expires_at>now() AND a.status='active' AND a.deleted_at IS NULL AND p.status='active'`, prefix).Scan(&credentialUID, &accountUID, &projectUID, &tenantUID, &stored, &scopes)
 		got := security.SecretHash(s.cfg.SecretHashKey, value)
 		pathProjectUID := r.PathValue("project_uid")
 		if err != nil || subtle.ConstantTimeCompare(stored, got) != 1 || (pathProjectUID != "" && projectUID != pathProjectUID) {

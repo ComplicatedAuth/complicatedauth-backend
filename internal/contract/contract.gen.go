@@ -185,6 +185,24 @@ func (e ExternalBugReportSeverity) Valid() bool {
 	}
 }
 
+// Defines values for ExternalCredentialAuthorizationRequestOperation.
+const (
+	CredentialsCreate ExternalCredentialAuthorizationRequestOperation = "credentials.create"
+	CredentialsRevoke ExternalCredentialAuthorizationRequestOperation = "credentials.revoke"
+)
+
+// Valid indicates whether the value is a known member of the ExternalCredentialAuthorizationRequestOperation enum.
+func (e ExternalCredentialAuthorizationRequestOperation) Valid() bool {
+	switch e {
+	case CredentialsCreate:
+		return true
+	case CredentialsRevoke:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ExternalFeedbackReportCategory.
 const (
 	Documentation  ExternalFeedbackReportCategory = "documentation"
@@ -235,28 +253,13 @@ func (e ExternalSupportSubmissionKind) Valid() bool {
 
 // Defines values for ExternalSupportSubmissionSchemaVersion.
 const (
-	N20260820 ExternalSupportSubmissionSchemaVersion = "2026-08-20"
+	N20260825 ExternalSupportSubmissionSchemaVersion = "2026-08-25"
 )
 
 // Valid indicates whether the value is a known member of the ExternalSupportSubmissionSchemaVersion enum.
 func (e ExternalSupportSubmissionSchemaVersion) Valid() bool {
 	switch e {
-	case N20260820:
-		return true
-	default:
-		return false
-	}
-}
-
-// Defines values for ExternalSupportSubmissionSource.
-const (
-	PrivateMcp ExternalSupportSubmissionSource = "private_mcp"
-)
-
-// Valid indicates whether the value is a known member of the ExternalSupportSubmissionSource enum.
-func (e ExternalSupportSubmissionSource) Valid() bool {
-	switch e {
-	case PrivateMcp:
+	case N20260825:
 		return true
 	default:
 		return false
@@ -734,6 +737,24 @@ func (e ServiceAccountStatus) Valid() bool {
 	}
 }
 
+// Defines values for ServiceCredentialKind.
+const (
+	ServiceCredentialKindExternalPlatform ServiceCredentialKind = "external_platform"
+	ServiceCredentialKindStandard         ServiceCredentialKind = "standard"
+)
+
+// Valid indicates whether the value is a known member of the ServiceCredentialKind enum.
+func (e ServiceCredentialKind) Valid() bool {
+	switch e {
+	case ServiceCredentialKindExternalPlatform:
+		return true
+	case ServiceCredentialKindStandard:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for ServiceCredentialStatus.
 const (
 	ServiceCredentialStatusActive  ServiceCredentialStatus = "active"
@@ -749,6 +770,24 @@ func (e ServiceCredentialStatus) Valid() bool {
 	case ServiceCredentialStatusExpired:
 		return true
 	case ServiceCredentialStatusRevoked:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ServiceCredentialSecretKind.
+const (
+	ServiceCredentialSecretKindExternalPlatform ServiceCredentialSecretKind = "external_platform"
+	ServiceCredentialSecretKindStandard         ServiceCredentialSecretKind = "standard"
+)
+
+// Valid indicates whether the value is a known member of the ServiceCredentialSecretKind enum.
+func (e ServiceCredentialSecretKind) Valid() bool {
+	switch e {
+	case ServiceCredentialSecretKindExternalPlatform:
+		return true
+	case ServiceCredentialSecretKindStandard:
 		return true
 	default:
 		return false
@@ -1625,6 +1664,75 @@ type ExternalBugReport struct {
 // ExternalBugReportSeverity defines model for ExternalBugReport.Severity.
 type ExternalBugReportSeverity string
 
+// ExternalCredentialAuthorizationRequest Provider-neutral authorization context sent before a subject-bound credential mutation. Identity values are verified against the management credential's Tenant and cannot select another Tenant.
+type ExternalCredentialAuthorizationRequest struct {
+	// DeploymentId Trimmed opaque external-platform or pairwise-identity identifier.
+	DeploymentId ExternalCredentialIdentifier `json:"deployment_id"`
+	Details      map[string]interface{}       `json:"details"`
+
+	// ExternalCustomerId Trimmed opaque external-platform or pairwise-identity identifier.
+	ExternalCustomerId ExternalCredentialIdentifier                    `json:"external_customer_id"`
+	InstallationId     string                                          `json:"installation_id"`
+	Operation          ExternalCredentialAuthorizationRequestOperation `json:"operation"`
+
+	// Subject Trimmed opaque external-platform or pairwise-identity identifier.
+	Subject ExternalCredentialIdentifier `json:"subject"`
+}
+
+// ExternalCredentialAuthorizationRequestOperation defines model for ExternalCredentialAuthorizationRequest.Operation.
+type ExternalCredentialAuthorizationRequestOperation string
+
+// ExternalCredentialAuthorizationResult Provider-side allow or deny result. Denial is deliberately represented as data so callers fail closed without treating policy as transport failure.
+type ExternalCredentialAuthorizationResult struct {
+	Allowed bool `json:"allowed"`
+}
+
+// ExternalCredentialIdentifier Trimmed opaque external-platform or pairwise-identity identifier.
+type ExternalCredentialIdentifier = string
+
+// ExternalCredentialIssueRequest Provider-neutral one-time credential issue or overlap-rotation request. access_instance_id must be empty because ComplicatedAuth credentials are scoped to the configured Project connection.
+type ExternalCredentialIssueRequest struct {
+	AccessInstanceId string `json:"access_instance_id"`
+
+	// DeploymentId Trimmed opaque external-platform or pairwise-identity identifier.
+	DeploymentId ExternalCredentialIdentifier `json:"deployment_id"`
+
+	// EnvironmentId Trimmed opaque external-platform or pairwise-identity identifier.
+	EnvironmentId  ExternalCredentialIdentifier `json:"environment_id"`
+	IdempotencyKey string                       `json:"idempotency_key"`
+
+	// IntegrationId Trimmed opaque external-platform or pairwise-identity identifier.
+	IntegrationId           ExternalCredentialIdentifier `json:"integration_id"`
+	RotatedFromCredentialId *openapi_types.UUID          `json:"rotated_from_credential_id,omitempty"`
+	Scopes                  []string                     `json:"scopes"`
+
+	// Subject Trimmed opaque external-platform or pairwise-identity identifier.
+	Subject ExternalCredentialIdentifier `json:"subject"`
+
+	// TtlSeconds Zero selects the provider default; nonzero values must be at least 300 seconds.
+	TtlSeconds int `json:"ttl_seconds"`
+}
+
+// ExternalCredentialIssueResult One-time external credential material and provider identifier. The credential value must never be logged or persisted in browser storage.
+type ExternalCredentialIssueResult struct {
+	Credential *string `json:"credential,omitempty"`
+
+	// CredentialId RFC 4122 universally unique identifier.
+	CredentialId Uuid `json:"credential_id"`
+
+	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
+	ExpiresAt Timestamp `json:"expires_at"`
+}
+
+// ExternalCredentialRevokeRequest Provider-neutral revoke context bound to the exact management connection and pairwise OAuth subject.
+type ExternalCredentialRevokeRequest struct {
+	// DeploymentId Trimmed opaque external-platform or pairwise-identity identifier.
+	DeploymentId ExternalCredentialIdentifier `json:"deployment_id"`
+
+	// Subject Trimmed opaque external-platform or pairwise-identity identifier.
+	Subject ExternalCredentialIdentifier `json:"subject"`
+}
+
 // ExternalFeedbackReport Structured external feedback report; kind `feedback` requires this object and forbids a bug report.
 type ExternalFeedbackReport struct {
 	AllowContact     *bool                           `json:"allow_contact,omitempty"`
@@ -1638,34 +1746,14 @@ type ExternalFeedbackReport struct {
 // ExternalFeedbackReportCategory defines model for ExternalFeedbackReport.Category.
 type ExternalFeedbackReportCategory string
 
-// ExternalIntegrationContext Published external integration revision and immutable snapshot active when the report was confirmed.
-type ExternalIntegrationContext struct {
-	DisplayName   string  `json:"display_name"`
-	FamilyKey     string  `json:"family_key"`
-	IntegrationId string  `json:"integration_id"`
-	Lifecycle     string  `json:"lifecycle"`
-	ManifestHash  *string `json:"manifest_hash,omitempty"`
-	Revision      int64   `json:"revision"`
-
-	// Snapshot Immutable published integration revision snapshot.
-	Snapshot   *map[string]interface{} `json:"snapshot,omitempty"`
-	VersionKey string                  `json:"version_key"`
+// ExternalProviderContext Stable identity of the external platform delivering the report. The key identifies an adapter profile without imposing that provider's catalog model on ComplicatedAuth.
+type ExternalProviderContext struct {
+	Key     string  `json:"key"`
+	Name    *string `json:"name,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
-// ExternalProductContext Immutable external product/catalog context attached to the support report for routing and diagnosis.
-type ExternalProductContext struct {
-	CatalogRevision  *int64  `json:"catalog_revision,omitempty"`
-	EnvironmentId    *string `json:"environment_id,omitempty"`
-	InstallationId   *string `json:"installation_id,omitempty"`
-	ManifestHash     *string `json:"manifest_hash,omitempty"`
-	ProductId        string  `json:"product_id"`
-	ProductName      string  `json:"product_name"`
-	ProductVersion   *string `json:"product_version,omitempty"`
-	ProductVersionId *string `json:"product_version_id,omitempty"`
-	SelectionSource  *string `json:"selection_source,omitempty"`
-}
-
-// ExternalReporterContext Vendor-owned customer identity derived by the external platform from authenticated claims; contact fields require explicit allow_contact consent.
+// ExternalReporterContext External projection of the customer identity derived from authenticated ComplicatedAuth claims; contact fields require explicit allow_contact consent.
 type ExternalReporterContext struct {
 	AllowContact bool                 `json:"allow_contact"`
 	DisplayName  *string              `json:"display_name,omitempty"`
@@ -1680,29 +1768,48 @@ type ExternalReporterContext struct {
 	} `json:"principal"`
 }
 
-// ExternalSupportSubmission Versioned, consented bug or feedback report together with trusted identity, product, and optional integration context.
+// ExternalResourceContext Immutable provider-owned resource identity active when the report was confirmed. Resource types and identifiers are provider-defined.
+type ExternalResourceContext struct {
+	EnvironmentId  *string `json:"environment_id,omitempty"`
+	Id             string  `json:"id"`
+	InstallationId *string `json:"installation_id,omitempty"`
+	Name           string  `json:"name"`
+	Revision       *int64  `json:"revision,omitempty"`
+	State          *string `json:"state,omitempty"`
+	Type           string  `json:"type"`
+	Version        *string `json:"version,omitempty"`
+	VersionId      *string `json:"version_id,omitempty"`
+}
+
+// ExternalSupportSubmission Versioned, consented bug or feedback report together with trusted identity and provider-neutral external resource context.
 type ExternalSupportSubmission struct {
 	// Bug Structured external bug report; kind `bug` requires this object and forbids feedback.
 	Bug *ExternalBugReport `json:"bug,omitempty"`
 
+	// Channel Provider-defined delivery channel such as private_mcp, widget, or api. ComplicatedAuth does not require a particular external platform transport.
+	Channel string `json:"channel"`
+
 	// ConfirmedAt UTC timestamp serialized in RFC 3339 date-time form.
 	ConfirmedAt Timestamp `json:"confirmed_at"`
 
+	// Extensions Optional provider-owned metadata. Keys must be 1–64 characters and match `^[a-z][a-z0-9._-]*$`. Consumers must treat unknown keys as opaque; ComplicatedAuth preserves this object in the encrypted support attachment.
+	Extensions *map[string]interface{} `json:"extensions,omitempty"`
+
 	// Feedback Structured external feedback report; kind `feedback` requires this object and forbids a bug report.
-	Feedback *ExternalFeedbackReport `json:"feedback,omitempty"`
+	Feedback *ExternalFeedbackReport       `json:"feedback,omitempty"`
+	Kind     ExternalSupportSubmissionKind `json:"kind"`
 
-	// Integration Published external integration revision and immutable snapshot active when the report was confirmed.
-	Integration *ExternalIntegrationContext   `json:"integration,omitempty"`
-	Kind        ExternalSupportSubmissionKind `json:"kind"`
+	// Provider Stable identity of the external platform delivering the report. The key identifies an adapter profile without imposing that provider's catalog model on ComplicatedAuth.
+	Provider         ExternalProviderContext    `json:"provider"`
+	RelatedResources *[]ExternalResourceContext `json:"related_resources,omitempty"`
 
-	// Product Immutable external product/catalog context attached to the support report for routing and diagnosis.
-	Product ExternalProductContext `json:"product"`
+	// Reporter External projection of the customer identity derived from authenticated ComplicatedAuth claims; contact fields require explicit allow_contact consent.
+	Reporter  ExternalReporterContext `json:"reporter"`
+	RequestId string                  `json:"request_id"`
 
-	// Reporter Vendor-owned customer identity derived by the external platform from authenticated claims; contact fields require explicit allow_contact consent.
-	Reporter      ExternalReporterContext                `json:"reporter"`
-	RequestId     string                                 `json:"request_id"`
+	// Resource Immutable provider-owned resource identity active when the report was confirmed. Resource types and identifiers are provider-defined.
+	Resource      ExternalResourceContext                `json:"resource"`
 	SchemaVersion ExternalSupportSubmissionSchemaVersion `json:"schema_version"`
-	Source        ExternalSupportSubmissionSource        `json:"source"`
 }
 
 // ExternalSupportSubmissionKind defines model for ExternalSupportSubmission.Kind.
@@ -1710,9 +1817,6 @@ type ExternalSupportSubmissionKind string
 
 // ExternalSupportSubmissionSchemaVersion defines model for ExternalSupportSubmission.SchemaVersion.
 type ExternalSupportSubmissionSchemaVersion string
-
-// ExternalSupportSubmissionSource defines model for ExternalSupportSubmission.Source.
-type ExternalSupportSubmissionSource string
 
 // FactorVerified Confirmation that the password factor succeeded and the login attempt can continue.
 type FactorVerified struct {
@@ -2276,14 +2380,17 @@ type ServiceCredential struct {
 	CreatedByMemberUid *openapi_types.UUID `json:"created_by_member_uid,omitempty"`
 
 	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
-	ExpiresAt          Timestamp           `json:"expires_at"`
-	Fingerprint        string              `json:"fingerprint"`
-	LastUsedAt         *time.Time          `json:"last_used_at,omitempty"`
-	Name               string              `json:"name"`
-	Prefix             string              `json:"prefix"`
-	RevocationReason   *string             `json:"revocation_reason,omitempty"`
-	RevokedAt          *time.Time          `json:"revoked_at,omitempty"`
-	RevokedByMemberUid *openapi_types.UUID `json:"revoked_by_member_uid,omitempty"`
+	ExpiresAt   Timestamp `json:"expires_at"`
+	Fingerprint string    `json:"fingerprint"`
+
+	// Kind Standard credentials are issued directly by a Tenant Member; external-platform credentials are subject-bound children issued through an authorized provider management connection.
+	Kind               ServiceCredentialKind `json:"kind"`
+	LastUsedAt         *time.Time            `json:"last_used_at,omitempty"`
+	Name               string                `json:"name"`
+	Prefix             string                `json:"prefix"`
+	RevocationReason   *string               `json:"revocation_reason,omitempty"`
+	RevokedAt          *time.Time            `json:"revoked_at,omitempty"`
+	RevokedByMemberUid *openapi_types.UUID   `json:"revoked_by_member_uid,omitempty"`
 
 	// ServiceAccountUid RFC 4122 universally unique identifier.
 	ServiceAccountUid Uuid                    `json:"service_account_uid"`
@@ -2292,6 +2399,9 @@ type ServiceCredential struct {
 	// Uid RFC 4122 universally unique identifier.
 	Uid Uuid `json:"uid"`
 }
+
+// ServiceCredentialKind Standard credentials are issued directly by a Tenant Member; external-platform credentials are subject-bound children issued through an authorized provider management connection.
+type ServiceCredentialKind string
 
 // ServiceCredentialStatus defines model for ServiceCredential.Status.
 type ServiceCredentialStatus string
@@ -2309,15 +2419,18 @@ type ServiceCredentialSecret struct {
 	CreatedByMemberUid *openapi_types.UUID `json:"created_by_member_uid,omitempty"`
 
 	// ExpiresAt UTC timestamp serialized in RFC 3339 date-time form.
-	ExpiresAt          Timestamp           `json:"expires_at"`
-	Fingerprint        string              `json:"fingerprint"`
-	LastUsedAt         *time.Time          `json:"last_used_at,omitempty"`
-	Name               string              `json:"name"`
-	Prefix             string              `json:"prefix"`
-	RevocationReason   *string             `json:"revocation_reason,omitempty"`
-	RevokedAt          *time.Time          `json:"revoked_at,omitempty"`
-	RevokedByMemberUid *openapi_types.UUID `json:"revoked_by_member_uid,omitempty"`
-	Secret             *string             `json:"secret,omitempty"`
+	ExpiresAt   Timestamp `json:"expires_at"`
+	Fingerprint string    `json:"fingerprint"`
+
+	// Kind Standard credentials are issued directly by a Tenant Member; external-platform credentials are subject-bound children issued through an authorized provider management connection.
+	Kind               ServiceCredentialSecretKind `json:"kind"`
+	LastUsedAt         *time.Time                  `json:"last_used_at,omitempty"`
+	Name               string                      `json:"name"`
+	Prefix             string                      `json:"prefix"`
+	RevocationReason   *string                     `json:"revocation_reason,omitempty"`
+	RevokedAt          *time.Time                  `json:"revoked_at,omitempty"`
+	RevokedByMemberUid *openapi_types.UUID         `json:"revoked_by_member_uid,omitempty"`
+	Secret             *string                     `json:"secret,omitempty"`
 
 	// ServiceAccountUid RFC 4122 universally unique identifier.
 	ServiceAccountUid Uuid                          `json:"service_account_uid"`
@@ -2326,6 +2439,9 @@ type ServiceCredentialSecret struct {
 	// Uid RFC 4122 universally unique identifier.
 	Uid Uuid `json:"uid"`
 }
+
+// ServiceCredentialSecretKind Standard credentials are issued directly by a Tenant Member; external-platform credentials are subject-bound children issued through an authorized provider management connection.
+type ServiceCredentialSecretKind string
 
 // ServiceCredentialSecretStatus defines model for ServiceCredentialSecret.Status.
 type ServiceCredentialSecretStatus string
@@ -2551,7 +2667,7 @@ type SupportSubmissionRequest struct {
 	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt Timestamp `json:"created_at"`
 
-	// Submission Versioned, consented bug or feedback report together with trusted identity, product, and optional integration context.
+	// Submission Versioned, consented bug or feedback report together with trusted identity and provider-neutral external resource context.
 	Submission   ExternalSupportSubmission `json:"submission"`
 	SubmissionId string                    `json:"submission_id"`
 }
@@ -2874,6 +2990,9 @@ type CredentialUid = Uuid
 
 // Cursor defines model for Cursor.
 type Cursor = string
+
+// ExternalCredentialUid RFC 4122 universally unique identifier.
+type ExternalCredentialUid = Uuid
 
 // ExternalRequestId defines model for ExternalRequestId.
 type ExternalRequestId = string
@@ -3736,6 +3855,15 @@ type CreateTenantMemberWebAuthnRegistrationCeremonyJSONRequestBody = TenantMembe
 // VerifyTenantMemberWebAuthnRegistrationJSONRequestBody defines body for VerifyTenantMemberWebAuthnRegistration for application/json ContentType.
 type VerifyTenantMemberWebAuthnRegistrationJSONRequestBody = TenantMemberWebAuthnFinishRequest
 
+// IssueExternalCredentialJSONRequestBody defines body for IssueExternalCredential for application/json ContentType.
+type IssueExternalCredentialJSONRequestBody = ExternalCredentialIssueRequest
+
+// AuthorizeExternalCredentialOperationJSONRequestBody defines body for AuthorizeExternalCredentialOperation for application/json ContentType.
+type AuthorizeExternalCredentialOperationJSONRequestBody = ExternalCredentialAuthorizationRequest
+
+// RevokeExternalCredentialJSONRequestBody defines body for RevokeExternalCredential for application/json ContentType.
+type RevokeExternalCredentialJSONRequestBody = ExternalCredentialRevokeRequest
+
 // CreateOAuthApplicationJSONRequestBody defines body for CreateOAuthApplication for application/json ContentType.
 type CreateOAuthApplicationJSONRequestBody = CreateOAuthApplicationRequest
 
@@ -3954,6 +4082,15 @@ type ServerInterface interface {
 	// Complete management WebAuthn credential enrollment
 	// (POST /v1/console/webauthn-registration-verifications)
 	VerifyTenantMemberWebAuthnRegistration(w http.ResponseWriter, r *http.Request, params VerifyTenantMemberWebAuthnRegistrationParams)
+	// Issue one subject-bound external credential
+	// (POST /v1/external-platform/credentials)
+	IssueExternalCredential(w http.ResponseWriter, r *http.Request)
+	// Authorize one external credential-management operation
+	// (POST /v1/external-platform/credentials/authorize)
+	AuthorizeExternalCredentialOperation(w http.ResponseWriter, r *http.Request)
+	// Revoke one subject-bound external credential
+	// (POST /v1/external-platform/credentials/{credential_uid}/revoke)
+	RevokeExternalCredential(w http.ResponseWriter, r *http.Request, credentialUid ExternalCredentialUid)
 	// List OAuth Applications
 	// (GET /v1/oauth/applications)
 	ListOAuthApplications(w http.ResponseWriter, r *http.Request, params ListOAuthApplicationsParams)
@@ -5755,6 +5892,78 @@ func (siw *ServerInterfaceWrapper) VerifyTenantMemberWebAuthnRegistration(w http
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.VerifyTenantMemberWebAuthnRegistration(w, r, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// IssueExternalCredential operation middleware
+func (siw *ServerInterfaceWrapper) IssueExternalCredential(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.IssueExternalCredential(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// AuthorizeExternalCredentialOperation operation middleware
+func (siw *ServerInterfaceWrapper) AuthorizeExternalCredentialOperation(w http.ResponseWriter, r *http.Request) {
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.AuthorizeExternalCredentialOperation(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// RevokeExternalCredential operation middleware
+func (siw *ServerInterfaceWrapper) RevokeExternalCredential(w http.ResponseWriter, r *http.Request) {
+
+	var err error
+	_ = err
+
+	// ------------- Path parameter "credential_uid" -------------
+	var credentialUid ExternalCredentialUid
+
+	err = runtime.BindStyledParameterWithOptions("simple", "credential_uid", r.PathValue("credential_uid"), &credentialUid, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: "uuid"})
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "credential_uid", Err: err})
+		return
+	}
+
+	ctx := r.Context()
+
+	ctx = context.WithValue(ctx, ServiceCredentialScopes, []string{})
+
+	r = r.WithContext(ctx)
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.RevokeExternalCredential(w, r, credentialUid)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -11249,6 +11458,9 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	m.HandleFunc(http.MethodPatch+" "+options.BaseURL+"/v1/console/webauthn-credentials/{credential_uid}", wrapper.UpdateTenantMemberWebAuthnCredential)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/webauthn-registration-ceremonies", wrapper.CreateTenantMemberWebAuthnRegistrationCeremony)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/console/webauthn-registration-verifications", wrapper.VerifyTenantMemberWebAuthnRegistration)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/external-platform/credentials", wrapper.IssueExternalCredential)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/external-platform/credentials/authorize", wrapper.AuthorizeExternalCredentialOperation)
+	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/external-platform/credentials/{credential_uid}/revoke", wrapper.RevokeExternalCredential)
 	m.HandleFunc(http.MethodGet+" "+options.BaseURL+"/v1/oauth/applications", wrapper.ListOAuthApplications)
 	m.HandleFunc(http.MethodPost+" "+options.BaseURL+"/v1/oauth/applications", wrapper.CreateOAuthApplication)
 	m.HandleFunc(http.MethodDelete+" "+options.BaseURL+"/v1/oauth/applications/{application_uid}", wrapper.DeleteOAuthApplication)

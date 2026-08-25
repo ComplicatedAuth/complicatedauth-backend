@@ -23,6 +23,7 @@ import (
 var (
 	accessEvaluationKeyPattern = regexp.MustCompile(`^aeval_[a-f0-9]{32}$`)
 	externalRequestIDPattern   = regexp.MustCompile(`^req_[a-f0-9]{32}$`)
+	externalContextKeyPattern  = regexp.MustCompile(`^[a-z][a-z0-9._-]*$`)
 )
 
 func (s *Server) createAccessEvaluation(w http.ResponseWriter, r *http.Request) {
@@ -211,11 +212,18 @@ func (s *Server) validateSupportSubmission(in contract.SupportSubmissionRequest,
 	if in.CreatedAt.IsZero() || in.CreatedAt.After(now.Add(5*time.Minute)) || in.Submission.ConfirmedAt.IsZero() || in.Submission.ConfirmedAt.After(now.Add(5*time.Minute)) {
 		return errors.New("created_at and confirmed_at must be valid timestamps that are not in the future")
 	}
-	if string(in.Submission.SchemaVersion) != "2026-08-20" || string(in.Submission.Source) != "private_mcp" {
-		return errors.New("schema_version or source is unsupported")
+	if string(in.Submission.SchemaVersion) != "2026-08-25" {
+		return errors.New("schema_version is unsupported")
 	}
-	if strings.TrimSpace(in.Submission.RequestId) == "" {
-		return errors.New("request_id is required")
+	if strings.TrimSpace(in.Submission.RequestId) == "" || len(in.Submission.RequestId) > 200 {
+		return errors.New("request_id is invalid")
+	}
+	if !validExternalContextKey(in.Submission.Channel) {
+		return errors.New("channel is invalid")
+	}
+	provider := in.Submission.Provider
+	if !validExternalContextKey(provider.Key) || exceedsStringPointer(provider.Name, 200) || exceedsStringPointer(provider.Version, 100) {
+		return errors.New("provider context is invalid")
 	}
 	reporter := in.Submission.Reporter
 	issuer := strings.TrimSpace(reporter.Principal.Issuer)
@@ -229,8 +237,8 @@ func (s *Server) validateSupportSubmission(in contract.SupportSubmissionRequest,
 	if reporter.ExternalCustomerId != nil && *reporter.ExternalCustomerId != actor.TenantUID {
 		return errors.New("external_customer_id must match the service credential Tenant")
 	}
-	if reporter.DisplayName != nil && len(*reporter.DisplayName) > 200 {
-		return errors.New("reporter display_name is too long")
+	if exceedsStringPointer(reporter.DisplayName, 200) || exceedsStringPointer(reporter.ExternalCustomerId, 200) || exceedsStringPointer(reporter.InstallationId, 200) {
+		return errors.New("reporter context field is too long")
 	}
 	if reporter.Email != nil {
 		email := string(*reporter.Email)
@@ -242,13 +250,37 @@ func (s *Server) validateSupportSubmission(in contract.SupportSubmissionRequest,
 	if !reporter.AllowContact && (nonEmptyStringPointer(reporter.DisplayName) || reporter.Email != nil) {
 		return errors.New("contact fields require explicit allow_contact consent")
 	}
-	if strings.TrimSpace(in.Submission.Product.ProductId) == "" || strings.TrimSpace(in.Submission.Product.ProductName) == "" {
-		return errors.New("product_id and product_name are required")
+	if err = validateExternalResource(in.Submission.Resource); err != nil {
+		return fmt.Errorf("resource: %w", err)
 	}
-	if in.Submission.Integration != nil {
-		integration := in.Submission.Integration
-		if strings.TrimSpace(integration.IntegrationId) == "" || strings.TrimSpace(integration.FamilyKey) == "" || strings.TrimSpace(integration.VersionKey) == "" || strings.TrimSpace(integration.DisplayName) == "" || strings.TrimSpace(integration.Lifecycle) == "" || integration.Revision < 1 {
-			return errors.New("integration context is incomplete")
+	if in.Submission.RelatedResources != nil {
+		if len(*in.Submission.RelatedResources) > 20 {
+			return errors.New("related_resources has too many items")
+		}
+		seen := map[string]bool{in.Submission.Resource.Type + "\x00" + in.Submission.Resource.Id: true}
+		for index, resource := range *in.Submission.RelatedResources {
+			if err = validateExternalResource(resource); err != nil {
+				return fmt.Errorf("related_resources[%d]: %w", index, err)
+			}
+			key := resource.Type + "\x00" + resource.Id
+			if seen[key] {
+				return errors.New("resource identities must be unique")
+			}
+			seen[key] = true
+		}
+	}
+	if in.Submission.Extensions != nil {
+		if len(*in.Submission.Extensions) > 20 {
+			return errors.New("extensions has too many provider profiles")
+		}
+		for key := range *in.Submission.Extensions {
+			if !validExternalContextKey(key) {
+				return errors.New("extension key is invalid")
+			}
+		}
+		encoded, marshalErr := json.Marshal(in.Submission.Extensions)
+		if marshalErr != nil || len(encoded) > 64<<10 {
+			return errors.New("extensions exceeds the 64 KiB limit")
 		}
 	}
 	switch string(in.Submission.Kind) {
@@ -265,6 +297,23 @@ func (s *Server) validateSupportSubmission(in contract.SupportSubmissionRequest,
 	default:
 		return errors.New("kind must be bug or feedback")
 	}
+}
+
+func validExternalContextKey(value string) bool {
+	return len(value) <= 64 && externalContextKeyPattern.MatchString(value)
+}
+
+func validateExternalResource(resource contract.ExternalResourceContext) error {
+	if !validExternalContextKey(resource.Type) || strings.TrimSpace(resource.Id) == "" || len(resource.Id) > 200 || strings.TrimSpace(resource.Name) == "" || len(resource.Name) > 200 {
+		return errors.New("type, id, or name is invalid")
+	}
+	if exceedsStringPointer(resource.VersionId, 200) || exceedsStringPointer(resource.Version, 100) || exceedsStringPointer(resource.EnvironmentId, 200) || exceedsStringPointer(resource.InstallationId, 200) || exceedsStringPointer(resource.State, 64) {
+		return errors.New("field exceeds its documented maximum length")
+	}
+	if resource.Revision != nil && *resource.Revision < 1 {
+		return errors.New("revision must be at least 1")
+	}
+	return nil
 }
 
 func validateExternalBug(bug contract.ExternalBugReport) error {
@@ -326,7 +375,7 @@ func externalSupportPresentation(submission contract.ExternalSupportSubmission) 
 		}
 		return subject, externalSupportMessage(body, submission), priority
 	}
-	subject := truncateUTF8("Feedback about "+submission.Product.ProductName, 200)
+	subject := truncateUTF8("Feedback about "+submission.Resource.Name, 200)
 	return subject, externalSupportMessage(submission.Feedback.Message, submission), priority
 }
 
@@ -338,9 +387,16 @@ func externalSupportMessage(body string, submission contract.ExternalSupportSubm
 	if submission.Feedback != nil && submission.Feedback.AllowContact != nil {
 		contactAllowed = contactAllowed && *submission.Feedback.AllowContact
 	}
-	context := "\n\nExternal product: " + submission.Product.ProductName + " (" + submission.Product.ProductId + ")"
-	if submission.Integration != nil {
-		context += "\nIntegration: " + submission.Integration.DisplayName + " (" + submission.Integration.IntegrationId + ")"
+	provider := submission.Provider.Key
+	if submission.Provider.Name != nil && strings.TrimSpace(*submission.Provider.Name) != "" {
+		provider = *submission.Provider.Name + " (" + provider + ")"
+	}
+	context := "\n\nExternal provider: " + provider
+	context += "\nResource: " + submission.Resource.Name + " (" + submission.Resource.Type + ":" + submission.Resource.Id + ")"
+	if submission.RelatedResources != nil {
+		for _, resource := range *submission.RelatedResources {
+			context += "\nRelated resource: " + resource.Name + " (" + resource.Type + ":" + resource.Id + ")"
+		}
 	}
 	if contactAllowed {
 		if submission.Reporter.DisplayName != nil && *submission.Reporter.DisplayName != "" {

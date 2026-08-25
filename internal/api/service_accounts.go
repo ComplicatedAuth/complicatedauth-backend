@@ -19,26 +19,28 @@ import (
 )
 
 const (
-	serviceAccountLimit           = 20
-	serviceCredentialActiveLimit  = 2
-	serviceCredentialDefaultTTL   = 90 * 24 * time.Hour
-	serviceCredentialMaximumTTL   = 365 * 24 * time.Hour
-	serviceCredentialMinimumTTL   = 5 * time.Minute
-	serviceScopeProjectUsersRead  = "project_users.read"
-	serviceScopeProjectUsersWrite = "project_users.write"
-	serviceScopeAuthentication    = "authentication.perform"
-	serviceScopeSessionsManage    = "sessions.manage"
-	serviceScopeSupportCasesRead  = "support_cases.read"
-	serviceScopeSupportCasesWrite = "support_cases.write"
+	serviceAccountLimit                   = 20
+	serviceCredentialActiveLimit          = 2
+	serviceCredentialDefaultTTL           = 90 * 24 * time.Hour
+	serviceCredentialMaximumTTL           = 365 * 24 * time.Hour
+	serviceCredentialMinimumTTL           = 5 * time.Minute
+	serviceScopeProjectUsersRead          = "project_users.read"
+	serviceScopeProjectUsersWrite         = "project_users.write"
+	serviceScopeAuthentication            = "authentication.perform"
+	serviceScopeSessionsManage            = "sessions.manage"
+	serviceScopeSupportCasesRead          = "support_cases.read"
+	serviceScopeSupportCasesWrite         = "support_cases.write"
+	serviceScopeExternalCredentialsManage = "external_credentials.manage"
 )
 
 var validServiceAccountScopes = map[string]bool{
-	serviceScopeProjectUsersRead:  true,
-	serviceScopeProjectUsersWrite: true,
-	serviceScopeAuthentication:    true,
-	serviceScopeSessionsManage:    true,
-	serviceScopeSupportCasesRead:  true,
-	serviceScopeSupportCasesWrite: true,
+	serviceScopeProjectUsersRead:          true,
+	serviceScopeProjectUsersWrite:         true,
+	serviceScopeAuthentication:            true,
+	serviceScopeSessionsManage:            true,
+	serviceScopeSupportCasesRead:          true,
+	serviceScopeSupportCasesWrite:         true,
+	serviceScopeExternalCredentialsManage: true,
 }
 
 type ServiceAccount struct {
@@ -58,6 +60,7 @@ type ServiceAccount struct {
 type ServiceCredential struct {
 	UID                string     `json:"uid"`
 	ServiceAccountUID  string     `json:"service_account_uid"`
+	Kind               string     `json:"kind"`
 	Name               string     `json:"name"`
 	Prefix             string     `json:"prefix"`
 	Fingerprint        string     `json:"fingerprint"`
@@ -405,11 +408,11 @@ func (s *Server) deleteServiceAccount(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-const serviceCredentialSelect = `SELECT c.uid,c.service_account_uid,c.name,c.prefix,c.fingerprint,CASE WHEN c.status='active' AND c.expires_at<=now() THEN 'expired' ELSE c.status END,c.created_by_member_uid,c.created_at,c.expires_at,c.last_used_at,c.revoked_at,c.revoked_by_member_uid,c.revocation_reason FROM project_service_credentials c`
+const serviceCredentialSelect = `SELECT c.uid,c.service_account_uid,CASE WHEN c.external_subject IS NULL THEN 'standard' ELSE 'external_platform' END,c.name,c.prefix,c.fingerprint,CASE WHEN c.status='active' AND c.expires_at<=now() THEN 'expired' ELSE c.status END,c.created_by_member_uid,c.created_at,c.expires_at,c.last_used_at,c.revoked_at,c.revoked_by_member_uid,c.revocation_reason FROM project_service_credentials c`
 
 func scanServiceCredential(row rowScanner) (ServiceCredential, error) {
 	var value ServiceCredential
-	err := row.Scan(&value.UID, &value.ServiceAccountUID, &value.Name, &value.Prefix, &value.Fingerprint, &value.Status, &value.CreatedByMemberUID, &value.CreatedAt, &value.ExpiresAt, &value.LastUsedAt, &value.RevokedAt, &value.RevokedByMemberUID, &value.RevocationReason)
+	err := row.Scan(&value.UID, &value.ServiceAccountUID, &value.Kind, &value.Name, &value.Prefix, &value.Fingerprint, &value.Status, &value.CreatedByMemberUID, &value.CreatedAt, &value.ExpiresAt, &value.LastUsedAt, &value.RevokedAt, &value.RevokedByMemberUID, &value.RevocationReason)
 	return value, err
 }
 
@@ -542,7 +545,7 @@ func (s *Server) createServiceCredential(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var count int
-	if err = tx.QueryRow(r.Context(), `SELECT count(*) FROM project_service_credentials WHERE service_account_uid=$1 AND status='active' AND expires_at>now()`, r.PathValue("service_account_uid")).Scan(&count); err != nil {
+	if err = tx.QueryRow(r.Context(), `SELECT count(*) FROM project_service_credentials WHERE service_account_uid=$1 AND external_subject IS NULL AND status='active' AND expires_at>now()`, r.PathValue("service_account_uid")).Scan(&count); err != nil {
 		fail(w, r, 500, "internal_error", "could not create service credential")
 		return
 	}
@@ -557,7 +560,7 @@ func (s *Server) createServiceCredential(w http.ResponseWriter, r *http.Request)
 	prefix := "ca_sk_" + environmentToken + "_" + strings.ReplaceAll(uuid.NewString(), "-", "")[:16]
 	secretValue := prefix + "." + randomSecret
 	digest := sha256.Sum256([]byte(secretValue))
-	value := ServiceCredential{UID: uuid.NewString(), ServiceAccountUID: r.PathValue("service_account_uid"), Name: in.Name, Prefix: prefix, Fingerprint: "sha256:" + hex.EncodeToString(digest[:])[:24], Status: "active", CreatedByMemberUID: &p.MemberUID, CreatedAt: now, ExpiresAt: expiresAt, Secret: secretValue}
+	value := ServiceCredential{UID: uuid.NewString(), ServiceAccountUID: r.PathValue("service_account_uid"), Kind: "standard", Name: in.Name, Prefix: prefix, Fingerprint: "sha256:" + hex.EncodeToString(digest[:])[:24], Status: "active", CreatedByMemberUID: &p.MemberUID, CreatedAt: now, ExpiresAt: expiresAt, Secret: secretValue}
 	_, err = tx.Exec(r.Context(), `INSERT INTO project_service_credentials(uid,service_account_uid,name,prefix,fingerprint,secret_hash,created_by_member_uid,created_at,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, value.UID, value.ServiceAccountUID, value.Name, value.Prefix, value.Fingerprint, security.SecretHash(s.cfg.SecretHashKey, secretValue), p.MemberUID, now, expiresAt)
 	if err == nil {
 		_, err = tx.Exec(r.Context(), `INSERT INTO audit_events(uid,tenant_uid,project_uid,actor_type,actor_uid,action,target_type,target_uid,metadata) VALUES($1,$2,$3,'tenant_member',$4,'service_credential.created','service_credential',$5,$6)`, uuid.NewString(), p.TenantUID, r.PathValue("project_uid"), p.MemberUID, value.UID, map[string]any{"service_account_uid": value.ServiceAccountUID, "expires_at": expiresAt, "fingerprint": value.Fingerprint})

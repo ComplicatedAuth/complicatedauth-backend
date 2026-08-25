@@ -412,7 +412,7 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 	}
 
 	var serviceAccount ServiceAccount
-	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/projects/"+project.UID+"/service-accounts", map[string]any{"name": "Test backend", "description": "Acceptance workload", "scopes": []string{serviceScopeProjectUsersRead, serviceScopeProjectUsersWrite, serviceScopeAuthentication, serviceScopeSessionsManage, serviceScopeSupportCasesRead, serviceScopeSupportCasesWrite}}, "http://console.test", "", map[string]string{"Idempotency-Key": "service_account_123"}, http.StatusCreated, &serviceAccount)
+	requestJSONWithHeaders(t, client, "POST", ts.URL+"/v1/projects/"+project.UID+"/service-accounts", map[string]any{"name": "Test backend", "description": "Acceptance workload", "scopes": []string{serviceScopeProjectUsersRead, serviceScopeProjectUsersWrite, serviceScopeAuthentication, serviceScopeSessionsManage, serviceScopeSupportCasesRead, serviceScopeSupportCasesWrite, serviceScopeExternalCredentialsManage}}, "http://console.test", "", map[string]string{"Idempotency-Key": "service_account_123"}, http.StatusCreated, &serviceAccount)
 	if serviceAccount.Environment != "sandbox" || serviceAccount.Version != 1 {
 		t.Fatalf("unexpected service account: %+v", serviceAccount)
 	}
@@ -439,6 +439,70 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 	requestJSON(t, client, "POST", ts.URL+"/v1/projects/"+project.UID+"/users", map[string]any{"email": "user@example.com", "password": "another correct battery staple", "email_verified": true}, "http://console.test", "", http.StatusCreated, &user)
 	requestJSON(t, client, "GET", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, nil, "", credential.Secret, http.StatusOK, &ProjectUser{})
 	requestJSON(t, client, "PATCH", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, map[string]any{"email_verified": false}, "", credential.Secret, http.StatusOK, &ProjectUser{})
+
+	var externalAuthorization struct {
+		Allowed bool `json:"allowed"`
+	}
+	externalAuthorizationRequest := map[string]any{
+		"operation": "credentials.create", "subject": base64.RawURLEncoding.EncodeToString([]byte(cfg.OAuthIssuer)) + "." + base64.RawURLEncoding.EncodeToString([]byte(allowedDecision.Principal.Subject)),
+		"external_customer_id": session.Tenant.UID, "installation_id": "",
+		"deployment_id": "deployment_acceptance", "details": map[string]any{"integration_id": "customer-api-v1"},
+	}
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials/authorize", externalAuthorizationRequest, "", credential.Secret, http.StatusOK, &externalAuthorization)
+	if !externalAuthorization.Allowed {
+		t.Fatal("active pairwise OAuth subject was denied external credential management")
+	}
+	externalAuthorizationRequest["external_customer_id"] = uuid.NewString()
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials/authorize", externalAuthorizationRequest, "", credential.Secret, http.StatusOK, &externalAuthorization)
+	if externalAuthorization.Allowed {
+		t.Fatal("external credential authorization accepted a different Tenant")
+	}
+
+	type externalCredentialResult struct {
+		CredentialID string    `json:"credential_id"`
+		Credential   string    `json:"credential"`
+		ExpiresAt    time.Time `json:"expires_at"`
+	}
+	issueRequest := map[string]any{
+		"deployment_id": "deployment_acceptance", "integration_id": "customer-api-v1",
+		"environment_id": "sandbox", "access_instance_id": "", "subject": externalAuthorizationRequest["subject"],
+		"scopes": []string{serviceScopeProjectUsersRead}, "idempotency_key": "external_credential_123", "ttl_seconds": 3600,
+	}
+	var externalCredential externalCredentialResult
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials", issueRequest, "", credential.Secret, http.StatusCreated, &externalCredential)
+	if externalCredential.CredentialID == "" || !strings.HasPrefix(externalCredential.Credential, "ca_xk_test_") || !externalCredential.ExpiresAt.After(time.Now()) {
+		t.Fatalf("unexpected external credential ceremony: %+v", externalCredential)
+	}
+	var replayedExternalCredential externalCredentialResult
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials", issueRequest, "", credential.Secret, http.StatusCreated, &replayedExternalCredential)
+	if replayedExternalCredential != externalCredential {
+		t.Fatalf("external credential replay changed the one-time result: first=%+v replay=%+v", externalCredential, replayedExternalCredential)
+	}
+	requestJSON(t, serviceClient, "GET", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, nil, "", externalCredential.Credential, http.StatusOK, &ProjectUser{})
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials", issueRequest, "", externalCredential.Credential, http.StatusForbidden, nil)
+
+	rotationRequest := map[string]any{
+		"deployment_id": "deployment_acceptance", "integration_id": "customer-api-v1",
+		"environment_id": "sandbox", "access_instance_id": "", "subject": allowedDecision.Principal.Subject,
+		"scopes": []string{serviceScopeProjectUsersRead}, "idempotency_key": "external_credential_rotation_123", "ttl_seconds": 3600,
+		"rotated_from_credential_id": externalCredential.CredentialID,
+	}
+	var rotatedExternalCredential externalCredentialResult
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials", rotationRequest, "", credential.Secret, http.StatusCreated, &rotatedExternalCredential)
+	if rotatedExternalCredential.CredentialID == externalCredential.CredentialID || rotatedExternalCredential.Credential == externalCredential.Credential {
+		t.Fatal("external credential rotation reused the prior credential")
+	}
+	thirdRequest := map[string]any{
+		"deployment_id": "deployment_acceptance", "integration_id": "customer-api-v1",
+		"environment_id": "sandbox", "access_instance_id": "", "subject": allowedDecision.Principal.Subject,
+		"scopes": []string{serviceScopeProjectUsersRead}, "idempotency_key": "external_credential_third_123", "ttl_seconds": 3600,
+	}
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials", thirdRequest, "", credential.Secret, http.StatusConflict, nil)
+	revokeRequest := map[string]any{"deployment_id": "deployment_acceptance", "subject": externalAuthorizationRequest["subject"]}
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials/"+externalCredential.CredentialID+"/revoke", revokeRequest, "", credential.Secret, http.StatusNoContent, nil)
+	requestJSON(t, serviceClient, "POST", ts.URL+"/v1/external-platform/credentials/"+externalCredential.CredentialID+"/revoke", revokeRequest, "", credential.Secret, http.StatusNoContent, nil)
+	requestJSON(t, serviceClient, "GET", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, nil, "", externalCredential.Credential, http.StatusUnauthorized, nil)
+	requestJSON(t, serviceClient, "GET", ts.URL+"/v1/projects/"+project.UID+"/users/"+user.UID, nil, "", rotatedExternalCredential.Credential, http.StatusOK, &ProjectUser{})
 
 	var supportCase SupportCase
 	supportCreate := map[string]any{
@@ -468,15 +532,17 @@ func TestPostgresAcceptanceFlow(t *testing.T) {
 		"submission_id": supportSubmissionID,
 		"created_at":    time.Now().UTC(),
 		"submission": map[string]any{
-			"schema_version": "2026-08-20", "kind": "bug", "source": "private_mcp",
+			"schema_version": "2026-08-25", "kind": "bug", "channel": "agent_api",
 			"confirmed_at": time.Now().UTC(), "request_id": "external_report_123",
 			"reporter": map[string]any{
 				"principal":            map[string]any{"issuer": cfg.OAuthIssuer, "subject": allowedDecision.Principal.Subject},
 				"external_customer_id": session.Tenant.UID, "allow_contact": false,
 			},
-			"product":     map[string]any{"product_id": "complicatedauth-console", "product_name": "ComplicatedAuth Console"},
-			"integration": map[string]any{"integration_id": "integration_123", "family_key": "complicatedauth", "version_key": "v1", "display_name": "ComplicatedAuth", "lifecycle": "published", "revision": 1},
-			"bug":         map[string]any{"summary": "External login report", "description": "Login failed after redirect.", "severity": "high"},
+			"provider":          map[string]any{"key": "example_connector", "name": "Example Connector", "version": "1.0"},
+			"resource":          map[string]any{"type": "application", "id": "complicatedauth-console", "name": "ComplicatedAuth Console", "environment_id": "acceptance"},
+			"related_resources": []map[string]any{{"type": "api", "id": "customer-auth-v1", "name": "Customer Auth API", "version": "v1", "state": "published", "revision": 1}},
+			"extensions":        map[string]any{"example_connector": map[string]any{"catalog_digest": "sha256:acceptance"}},
+			"bug":               map[string]any{"summary": "External login report", "description": "Login failed after redirect.", "severity": "high"},
 		},
 	}
 	var submissionReceipt struct {
