@@ -1105,16 +1105,13 @@ func (e TenantMemberWebAuthnModeRequestMode) Valid() bool {
 
 // Defines values for TenantMemberWebAuthnRegistrationRequestMode.
 const (
-	TenantMemberWebAuthnRegistrationRequestModePasskey     TenantMemberWebAuthnRegistrationRequestMode = "passkey"
-	TenantMemberWebAuthnRegistrationRequestModeSecurityKey TenantMemberWebAuthnRegistrationRequestMode = "security_key"
+	TenantMemberWebAuthnRegistrationRequestModePasskey TenantMemberWebAuthnRegistrationRequestMode = "passkey"
 )
 
 // Valid indicates whether the value is a known member of the TenantMemberWebAuthnRegistrationRequestMode enum.
 func (e TenantMemberWebAuthnRegistrationRequestMode) Valid() bool {
 	switch e {
 	case TenantMemberWebAuthnRegistrationRequestModePasskey:
-		return true
-	case TenantMemberWebAuthnRegistrationRequestModeSecurityKey:
 		return true
 	default:
 		return false
@@ -2799,9 +2796,10 @@ type TenantMemberWebAuthnCeremony struct {
 	Uid Uuid `json:"uid"`
 }
 
-// TenantMemberWebAuthnCredential Safe, versioned metadata for one management passkey or attested security key. Authenticator identifiers, public keys, and counters remain internal.
+// TenantMemberWebAuthnCredential Safe, versioned metadata for one management passkey or legacy security key. The AAGUID identifies display metadata only; public keys, credential identifiers, and counters remain internal.
 type TenantMemberWebAuthnCredential struct {
-	Attested bool `json:"attested"`
+	Aaguid   openapi_types.UUID `json:"aaguid"`
+	Attested bool               `json:"attested"`
 
 	// CreatedAt UTC timestamp serialized in RFC 3339 date-time form.
 	CreatedAt  Timestamp                          `json:"created_at"`
@@ -2844,10 +2842,9 @@ type TenantMemberWebAuthnModeRequest struct {
 // TenantMemberWebAuthnModeRequestMode defines model for TenantMemberWebAuthnModeRequest.Mode.
 type TenantMemberWebAuthnModeRequestMode string
 
-// TenantMemberWebAuthnRegistrationRequest Human label and authenticator category for a management WebAuthn credential.
+// TenantMemberWebAuthnRegistrationRequest Fixed authenticator category for management passkey enrollment. The server derives authenticator identity from the verified AAGUID.
 type TenantMemberWebAuthnRegistrationRequest struct {
 	Mode TenantMemberWebAuthnRegistrationRequestMode `json:"mode"`
-	Name string                                      `json:"name"`
 }
 
 // TenantMemberWebAuthnRegistrationRequestMode defines model for TenantMemberWebAuthnRegistrationRequest.Mode.

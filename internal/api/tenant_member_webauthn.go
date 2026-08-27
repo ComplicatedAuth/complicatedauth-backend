@@ -480,15 +480,13 @@ func (s *Server) beginInitialTenantMemberWebAuthnEnrollment(w http.ResponseWrite
 		return
 	}
 	var in struct {
-		Name string `json:"name"`
 		Mode string `json:"mode"`
 	}
 	if !decode(w, r, &in) {
 		return
 	}
-	in.Name = strings.TrimSpace(in.Name)
-	if !fidoMode(in.Mode, true) || len(in.Name) < 1 || len(in.Name) > 100 {
-		fail(w, r, http.StatusUnprocessableEntity, "validation_failed", "name and a passkey or security_key mode are required")
+	if !tenantMemberEnrollmentMode(in.Mode) {
+		fail(w, r, http.StatusUnprocessableEntity, "validation_failed", "mode must be passkey")
 		return
 	}
 	var count int
@@ -500,21 +498,19 @@ func (s *Server) beginInitialTenantMemberWebAuthnEnrollment(w http.ResponseWrite
 		fail(w, r, http.StatusConflict, "enrollment_not_allowed", "initial enrollment is available only before the first credential")
 		return
 	}
-	s.beginTenantMemberRegistration(w, r, attempt, nil, in.Name, in.Mode)
+	s.beginTenantMemberRegistration(w, r, attempt, nil, "Passkey", in.Mode)
 }
 
 func (s *Server) beginSessionTenantMemberWebAuthnEnrollment(w http.ResponseWriter, r *http.Request) {
 	p := mustPrincipal(r)
 	var in struct {
-		Name string `json:"name"`
 		Mode string `json:"mode"`
 	}
 	if !decode(w, r, &in) {
 		return
 	}
-	in.Name = strings.TrimSpace(in.Name)
-	if !fidoMode(in.Mode, true) || len(in.Name) < 1 || len(in.Name) > 100 {
-		fail(w, r, http.StatusUnprocessableEntity, "validation_failed", "name and a passkey or security_key mode are required")
+	if !tenantMemberEnrollmentMode(in.Mode) {
+		fail(w, r, http.StatusUnprocessableEntity, "validation_failed", "mode must be passkey")
 		return
 	}
 	var count int
@@ -527,7 +523,7 @@ func (s *Server) beginSessionTenantMemberWebAuthnEnrollment(w http.ResponseWrite
 		return
 	}
 	attempt := tenantMemberLoginAttemptState{TenantUID: p.TenantUID, MemberUID: p.MemberUID}
-	s.beginTenantMemberRegistration(w, r, attempt, &p, in.Name, in.Mode)
+	s.beginTenantMemberRegistration(w, r, attempt, &p, "Passkey "+uuid.NewString()[:8], in.Mode)
 }
 
 func (s *Server) beginTenantMemberRegistration(w http.ResponseWriter, r *http.Request, attempt tenantMemberLoginAttemptState, p *principal, name, mode string) {
@@ -541,21 +537,15 @@ func (s *Server) beginTenantMemberRegistration(w http.ResponseWriter, r *http.Re
 		fail(w, r, http.StatusInternalServerError, "webauthn_configuration", "management WebAuthn configuration is invalid")
 		return
 	}
-	attachment := protocol.Platform
-	attestation := protocol.PreferNoAttestation
-	if mode == "security_key" {
-		attachment = protocol.CrossPlatform
-		attestation = protocol.PreferDirectAttestation
-	}
 	options, session, err := wa.BeginRegistration(user,
 		webauthn.WithExclusions(webauthn.Credentials(user.Credentials).CredentialDescriptors()),
 		webauthn.WithAuthenticatorSelection(protocol.AuthenticatorSelection{
-			AuthenticatorAttachment: attachment,
+			AuthenticatorAttachment: protocol.Platform,
 			ResidentKey:             protocol.ResidentKeyRequirementRequired,
 			RequireResidentKey:      protocol.ResidentKeyRequired(),
 			UserVerification:        protocol.VerificationRequired,
 		}),
-		webauthn.WithConveyancePreference(attestation),
+		webauthn.WithConveyancePreference(protocol.PreferNoAttestation),
 		webauthn.WithPublicKeyCredentialHints([]protocol.PublicKeyCredentialHints{fidoHint(mode)}),
 	)
 	if err != nil {
@@ -639,7 +629,7 @@ func (s *Server) verifyTenantMemberRegistration(w http.ResponseWriter, r *http.R
 		return nil, tenantMemberCeremony{}, false
 	}
 	ceremony, ok := s.consumeTenantMemberCeremony(r.Context(), in.CeremonyUID, "registration")
-	if !ok || ceremony.MemberUID != memberUID || ceremony.TenantUID != tenantUID || ceremony.Kind != in.Mode || ceremony.LoginAttemptUID != loginUID || ceremony.MemberSessionUID != sessionUID || !fidoMode(in.Mode, true) {
+	if !ok || ceremony.MemberUID != memberUID || ceremony.TenantUID != tenantUID || ceremony.Kind != in.Mode || ceremony.LoginAttemptUID != loginUID || ceremony.MemberSessionUID != sessionUID || !tenantMemberEnrollmentMode(in.Mode) {
 		fail(w, r, http.StatusBadRequest, "invalid_ceremony", "ceremony is expired, consumed, or does not match the enrollment")
 		return nil, tenantMemberCeremony{}, false
 	}
@@ -656,11 +646,6 @@ func (s *Server) verifyTenantMemberRegistration(w http.ResponseWriter, r *http.R
 	credential, err := wa.FinishRegistration(user, ceremony.Session, credentialRequest(r, in.Credential))
 	if err != nil {
 		fail(w, r, http.StatusBadRequest, "webauthn_verification_failed", "credential verification failed")
-		return nil, tenantMemberCeremony{}, false
-	}
-	attested := credential.AttestationType != "" && credential.AttestationType != "none" && credential.AttestationFormat != "none"
-	if in.Mode == "security_key" && !attested {
-		fail(w, r, http.StatusBadRequest, "attestation_required", "security key did not provide attestation")
 		return nil, tenantMemberCeremony{}, false
 	}
 	return credential, ceremony, true
@@ -742,7 +727,7 @@ func (s *Server) persistSessionTenantMemberCredential(ctx context.Context, p pri
 	}
 	now := time.Now().UTC()
 	record := TenantMemberWebAuthnCredential{
-		UID: uuid.NewString(), Name: ceremony.Name, Kind: ceremony.Kind,
+		UID: uuid.NewString(), Name: ceremony.Name, AAGUID: tenantMemberCredentialAAGUID(credential), Kind: ceremony.Kind,
 		Attested: credential.AttestationType != "" && credential.AttestationType != "none" && credential.AttestationFormat != "none",
 		Version:  1, CreatedAt: now, UpdatedAt: now,
 	}
@@ -839,14 +824,38 @@ func (s *Server) consumeTenantMemberCeremony(ctx context.Context, ceremonyUID, c
 
 func scanTenantMemberWebAuthnCredential(row rowScanner) (TenantMemberWebAuthnCredential, error) {
 	var record TenantMemberWebAuthnCredential
-	err := row.Scan(&record.UID, &record.Name, &record.Kind, &record.Attested, &record.Version, &record.CreatedAt, &record.UpdatedAt, &record.LastUsedAt)
+	var raw []byte
+	err := row.Scan(&record.UID, &record.Name, &record.Kind, &record.Attested, &record.Version, &record.CreatedAt, &record.UpdatedAt, &record.LastUsedAt, &raw)
+	if err != nil {
+		return record, err
+	}
+	var credential webauthn.Credential
+	if err = json.Unmarshal(raw, &credential); err != nil {
+		return record, err
+	}
+	record.AAGUID = tenantMemberCredentialAAGUID(&credential)
 	return record, err
+}
+
+func tenantMemberCredentialAAGUID(credential *webauthn.Credential) string {
+	if credential == nil || len(credential.Authenticator.AAGUID) != 16 {
+		return uuid.Nil.String()
+	}
+	aaguid, err := uuid.FromBytes(credential.Authenticator.AAGUID)
+	if err != nil {
+		return uuid.Nil.String()
+	}
+	return aaguid.String()
+}
+
+func tenantMemberEnrollmentMode(mode string) bool {
+	return mode == "passkey"
 }
 
 func (s *Server) listTenantMemberWebAuthnCredentials(w http.ResponseWriter, r *http.Request) {
 	p := mustPrincipal(r)
 	rows, err := s.db.Query(r.Context(), `
-		SELECT uid,name,credential_kind,attested,version,created_at,updated_at,last_used_at
+		SELECT uid,name,credential_kind,attested,version,created_at,updated_at,last_used_at,credential_json
 		FROM tenant_member_webauthn_credentials
 		WHERE tenant_uid=$1 AND tenant_member_uid=$2
 		ORDER BY created_at DESC,uid DESC
@@ -910,7 +919,7 @@ func (s *Server) updateTenantMemberWebAuthnCredential(w http.ResponseWriter, r *
 		return
 	}
 	record, err := scanTenantMemberWebAuthnCredential(s.db.QueryRow(r.Context(), `
-		SELECT uid,name,credential_kind,attested,version,created_at,updated_at,last_used_at
+		SELECT uid,name,credential_kind,attested,version,created_at,updated_at,last_used_at,credential_json
 		FROM tenant_member_webauthn_credentials WHERE uid=$1
 	`, r.PathValue("credential_uid")))
 	if err != nil {

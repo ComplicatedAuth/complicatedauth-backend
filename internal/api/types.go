@@ -38,6 +38,7 @@ type TenantMemberLoginProgress struct {
 type TenantMemberWebAuthnCredential struct {
 	UID        string     `json:"uid"`
 	Name       string     `json:"name"`
+	AAGUID     string     `json:"aaguid"`
 	Kind       string     `json:"kind"`
 	Attested   bool       `json:"attested"`
 	Version    int64      `json:"version"`

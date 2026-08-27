@@ -303,7 +303,7 @@ func (s *Server) serviceCredential(requiredScope string, next http.Handler) http
 func (s *Server) consoleAuthorized(permission string, next http.Handler) http.Handler {
 	return s.consoleSession(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if mustPrincipal(r).AuthenticationAssurance != "strong" {
-			fail(w, r, http.StatusForbidden, "strong_authentication_required", "complete passkey or security-key setup before using the management API")
+			fail(w, r, http.StatusForbidden, "strong_authentication_required", "complete passkey setup before using the management API")
 			return
 		}
 		if !roleAllows(mustPrincipal(r).Role, permission) {

@@ -112,13 +112,16 @@ first management WebAuthn credential; ordinary management resources require
 Login creates a five-minute, non-enumerating attempt. Its one-time client
 secret is returned only on creation, remains in browser function memory, and is
 sent only in `X-ComplicatedAuth-Login-Secret` to child operations. Password
-verification does not create a session. A user-verified passkey or attested
-cross-platform security-key assertion consumes the attempt and creates a
-strong session.
+verification does not create a session. A user-verified passkey or previously
+enrolled attested cross-platform security-key assertion consumes the attempt
+and creates a strong session.
 
-Tenant Members may hold at most ten named management credentials. Registration
-supplies existing identifiers in `excludeCredentials`, reads expose safe
-metadata only, and rename/removal require the current strong ETag. The final
+New Tenant Member enrollment creates only management passkeys; previously
+enrolled security keys remain valid for authentication. Tenant Members may hold
+at most ten management credentials. Registration supplies existing identifiers
+in `excludeCredentials`, while the verified AAGUID lets the console resolve the
+authenticator name and icon from the Passkey Developer catalog. Reads expose
+safe metadata only, and rename/removal require the current strong ETag. The final
 credential cannot be deleted; removing another credential revokes every other
 management session. WebAuthn RP IDs ignore ports, so production management and
 customer applications must use distinct stable hostnames.
